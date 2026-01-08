@@ -24,40 +24,39 @@ const StatementOverlay = ({ currentSlideIndex }: StatementOverlayProps) => {
   return (
     <>
       <motion.div 
-        className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none"
-        initial={{ opacity: 0, y: 30 }}
+        className="absolute bottom-0 left-0 right-0 z-10 pointer-events-none"
+        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.3 }}
       >
-        <div className="text-center px-4 pointer-events-auto bg-background/80 backdrop-blur-sm py-12 px-16 max-w-4xl">
-          <p className="font-serif text-2xl md:text-4xl lg:text-5xl font-light leading-relaxed text-foreground">
-            My Boutique is{' '}
+        <div className="pointer-events-auto bg-background/80 backdrop-blur-sm py-4 px-8">
+          <div className="flex items-center justify-center gap-2 font-sans text-sm md:text-base text-foreground">
+            <span>My Boutique is</span>
             <button
               onClick={() => setShowSeasonModal(true)}
-              className="inline-flex items-center gap-1 text-gold hover:text-gold/80 transition-colors underline underline-offset-4 decoration-1"
+              className="inline-flex items-center gap-1 font-medium text-foreground hover:text-foreground/70 transition-colors"
             >
               {selectedSeason}
               <ChevronDown className="w-4 h-4" />
             </button>
-            <br className="hidden md:block" />
-            <span className="block mt-2">& I want to source for{' '}</span>
+            <span>&</span>
+            <span>I want to source for</span>
             <button
               onClick={() => setShowCategoryModal(true)}
-              className="inline-flex items-center gap-1 text-gold hover:text-gold/80 transition-colors underline underline-offset-4 decoration-1"
+              className="inline-flex items-center gap-1 font-medium text-foreground hover:text-foreground/70 transition-colors"
             >
               {selectedCategory}
               <ChevronDown className="w-4 h-4" />
             </button>
-          </p>
-
-          <motion.button
-            onClick={handleFind}
-            className="btn-luxury mt-10"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            Find
-          </motion.button>
+            <motion.button
+              onClick={handleFind}
+              className="ml-4 text-foreground font-medium tracking-[0.2em] hover:text-foreground/70 transition-colors"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              FIND
+            </motion.button>
+          </div>
         </div>
       </motion.div>
 
