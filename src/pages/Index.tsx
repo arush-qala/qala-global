@@ -1,12 +1,30 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from 'react';
+import Header from '@/components/layout/Header';
+import HeroCarousel from '@/components/home/HeroCarousel';
+import StatementOverlay from '@/components/home/StatementOverlay';
+import BrandTimeline from '@/components/home/BrandTimeline';
 
 const Index = () => {
+  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="relative min-h-screen overflow-hidden">
+      <Header variant="transparent" />
+      
+      {/* Hero Section */}
+      <section className="relative h-screen">
+        <HeroCarousel 
+          currentIndex={currentSlideIndex}
+          onSlideChange={setCurrentSlideIndex}
+        />
+        <StatementOverlay currentSlideIndex={currentSlideIndex} />
+      </section>
+
+      {/* Brand Timeline */}
+      <BrandTimeline 
+        currentIndex={currentSlideIndex}
+        onIndexChange={setCurrentSlideIndex}
+      />
     </div>
   );
 };
