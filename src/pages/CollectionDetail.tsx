@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
+import { motion, useScroll, useTransform, AnimatePresence, useMotionValueEvent } from 'framer-motion';
 import { ArrowLeft, Plus, Check, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { brands } from '@/data/brands';
 
@@ -118,6 +118,22 @@ const ProductDetailOverlay = ({
     target: detailScrollRef,
     offset: ["start start", "end end"]
   });
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft' && productIndex > 0) {
+        onNavigate(productIndex - 1);
+      } else if (e.key === 'ArrowRight' && productIndex < products.length - 1) {
+        onNavigate(productIndex + 1);
+      } else if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [productIndex, products.length, onNavigate, onClose]);
 
   // Parallax effect: shift images from -6.5vw to -31.5vw as user scrolls
   const imageX = useTransform(scrollYProgress, [0, 1], ['-6.5vw', '-31.5vw']);
@@ -327,6 +343,7 @@ const CollectionDetail = () => {
   const [selectedProductIndex, setSelectedProductIndex] = useState<number | null>(null);
   const [assortment, setAssortment] = useState<string[]>([]);
   const [flyingImage, setFlyingImage] = useState<{ src: string; x: number; y: number } | null>(null);
+  const [currentProductIndex, setCurrentProductIndex] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   
   const brand = brands.find(b => b.slug === slug);
@@ -345,6 +362,12 @@ const CollectionDetail = () => {
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end end"]
+  });
+
+  // Track scroll progress to update product counter
+  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+    const productIdx = Math.min(Math.floor(latest * products.length), products.length - 1);
+    setCurrentProductIndex(productIdx);
   });
 
   // Calculate scroll bounds:
@@ -396,7 +419,7 @@ const CollectionDetail = () => {
     <div className="min-h-screen bg-background">
       {/* Fixed Header */}
       <div className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm">
-        <div className="flex items-center px-8 py-6">
+        <div className="flex items-center justify-between px-8 py-6">
           <Link 
             to={`/brands/${slug}`}
             className="flex items-center gap-2 hover:text-gold transition-colors"
@@ -404,6 +427,19 @@ const CollectionDetail = () => {
             <ArrowLeft className="w-4 h-4" />
             <span className="text-luxury-sm tracking-widest uppercase">Back to Brand</span>
           </Link>
+          
+          {/* Scroll Progress Indicator */}
+          <div className="flex items-center gap-4">
+            <div className="w-32 h-px bg-border relative overflow-hidden">
+              <motion.div 
+                className="absolute inset-y-0 left-0 bg-gold"
+                style={{ width: useTransform(scrollYProgress, [0, 1], ['0%', '100%']) }}
+              />
+            </div>
+            <span className="text-luxury-xs text-muted-foreground min-w-[40px]">
+              {currentProductIndex + 1} / {products.length}
+            </span>
+          </div>
         </div>
       </div>
 
