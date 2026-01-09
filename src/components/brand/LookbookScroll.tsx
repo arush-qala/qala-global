@@ -11,11 +11,11 @@ const LookbookScroll = ({ images, slug }: LookbookScrollProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerHeight, setContainerHeight] = useState(0);
 
-  // Calculate the total scroll distance needed
+  // Calculate the total scroll distance needed (images at 1/3 viewport width each)
   useEffect(() => {
     if (containerRef.current) {
-      const scrollWidth = images.length * window.innerWidth;
-      setContainerHeight(scrollWidth);
+      const totalWidth = (images.length / 3) * window.innerWidth;
+      setContainerHeight(totalWidth);
     }
   }, [images.length]);
 
@@ -24,11 +24,12 @@ const LookbookScroll = ({ images, slug }: LookbookScrollProps) => {
     offset: ['start start', 'end end'],
   });
 
-  // Transform vertical scroll to horizontal movement
+  // Transform vertical scroll to horizontal movement (each image is 1/3 of viewport)
+  const totalImagesWidth = (images.length + 1) * (100 / 3); // +1 for CTA slide
   const x = useTransform(
     scrollYProgress,
     [0, 1],
-    ['0%', `-${(images.length - 1) * 100}%`]
+    ['0%', `-${totalImagesWidth - 100}%`]
   );
 
   return (
@@ -58,19 +59,18 @@ const LookbookScroll = ({ images, slug }: LookbookScrollProps) => {
             {images.map((img, index) => (
               <div
                 key={index}
-                className="w-screen h-full flex-shrink-0 flex items-center justify-center px-4 lg:px-16"
+                className="h-full flex-shrink-0 relative group cursor-pointer"
+                style={{ width: `${100 / 3}vw` }}
               >
-                <div className="relative h-[70vh] max-h-[800px] aspect-[3/4] overflow-hidden group cursor-pointer">
-                  <img
-                    src={img}
-                    alt={`Look ${index + 1}`}
-                    className="w-full h-full object-cover img-luxury"
-                  />
-                  <div className="absolute inset-0 bg-charcoal/0 group-hover:bg-charcoal/40 transition-all duration-500 flex items-end p-6">
-                    <span className="text-primary-foreground text-luxury-xs opacity-0 group-hover:opacity-100 transition-opacity">
-                      Look {String(index + 1).padStart(2, '0')}
-                    </span>
-                  </div>
+                <img
+                  src={img}
+                  alt={`Look ${index + 1}`}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-charcoal/0 group-hover:bg-charcoal/30 transition-all duration-500 flex items-end p-6">
+                  <span className="text-primary-foreground text-luxury-xs opacity-0 group-hover:opacity-100 transition-opacity">
+                    Look {String(index + 1).padStart(2, '0')}
+                  </span>
                 </div>
               </div>
             ))}
