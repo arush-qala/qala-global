@@ -2,11 +2,11 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { heroSlides } from '@/data/brands';
 
-import heroDoodlage from '@/assets/images/home/hero-doodlage.jpg';
-import heroItuvana from '@/assets/images/home/hero-ituvana.jpg';
-import heroKharaKapas from '@/assets/images/home/hero-khara-kapas.jpg';
-import heroNaushadAli from '@/assets/images/home/hero-naushad-ali.jpg';
-import heroCapisvirleo from '@/assets/images/home/hero-capisvirleo.jpg';
+import heroDoodlage from '@/assets/images/home/hero-doodlage.png';
+import heroItuvana from '@/assets/images/home/hero-ituvana.png';
+import heroKharaKapas from '@/assets/images/home/hero-khara-kapas.png';
+import heroNaushadAli from '@/assets/images/home/hero-naushad-ali.png';
+import heroCapisvirleo from '@/assets/images/home/hero-capisvirleo.png';
 
 const heroImages: Record<string, string> = {
   'doodlage': heroDoodlage,
