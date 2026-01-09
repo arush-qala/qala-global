@@ -230,7 +230,7 @@ const ProductDetailOverlay = ({
       <div ref={overlayRef} className="h-full overflow-y-auto overscroll-contain">
         <div className="min-h-[200vh]">
           <div className="flex min-h-[200vh]">
-            {/* Left Edge - Previous Product Peek (constant) */}
+            {/* Left Edge - Previous Product Peek (constant 7vw) */}
             <div
               className="w-[7vw] sticky top-0 h-screen flex-shrink-0 cursor-pointer relative overflow-hidden"
               onClick={() => prevProduct && onNavigate(productIndex - 1)}
@@ -249,122 +249,118 @@ const ProductDetailOverlay = ({
               )}
             </div>
 
-            {/* Center Column - Image Stack (centered on open, shifts left on scroll) */}
-            <div className="flex-1 flex justify-center">
-              <div className="pt-16 pb-[60vh] px-4">
-                <motion.div style={{ x: imageX }} className="max-w-[520px] space-y-6">
-                  {product.images.map((img, idx) => (
-                    <div
-                      key={idx}
-                      className={idx === 0 ? 'h-[88vh]' : 'h-[80vh]'}
-                    >
-                      <img
-                        src={img}
-                        alt={`${product.name} - View ${idx + 1}`}
-                        className="w-full h-full object-cover"
-                        loading={idx === 0 ? 'eager' : 'lazy'}
-                      />
+            {/* Middle Section - Fixed 86vw containing images + details panel */}
+            <div className="w-[86vw] flex-shrink-0 sticky top-0 h-screen overflow-hidden">
+              {/* Image Column - shifts left on scroll */}
+              <motion.div 
+                style={{ x: imageX }} 
+                className="absolute inset-0 flex justify-center pt-16"
+              >
+                <div className="max-w-[520px] w-full">
+                  <img
+                    src={product.images[0]}
+                    alt={`${product.name}`}
+                    className="w-full h-[85vh] object-cover"
+                  />
+                </div>
+              </motion.div>
+
+              {/* Right Panel - Reveals on scroll (positioned absolutely within middle section) */}
+              <motion.aside
+                style={{ opacity: panelOpacity, x: panelX }}
+                className="w-[360px] absolute right-0 top-0 h-screen border-l border-border bg-background overflow-y-auto"
+              >
+                <div className="h-full flex flex-col px-8 py-10">
+                  {/* Product Header */}
+                  <div>
+                    <span className="text-gold text-luxury-xs tracking-widest block mb-4">
+                      {String(productIndex + 1).padStart(2, '0')} / {products.length}
+                    </span>
+
+                    <h2 className="font-serif text-2xl lg:text-3xl leading-tight mb-6">
+                      {product.name}
+                    </h2>
+
+                    {/* Specs */}
+                    <div className="space-y-3 mb-6">
+                      <div className="flex">
+                        <span className="text-muted-foreground text-luxury-xs w-24">FABRIC:</span>
+                        <span className="text-sm">{product.fabricDetails}</span>
+                      </div>
+                      <div className="flex">
+                        <span className="text-muted-foreground text-luxury-xs w-24">FEELS LIKE:</span>
+                        <span className="text-sm">{product.feelsLike}</span>
+                      </div>
+                      <div className="flex">
+                        <span className="text-muted-foreground text-luxury-xs w-24">SIZE GUIDE:</span>
+                        <button
+                          onClick={() => setShowSizeChart(true)}
+                          className="text-sm underline hover:text-gold transition-colors"
+                        >
+                          View Chart
+                        </button>
+                      </div>
                     </div>
-                  ))}
-                </motion.div>
-              </div>
+
+                    {/* CTA */}
+                    <button
+                      onClick={() => onSelectStyle(product.id)}
+                      className={`w-full py-4 flex items-center justify-center gap-2 transition-all mb-8 ${
+                        isInAssortment
+                          ? 'bg-gold text-primary-foreground'
+                          : 'bg-gold/80 hover:bg-gold text-primary-foreground'
+                      }`}
+                    >
+                      {isInAssortment ? (
+                        <>
+                          <Check className="w-4 h-4" />
+                          <span className="text-luxury-sm tracking-widest">SELECTED</span>
+                        </>
+                      ) : (
+                        <span className="text-luxury-sm tracking-widest">SELECT THIS STYLE</span>
+                      )}
+                    </button>
+                  </div>
+
+                  {/* Virtual Trial Video */}
+                  <section className="mb-8">
+                    <div className="aspect-video w-full bg-muted border border-border relative overflow-hidden">
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <span className="text-muted-foreground text-sm">You imagine it.</span>
+                      </div>
+                      <span className="absolute bottom-3 left-3 text-luxury-xs tracking-widest text-muted-foreground bg-background/80 px-2 py-1">
+                        VIRTUAL TRIAL
+                      </span>
+                    </div>
+                  </section>
+
+                  {/* Tabbed info */}
+                  <section className="mt-auto">
+                    <div className="flex gap-4 mb-4 border-b border-border pb-3">
+                      {tabs.map((tab) => (
+                        <button
+                          key={tab}
+                          onClick={() => setActiveTab(tab)}
+                          className={`text-luxury-xs tracking-widest transition-colors ${
+                            activeTab === tab
+                              ? 'text-foreground'
+                              : 'text-muted-foreground hover:text-foreground'
+                          }`}
+                        >
+                          {tab}
+                        </button>
+                      ))}
+                    </div>
+
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {tabContent[activeTab]}
+                    </p>
+                  </section>
+                </div>
+              </motion.aside>
             </div>
 
-            {/* Right Panel - Reveals on scroll */}
-            <motion.aside
-              style={{ opacity: panelOpacity, x: panelX }}
-              className="w-[400px] sticky top-0 h-screen flex-shrink-0 border-l border-border bg-background"
-            >
-              <div className="h-full flex flex-col px-8 py-10 overflow-y-auto">
-                {/* Product Header */}
-                <div>
-                  <span className="text-gold text-luxury-xs tracking-widest block mb-4">
-                    {String(productIndex + 1).padStart(2, '0')} / {products.length}
-                  </span>
-
-                  <h2 className="font-serif text-2xl lg:text-3xl leading-tight mb-6">
-                    {product.name}
-                  </h2>
-
-                  {/* Specs */}
-                  <div className="space-y-3 mb-6">
-                    <div className="flex">
-                      <span className="text-muted-foreground text-luxury-xs w-24">FABRIC:</span>
-                      <span className="text-sm">{product.fabricDetails}</span>
-                    </div>
-                    <div className="flex">
-                      <span className="text-muted-foreground text-luxury-xs w-24">FEELS LIKE:</span>
-                      <span className="text-sm">{product.feelsLike}</span>
-                    </div>
-                    <div className="flex">
-                      <span className="text-muted-foreground text-luxury-xs w-24">SIZE GUIDE:</span>
-                      <button
-                        onClick={() => setShowSizeChart(true)}
-                        className="text-sm underline hover:text-gold transition-colors"
-                      >
-                        View Chart
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* CTA */}
-                  <button
-                    onClick={() => onSelectStyle(product.id)}
-                    className={`w-full py-4 flex items-center justify-center gap-2 transition-all mb-8 ${
-                      isInAssortment
-                        ? 'bg-gold text-primary-foreground'
-                        : 'bg-gold/80 hover:bg-gold text-primary-foreground'
-                    }`}
-                  >
-                    {isInAssortment ? (
-                      <>
-                        <Check className="w-4 h-4" />
-                        <span className="text-luxury-sm tracking-widest">SELECTED</span>
-                      </>
-                    ) : (
-                      <span className="text-luxury-sm tracking-widest">SELECT THIS STYLE</span>
-                    )}
-                  </button>
-                </div>
-
-                {/* Virtual Trial Video */}
-                <section className="mb-8">
-                  <div className="aspect-video w-full bg-muted border border-border relative overflow-hidden">
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-muted-foreground text-sm">You imagine it.</span>
-                    </div>
-                    <span className="absolute bottom-3 left-3 text-luxury-xs tracking-widest text-muted-foreground bg-background/80 px-2 py-1">
-                      VIRTUAL TRIAL
-                    </span>
-                  </div>
-                </section>
-
-                {/* Tabbed info */}
-                <section className="mt-auto">
-                  <div className="flex gap-4 mb-4 border-b border-border pb-3">
-                    {tabs.map((tab) => (
-                      <button
-                        key={tab}
-                        onClick={() => setActiveTab(tab)}
-                        className={`text-luxury-xs tracking-widest transition-colors ${
-                          activeTab === tab
-                            ? 'text-foreground'
-                            : 'text-muted-foreground hover:text-foreground'
-                        }`}
-                      >
-                        {tab}
-                      </button>
-                    ))}
-                  </div>
-
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    {tabContent[activeTab]}
-                  </p>
-                </section>
-              </div>
-            </motion.aside>
-
-            {/* Right Edge - Next Product Peek (constant) */}
+            {/* Right Edge - Next Product Peek (constant 7vw) */}
             <div
               className="w-[7vw] sticky top-0 h-screen flex-shrink-0 cursor-pointer relative overflow-hidden"
               onClick={() => nextProduct && onNavigate(productIndex + 1)}
