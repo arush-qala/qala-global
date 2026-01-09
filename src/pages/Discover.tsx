@@ -6,19 +6,47 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { brands } from '@/data/brands';
 
-import brand1 from '@/assets/images/discover/brand-1.jpg';
-import brand2 from '@/assets/images/discover/brand-2.jpg';
-import brand3 from '@/assets/images/discover/brand-3.jpg';
-import brand4 from '@/assets/images/discover/brand-4.jpg';
-import brand5 from '@/assets/images/discover/brand-5.jpg';
-import brand6 from '@/assets/images/discover/brand-6.jpg';
-
 const brandImages: Record<string, string[]> = {
-  'asaii': [brand1, brand2, brand3, brand4, brand5, brand6],
-  'doodlage': [brand2, brand3, brand4, brand5, brand6, brand1],
-  'margn': [brand3, brand4, brand5, brand6, brand1, brand2],
-  'akhl': [brand4, brand5, brand6, brand1, brand2, brand3],
-  'ituvana': [brand5, brand6, brand1, brand2, brand3, brand4],
+  'asaii': [
+    '/images/discover/asaii/1.webp',
+    '/images/discover/asaii/2.webp',
+    '/images/discover/asaii/3.webp',
+    '/images/discover/asaii/4.webp',
+    '/images/discover/asaii/5.webp',
+    '/images/discover/asaii/6.webp',
+  ],
+  'doodlage': [
+    '/images/discover/doodlage/1.jpg',
+    '/images/discover/doodlage/2.webp',
+    '/images/discover/doodlage/3.webp',
+    '/images/discover/doodlage/4.webp',
+    '/images/discover/doodlage/5.webp',
+    '/images/discover/doodlage/6.webp',
+  ],
+  'margn': [
+    '/images/discover/margn/1.webp',
+    '/images/discover/margn/2.webp',
+    '/images/discover/margn/3.webp',
+    '/images/discover/margn/4.webp',
+    '/images/discover/margn/5.webp',
+    '/images/discover/margn/6.webp',
+  ],
+  'akhl': [
+    '/images/discover/akhl-studio/1.webp',
+    '/images/discover/akhl-studio/2.webp',
+    '/images/discover/akhl-studio/3.webp',
+    '/images/discover/akhl-studio/4.webp',
+    '/images/discover/akhl-studio/5.webp',
+    '/images/discover/akhl-studio/6.webp',
+  ],
+  'ituvana': [
+    '/images/discover/ituvana/1.webp',
+    '/images/discover/ituvana/2.webp',
+    '/images/discover/ituvana/3.webp',
+    '/images/discover/ituvana/4.webp',
+    '/images/discover/ituvana/5.webp',
+    '/images/discover/ituvana/6.webp',
+  ],
 };
 
 const Discover = () => {
