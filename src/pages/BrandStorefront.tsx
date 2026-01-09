@@ -9,7 +9,6 @@ import heroItuvana from '@/assets/images/home/hero-ituvana.jpg';
 import heroKharaKapas from '@/assets/images/home/hero-khara-kapas.jpg';
 import heroNaushadAli from '@/assets/images/home/hero-naushad-ali.jpg';
 import heroCapisvirleo from '@/assets/images/home/hero-capisvirleo.jpg';
-
 const heroImages: Record<string, string> = {
   'doodlage': heroDoodlage,
   'ituvana': heroItuvana,
@@ -18,81 +17,48 @@ const heroImages: Record<string, string> = {
   'capisvirleo': heroCapisvirleo,
   'asaii': heroDoodlage,
   'margn': heroKharaKapas,
-  'akhl-studio': heroNaushadAli,
+  'akhl-studio': heroNaushadAli
 };
 
 // Lookbook images for each brand from public folder
 const brandLookbookImages: Record<string, string[]> = {
-  'asaii': [
-    '/images/discover/asaii/1.webp',
-    '/images/discover/asaii/2.webp',
-    '/images/discover/asaii/3.webp',
-    '/images/discover/asaii/4.webp',
-    '/images/discover/asaii/5.webp',
-    '/images/discover/asaii/6.webp',
-  ],
-  'doodlage': [
-    '/images/discover/doodlage/1.jpg',
-    '/images/discover/doodlage/2.webp',
-    '/images/discover/doodlage/3.webp',
-    '/images/discover/doodlage/4.webp',
-    '/images/discover/doodlage/5.webp',
-    '/images/discover/doodlage/6.webp',
-  ],
-  'margn': [
-    '/images/discover/margn/1.webp',
-    '/images/discover/margn/2.webp',
-    '/images/discover/margn/3.webp',
-    '/images/discover/margn/4.webp',
-    '/images/discover/margn/5.webp',
-    '/images/discover/margn/6.webp',
-  ],
-  'akhl-studio': [
-    '/images/discover/akhl-studio/1.webp',
-    '/images/discover/akhl-studio/2.webp',
-    '/images/discover/akhl-studio/3.webp',
-    '/images/discover/akhl-studio/4.webp',
-    '/images/discover/akhl-studio/5.webp',
-    '/images/discover/akhl-studio/6.webp',
-  ],
-  'ituvana': [
-    '/images/discover/ituvana/1.webp',
-    '/images/discover/ituvana/2.webp',
-    '/images/discover/ituvana/3.webp',
-    '/images/discover/ituvana/4.webp',
-    '/images/discover/ituvana/5.webp',
-    '/images/discover/ituvana/6.webp',
-  ],
+  'asaii': ['/images/discover/asaii/1.webp', '/images/discover/asaii/2.webp', '/images/discover/asaii/3.webp', '/images/discover/asaii/4.webp', '/images/discover/asaii/5.webp', '/images/discover/asaii/6.webp'],
+  'doodlage': ['/images/discover/doodlage/1.jpg', '/images/discover/doodlage/2.webp', '/images/discover/doodlage/3.webp', '/images/discover/doodlage/4.webp', '/images/discover/doodlage/5.webp', '/images/discover/doodlage/6.webp'],
+  'margn': ['/images/discover/margn/1.webp', '/images/discover/margn/2.webp', '/images/discover/margn/3.webp', '/images/discover/margn/4.webp', '/images/discover/margn/5.webp', '/images/discover/margn/6.webp'],
+  'akhl-studio': ['/images/discover/akhl-studio/1.webp', '/images/discover/akhl-studio/2.webp', '/images/discover/akhl-studio/3.webp', '/images/discover/akhl-studio/4.webp', '/images/discover/akhl-studio/5.webp', '/images/discover/akhl-studio/6.webp'],
+  'ituvana': ['/images/discover/ituvana/1.webp', '/images/discover/ituvana/2.webp', '/images/discover/ituvana/3.webp', '/images/discover/ituvana/4.webp', '/images/discover/ituvana/5.webp', '/images/discover/ituvana/6.webp']
 };
-
 const BrandStorefront = () => {
-  const { slug } = useParams<{ slug: string }>();
+  const {
+    slug
+  } = useParams<{
+    slug: string;
+  }>();
   const brand = brands.find(b => b.slug === slug);
-
   if (!brand) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
+    return <div className="min-h-screen flex items-center justify-center">
         <p>Brand not found</p>
-      </div>
-    );
+      </div>;
   }
-
   const heroImage = heroImages[brand.slug] || heroDoodlage;
 
   // Mock collections data for "More Collections" section
-  const moreCollections = [
-    { name: 'Autumn Whispers', season: 'Fall Winter', image: (brandLookbookImages[slug || ''] || brandLookbookImages['asaii'])[0] },
-    { name: 'Urban Nomad', season: 'Spring Summer', image: (brandLookbookImages[slug || ''] || brandLookbookImages['asaii'])[2] },
-    { name: 'Minimalist Dreams', season: 'Trans Seasonal', image: (brandLookbookImages[slug || ''] || brandLookbookImages['asaii'])[4] },
-  ];
-
-  return (
-    <div className="min-h-screen bg-background">
+  const moreCollections = [{
+    name: 'Autumn Whispers',
+    season: 'Fall Winter',
+    image: (brandLookbookImages[slug || ''] || brandLookbookImages['asaii'])[0]
+  }, {
+    name: 'Urban Nomad',
+    season: 'Spring Summer',
+    image: (brandLookbookImages[slug || ''] || brandLookbookImages['asaii'])[2]
+  }, {
+    name: 'Minimalist Dreams',
+    season: 'Trans Seasonal',
+    image: (brandLookbookImages[slug || ''] || brandLookbookImages['asaii'])[4]
+  }];
+  return <div className="min-h-screen bg-background">
       {/* Back Button */}
-      <Link 
-        to="/discover"
-        className="fixed top-8 left-8 z-50 flex items-center gap-2 text-primary-foreground hover:text-gold transition-colors"
-      >
+      <Link to="/discover" className="fixed top-8 left-8 z-50 flex items-center gap-2 text-primary-foreground hover:text-gold transition-colors">
         <ArrowLeft className="w-4 h-4" />
         <span className="text-luxury-sm">Back</span>
       </Link>
@@ -100,22 +66,22 @@ const BrandStorefront = () => {
       {/* Hero Section - Full Screen Image */}
       <section className="relative h-screen">
         <div className="absolute inset-0">
-          <img
-            src={heroImage}
-            alt={brand.name}
-            className="w-full h-full object-cover"
-          />
+          <img src={heroImage} alt={brand.name} className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-deep-charcoal via-deep-charcoal/40 to-transparent" />
         </div>
 
         {/* Hero Content */}
         <div className="absolute inset-0 flex items-end pb-24 px-8 lg:px-16">
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-            className="max-w-3xl"
-          >
+          <motion.div initial={{
+          opacity: 0,
+          y: 40
+        }} animate={{
+          opacity: 1,
+          y: 0
+        }} transition={{
+          duration: 0.8,
+          delay: 0.3
+        }} className="max-w-3xl">
             <span className="text-gold text-luxury-label mb-4 block">
               {brand.location}
             </span>
@@ -128,14 +94,9 @@ const BrandStorefront = () => {
             
             {/* Feature Tags */}
             <div className="flex flex-wrap gap-3 mb-8">
-              {brand.tags.map((tag) => (
-                <span 
-                  key={tag} 
-                  className="px-4 py-2 border border-primary-foreground/30 text-primary-foreground text-luxury-xs"
-                >
+              {brand.tags.map(tag => <span key={tag} className="px-4 py-2 border border-primary-foreground/30 text-primary-foreground text-luxury-xs">
                   {tag}
-                </span>
-              ))}
+                </span>)}
             </div>
 
             {/* Play Brand Film CTA */}
@@ -160,21 +121,28 @@ const BrandStorefront = () => {
       {/* Brand Story Section */}
       <section className="py-32 px-8 lg:px-16 bg-background">
         <div className="max-w-4xl mx-auto text-center">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="font-serif text-4xl lg:text-5xl font-light mb-8"
-          >
+          <motion.h2 initial={{
+          opacity: 0,
+          y: 20
+        }} whileInView={{
+          opacity: 1,
+          y: 0
+        }} viewport={{
+          once: true
+        }} className="font-serif text-4xl lg:text-5xl font-light mb-8">
             The Story
           </motion.h2>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="text-muted-foreground text-lg leading-loose"
-          >
+          <motion.p initial={{
+          opacity: 0,
+          y: 20
+        }} whileInView={{
+          opacity: 1,
+          y: 0
+        }} viewport={{
+          once: true
+        }} transition={{
+          delay: 0.1
+        }} className="text-muted-foreground leading-loose text-xl">
             {brand.story}
           </motion.p>
         </div>
@@ -196,38 +164,38 @@ const BrandStorefront = () => {
               </p>
             </div>
             <div className="lg:col-span-2 grid grid-cols-2 gap-4">
-              {(brandLookbookImages[slug || ''] || brandLookbookImages['asaii']).slice(0, 4).map((img, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.15 }}
-                  className="aspect-square overflow-hidden"
-                >
-                  <img
-                    src={img}
-                    alt={`Process ${index + 1}`}
-                    className="w-full h-full object-cover img-luxury"
-                  />
-                </motion.div>
-              ))}
+              {(brandLookbookImages[slug || ''] || brandLookbookImages['asaii']).slice(0, 4).map((img, index) => <motion.div key={index} initial={{
+              opacity: 0
+            }} whileInView={{
+              opacity: 1
+            }} viewport={{
+              once: true
+            }} transition={{
+              delay: index * 0.15
+            }} className="aspect-square overflow-hidden">
+                  <img src={img} alt={`Process ${index + 1}`} className="w-full h-full object-cover img-luxury" />
+                </motion.div>)}
             </div>
           </div>
 
           {/* Sustainability Tags */}
           <div className="flex flex-wrap justify-center gap-8">
-            {[
-              { icon: '♻️', label: 'Ethical Sourcing' },
-              { icon: '🌿', label: 'Natural Dyes' },
-              { icon: '👐', label: 'Handcrafted' },
-              { icon: '🌍', label: 'Carbon Neutral' },
-            ].map((item) => (
-              <div key={item.label} className="flex items-center gap-3">
+            {[{
+            icon: '♻️',
+            label: 'Ethical Sourcing'
+          }, {
+            icon: '🌿',
+            label: 'Natural Dyes'
+          }, {
+            icon: '👐',
+            label: 'Handcrafted'
+          }, {
+            icon: '🌍',
+            label: 'Carbon Neutral'
+          }].map(item => <div key={item.label} className="flex items-center gap-3">
                 <span className="text-2xl">{item.icon}</span>
                 <span className="text-luxury-label">{item.label}</span>
-              </div>
-            ))}
+              </div>)}
           </div>
         </div>
       </section>
@@ -236,12 +204,15 @@ const BrandStorefront = () => {
       <section className="py-24 px-8 lg:px-16 bg-background">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between mb-12">
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="font-serif text-4xl lg:text-5xl font-light"
-            >
+            <motion.h2 initial={{
+            opacity: 0,
+            y: 20
+          }} whileInView={{
+            opacity: 1,
+            y: 0
+          }} viewport={{
+            once: true
+          }} className="font-serif text-4xl lg:text-5xl font-light">
               More Collections
             </motion.h2>
             <Link to={`/brands/${slug}/collections`} className="text-luxury-xs text-muted-foreground hover:text-gold transition-colors tracking-widest">
@@ -250,37 +221,30 @@ const BrandStorefront = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {moreCollections.map((collection, index) => (
-              <Link
-                key={collection.name}
-                to={`/brands/${slug}/collections/${collection.name.toLowerCase().replace(/\s+/g, '-')}`}
-              >
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
-                  className="group cursor-pointer"
-                >
+            {moreCollections.map((collection, index) => <Link key={collection.name} to={`/brands/${slug}/collections/${collection.name.toLowerCase().replace(/\s+/g, '-')}`}>
+                <motion.div initial={{
+              opacity: 0,
+              y: 20
+            }} whileInView={{
+              opacity: 1,
+              y: 0
+            }} viewport={{
+              once: true
+            }} transition={{
+              delay: index * 0.1
+            }} className="group cursor-pointer">
                   <div className="aspect-[3/4] overflow-hidden mb-4">
-                    <img
-                      src={collection.image}
-                      alt={collection.name}
-                      className="w-full h-full object-cover img-luxury group-hover:scale-105 transition-transform duration-700"
-                    />
+                    <img src={collection.image} alt={collection.name} className="w-full h-full object-cover img-luxury group-hover:scale-105 transition-transform duration-700" />
                   </div>
                   <h3 className="font-serif text-2xl font-light mb-2 text-center">{collection.name}</h3>
                   <p className="text-luxury-xs text-muted-foreground text-center tracking-widest">{collection.season.toUpperCase()}</p>
                 </motion.div>
-              </Link>
-            ))}
+              </Link>)}
           </div>
         </div>
       </section>
 
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default BrandStorefront;
