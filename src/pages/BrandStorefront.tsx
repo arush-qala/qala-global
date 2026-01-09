@@ -60,7 +60,7 @@ const BrandStorefront = () => {
       {/* Back Button */}
       <Link to="/discover" className="fixed top-8 left-8 z-50 flex items-center gap-2 text-primary-foreground hover:text-gold transition-colors">
         <ArrowLeft className="w-4 h-4" />
-        <span className="text-luxury-sm">Back</span>
+        <span className="text-luxury-sm text-base">Back</span>
       </Link>
 
       {/* Hero Section - Full Screen Image */}
