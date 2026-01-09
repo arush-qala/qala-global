@@ -30,13 +30,13 @@ const CTACard = ({
                       group-hover:bg-gold/20 transition-colors duration-300">
         <Icon className="w-7 h-7 text-gold" />
       </div>
-      <h3 className="font-serif text-2xl mb-3">{title}</h3>
-      <p className="text-muted-foreground text-sm leading-relaxed">{description}</p>
+      <h3 className="font-serif mb-3 text-4xl">{title}</h3>
+      <p className="text-muted-foreground leading-relaxed text-base">{description}</p>
       
       {/* Arrow indicator */}
       <div className="mt-6 flex items-center gap-2 text-gold opacity-0 group-hover:opacity-100 
                       translate-x-0 group-hover:translate-x-2 transition-all duration-300">
-        <span className="text-luxury-xs tracking-widest">EXPLORE</span>
+        <span className="text-luxury-xs tracking-widest text-base">EXPLORE</span>
         <ArrowLeft className="w-4 h-4 rotate-180" />
       </div>
     </div>
