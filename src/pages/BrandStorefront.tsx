@@ -10,22 +10,60 @@ import heroKharaKapas from '@/assets/images/home/hero-khara-kapas.jpg';
 import heroNaushadAli from '@/assets/images/home/hero-naushad-ali.jpg';
 import heroCapisvirleo from '@/assets/images/home/hero-capisvirleo.jpg';
 
-import brand1 from '@/assets/images/discover/brand-1.jpg';
-import brand2 from '@/assets/images/discover/brand-2.jpg';
-import brand3 from '@/assets/images/discover/brand-3.jpg';
-import brand4 from '@/assets/images/discover/brand-4.jpg';
-import brand5 from '@/assets/images/discover/brand-5.jpg';
-import brand6 from '@/assets/images/discover/brand-6.jpg';
-
 const heroImages: Record<string, string> = {
   'doodlage': heroDoodlage,
   'ituvana': heroItuvana,
   'khara-kapas': heroKharaKapas,
   'naushad-ali': heroNaushadAli,
   'capisvirleo': heroCapisvirleo,
+  'asaii': heroDoodlage,
+  'margn': heroKharaKapas,
+  'akhl-studio': heroNaushadAli,
 };
 
-const lookbookImages = [brand1, brand2, brand3, brand4, brand5, brand6];
+// Lookbook images for each brand from public folder
+const brandLookbookImages: Record<string, string[]> = {
+  'asaii': [
+    '/images/discover/asaii/1.webp',
+    '/images/discover/asaii/2.webp',
+    '/images/discover/asaii/3.webp',
+    '/images/discover/asaii/4.webp',
+    '/images/discover/asaii/5.webp',
+    '/images/discover/asaii/6.webp',
+  ],
+  'doodlage': [
+    '/images/discover/doodlage/1.jpg',
+    '/images/discover/doodlage/2.webp',
+    '/images/discover/doodlage/3.webp',
+    '/images/discover/doodlage/4.webp',
+    '/images/discover/doodlage/5.webp',
+    '/images/discover/doodlage/6.webp',
+  ],
+  'margn': [
+    '/images/discover/margn/1.webp',
+    '/images/discover/margn/2.webp',
+    '/images/discover/margn/3.webp',
+    '/images/discover/margn/4.webp',
+    '/images/discover/margn/5.webp',
+    '/images/discover/margn/6.webp',
+  ],
+  'akhl-studio': [
+    '/images/discover/akhl-studio/1.webp',
+    '/images/discover/akhl-studio/2.webp',
+    '/images/discover/akhl-studio/3.webp',
+    '/images/discover/akhl-studio/4.webp',
+    '/images/discover/akhl-studio/5.webp',
+    '/images/discover/akhl-studio/6.webp',
+  ],
+  'ituvana': [
+    '/images/discover/ituvana/1.webp',
+    '/images/discover/ituvana/2.webp',
+    '/images/discover/ituvana/3.webp',
+    '/images/discover/ituvana/4.webp',
+    '/images/discover/ituvana/5.webp',
+    '/images/discover/ituvana/6.webp',
+  ],
+};
 
 const BrandStorefront = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -136,7 +174,7 @@ const BrandStorefront = () => {
       </section>
 
       {/* Lookbook Horizontal Scroll */}
-      <LookbookScroll images={lookbookImages} slug={slug || ''} />
+      <LookbookScroll images={brandLookbookImages[slug || ''] || brandLookbookImages['asaii']} slug={slug || ''} />
 
       {/* Visual Story - The Process */}
       <section className="py-32 px-8 lg:px-16 bg-background">
@@ -151,7 +189,7 @@ const BrandStorefront = () => {
               </p>
             </div>
             <div className="lg:col-span-2 grid grid-cols-2 gap-4">
-              {[brand1, brand2, brand3, brand4].map((img, index) => (
+              {(brandLookbookImages[slug || ''] || brandLookbookImages['asaii']).slice(0, 4).map((img, index) => (
                 <motion.div
                   key={index}
                   initial={{ opacity: 0 }}
