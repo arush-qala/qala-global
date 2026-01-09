@@ -251,24 +251,28 @@ const BrandStorefront = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {moreCollections.map((collection, index) => (
-              <motion.div
+              <Link
                 key={collection.name}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="group cursor-pointer"
+                to={`/brands/${slug}/collections/${collection.name.toLowerCase().replace(/\s+/g, '-')}`}
               >
-                <div className="aspect-[3/4] overflow-hidden mb-4">
-                  <img
-                    src={collection.image}
-                    alt={collection.name}
-                    className="w-full h-full object-cover img-luxury group-hover:scale-105 transition-transform duration-700"
-                  />
-                </div>
-                <h3 className="font-serif text-2xl font-light mb-2 text-center">{collection.name}</h3>
-                <p className="text-luxury-xs text-muted-foreground text-center tracking-widest">{collection.season.toUpperCase()}</p>
-              </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                  className="group cursor-pointer"
+                >
+                  <div className="aspect-[3/4] overflow-hidden mb-4">
+                    <img
+                      src={collection.image}
+                      alt={collection.name}
+                      className="w-full h-full object-cover img-luxury group-hover:scale-105 transition-transform duration-700"
+                    />
+                  </div>
+                  <h3 className="font-serif text-2xl font-light mb-2 text-center">{collection.name}</h3>
+                  <p className="text-luxury-xs text-muted-foreground text-center tracking-widest">{collection.season.toUpperCase()}</p>
+                </motion.div>
+              </Link>
             ))}
           </div>
         </div>

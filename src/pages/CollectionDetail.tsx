@@ -4,69 +4,92 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import { ArrowLeft, Plus, Check, X } from 'lucide-react';
 import { brands } from '@/data/brands';
 
-import brand1 from '@/assets/images/discover/brand-1.jpg';
-import brand2 from '@/assets/images/discover/brand-2.jpg';
-import brand3 from '@/assets/images/discover/brand-3.jpg';
-import brand4 from '@/assets/images/discover/brand-4.jpg';
-import brand5 from '@/assets/images/discover/brand-5.jpg';
-import brand6 from '@/assets/images/discover/brand-6.jpg';
+// Lookbook images for each brand (same as BrandStorefront)
+const brandLookbookImages: Record<string, string[]> = {
+  'asaii': [
+    '/images/discover/asaii/1.webp',
+    '/images/discover/asaii/2.webp',
+    '/images/discover/asaii/3.webp',
+    '/images/discover/asaii/4.webp',
+    '/images/discover/asaii/5.webp',
+    '/images/discover/asaii/6.webp',
+  ],
+  'doodlage': [
+    '/images/discover/doodlage/1.jpg',
+    '/images/discover/doodlage/2.webp',
+    '/images/discover/doodlage/3.webp',
+    '/images/discover/doodlage/4.webp',
+    '/images/discover/doodlage/5.webp',
+    '/images/discover/doodlage/6.webp',
+  ],
+  'margn': [
+    '/images/discover/margn/1.webp',
+    '/images/discover/margn/2.webp',
+    '/images/discover/margn/3.webp',
+    '/images/discover/margn/4.webp',
+    '/images/discover/margn/5.webp',
+    '/images/discover/margn/6.webp',
+  ],
+  'akhl-studio': [
+    '/images/discover/akhl-studio/1.webp',
+    '/images/discover/akhl-studio/2.webp',
+    '/images/discover/akhl-studio/3.webp',
+    '/images/discover/akhl-studio/4.webp',
+    '/images/discover/akhl-studio/5.webp',
+    '/images/discover/akhl-studio/6.webp',
+  ],
+  'ituvana': [
+    '/images/discover/ituvana/1.webp',
+    '/images/discover/ituvana/2.webp',
+    '/images/discover/ituvana/3.webp',
+    '/images/discover/ituvana/4.webp',
+    '/images/discover/ituvana/5.webp',
+    '/images/discover/ituvana/6.webp',
+  ],
+};
 
-const products = [
-  { 
-    id: '1', 
-    name: 'Draped Asymmetric Dress', 
-    price: 485, 
-    image: brand1, 
-    fabricDetails: '100% Organic Silk',
+// Mock collection data per brand
+const brandCollections: Record<string, { name: string; season: string; description: string }[]> = {
+  'asaii': [
+    { name: 'Human Rituals', season: 'Spring Summer, Trans Seasonal', description: 'A celebration of the everyday rituals that define our humanity.' },
+    { name: 'Autumn Whispers', season: 'Fall Winter', description: 'Quiet elegance for the cooler months.' },
+    { name: 'Urban Nomad', season: 'Spring Summer', description: 'Contemporary pieces for the modern wanderer.' },
+  ],
+  'doodlage': [
+    { name: 'Human Rituals', season: 'Spring Summer, Trans Seasonal', description: 'Upcycled fashion that tells a story of renewal.' },
+    { name: 'Zero Waste', season: 'Trans Seasonal', description: 'Every scrap has a purpose, every piece has a story.' },
+    { name: 'Patchwork Dreams', season: 'Fall Winter', description: 'Handcrafted patchwork celebrating imperfection.' },
+  ],
+  'margn': [
+    { name: 'Human Rituals', season: 'Spring Summer, Trans Seasonal', description: 'Minimalist designs rooted in tradition.' },
+    { name: 'Silent Lines', season: 'Fall Winter', description: 'Structured silhouettes with a whisper of drama.' },
+    { name: 'Canvas Stories', season: 'Spring Summer', description: 'Where art meets wearable expression.' },
+  ],
+  'akhl-studio': [
+    { name: 'Human Rituals', season: 'Spring Summer, Trans Seasonal', description: 'Bold expressions of contemporary craft.' },
+    { name: 'Rebel Heritage', season: 'Trans Seasonal', description: 'Traditional techniques with a modern edge.' },
+    { name: 'Night Bloom', season: 'Fall Winter', description: 'Dark florals and midnight textures.' },
+  ],
+  'ituvana': [
+    { name: 'Human Rituals', season: 'Spring Summer, Trans Seasonal', description: 'Natural fibres celebrating slow fashion.' },
+    { name: 'Earth Tones', season: 'Trans Seasonal', description: 'Colors borrowed from the earth itself.' },
+    { name: 'Coastal Calm', season: 'Spring Summer', description: 'Breezy silhouettes inspired by the sea.' },
+  ],
+};
+
+// Mock products (using lookbook images as product images)
+const getProducts = (brandSlug: string) => {
+  const images = brandLookbookImages[brandSlug] || brandLookbookImages['asaii'];
+  return images.map((image, index) => ({
+    id: `${brandSlug}-${index + 1}`,
+    name: ['Draped Asymmetric Dress', 'Handwoven Wrap Blouse', 'Pleated Midi Skirt', 'Embroidered Jacket', 'Evening Gown', 'Tailored Suit Set'][index] || `Style ${index + 1}`,
+    price: [485, 295, 320, 650, 890, 720][index] || 399,
+    image,
+    fabricDetails: ['100% Organic Silk', 'Handwoven Cotton', 'Recycled Polyester', 'Silk Brocade', 'Mulberry Silk', 'Italian Wool Blend'][index] || 'Premium Fabric',
     sizes: ['XS', 'S', 'M', 'L'],
-    description: 'An elegant draped dress featuring asymmetric hemline and sustainable silk fabric.'
-  },
-  { 
-    id: '2', 
-    name: 'Handwoven Wrap Blouse', 
-    price: 295, 
-    image: brand2, 
-    fabricDetails: 'Handwoven Cotton',
-    sizes: ['S', 'M', 'L', 'XL'],
-    description: 'Minimalist wrap silhouette crafted from artisan handwoven cotton.'
-  },
-  { 
-    id: '3', 
-    name: 'Pleated Midi Skirt', 
-    price: 320, 
-    image: brand3, 
-    fabricDetails: 'Recycled Polyester',
-    sizes: ['XS', 'S', 'M', 'L'],
-    description: 'Flowing pleated skirt made from post-consumer recycled materials.'
-  },
-  { 
-    id: '4', 
-    name: 'Embroidered Jacket', 
-    price: 650, 
-    image: brand4, 
-    fabricDetails: 'Silk Brocade',
-    sizes: ['S', 'M', 'L'],
-    description: 'Statement jacket featuring hand-embroidered details and traditional brocade.'
-  },
-  { 
-    id: '5', 
-    name: 'Evening Gown', 
-    price: 890, 
-    image: brand5, 
-    fabricDetails: 'Mulberry Silk',
-    sizes: ['XS', 'S', 'M', 'L', 'XL'],
-    description: 'Show-stopping evening gown in rich mulberry silk with dramatic silhouette.'
-  },
-  { 
-    id: '6', 
-    name: 'Tailored Suit Set', 
-    price: 720, 
-    image: brand6, 
-    fabricDetails: 'Italian Wool Blend',
-    sizes: ['S', 'M', 'L'],
-    description: 'Contemporary tailored suit featuring pinstripe detail and relaxed fit.'
-  },
-];
+    description: 'A thoughtfully crafted piece that embodies sustainable luxury and timeless design.',
+  }));
+};
 
 const CollectionDetail = () => {
   const { slug, collectionSlug } = useParams<{ slug: string; collectionSlug: string }>();
@@ -75,14 +98,29 @@ const CollectionDetail = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   
   const brand = brands.find(b => b.slug === slug);
+  const products = getProducts(slug || 'asaii');
   const selectedProduct = products.find(p => p.id === selectedProductId);
+
+  // Get collection info based on slug or default to first
+  const collections = brandCollections[slug || 'asaii'] || brandCollections['asaii'];
+  const collection = collections.find(c => 
+    c.name.toLowerCase().replace(/\s+/g, '-') === collectionSlug
+  ) || collections[0];
+
+  // Hero image is the first lookbook image
+  const heroImage = (brandLookbookImages[slug || ''] || brandLookbookImages['asaii'])[0];
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end end"]
   });
 
-  const x = useTransform(scrollYProgress, [0, 1], ["0%", "-85%"]);
+  // Calculate the total width to scroll: hero section (100vw) + all products
+  const totalProductsWidth = products.length * 33.333; // Each product is 33.333vw
+  const heroInfoWidth = 50; // 50vw for the info section that scrolls away
+  const totalScrollWidth = heroInfoWidth + totalProductsWidth;
+  
+  const x = useTransform(scrollYProgress, [0, 1], ["0%", `-${totalScrollWidth - 100}%`]);
 
   const handleSelectStyle = (productId: string) => {
     if (assortment.includes(productId)) {
@@ -104,80 +142,84 @@ const CollectionDetail = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="fixed top-0 left-0 right-0 z-50 glass border-b border-border">
-        <div className="flex items-center justify-between px-8 py-4">
+      {/* Fixed Header */}
+      <div className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm">
+        <div className="flex items-center px-8 py-6">
           <Link 
             to={`/brands/${slug}`}
             className="flex items-center gap-2 hover:text-gold transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span className="text-luxury-sm">Back to {brand.name}</span>
+            <span className="text-luxury-sm tracking-widest uppercase">Back to Brand</span>
           </Link>
-          
-          <div className="text-center">
-            <h1 className="font-serif text-lg">Spring Awakening</h1>
-            <span className="text-luxury-label">Spring 2024</span>
-          </div>
-          
-          <div className="w-32" />
         </div>
       </div>
 
       {/* Horizontal Scroll Container */}
-      <div ref={containerRef} className="h-[600vh]">
-        <div className="sticky top-0 h-screen overflow-hidden pt-20">
+      <div ref={containerRef} style={{ height: `${(products.length + 2) * 100}vh` }}>
+        <div className="sticky top-0 h-screen overflow-hidden">
           <motion.div 
             style={{ x }}
-            className="flex h-full"
+            className="flex h-full pt-20"
           >
-            {/* Hero Slide */}
+            {/* Hero Slide - Collection Thumbnail + Info */}
             <div className="flex-shrink-0 w-screen h-full flex">
-              <div className="w-1/2 h-full p-8 lg:p-16 flex flex-col justify-center">
-                <span className="text-gold text-luxury-label mb-4">{brand.name}</span>
-                <h2 className="font-serif text-5xl lg:text-6xl font-light mb-6">
-                  Spring Awakening
-                </h2>
-                <p className="text-muted-foreground text-lg leading-relaxed max-w-md">
-                  A celebration of renewal through sustainable fashion. 
-                  Each piece in this collection represents our commitment 
-                  to ethical craftsmanship and timeless design.
-                </p>
+              {/* Left: Collection Thumbnail */}
+              <div className="w-1/2 h-full p-8 flex items-center justify-center">
+                <div className="w-full max-w-[500px] h-[85%]">
+                  <img
+                    src={heroImage}
+                    alt={collection.name}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
               </div>
-              <div className="w-1/2 h-full">
-                <img
-                  src={brand1}
-                  alt="Collection Hero"
-                  className="w-full h-full object-cover"
-                />
+              
+              {/* Right: Collection Info */}
+              <div className="w-1/2 h-full flex flex-col justify-center pr-16">
+                <span className="text-gold text-luxury-xs tracking-widest mb-6">
+                  {collection.season.toUpperCase()}
+                </span>
+                <h1 className="font-serif text-5xl lg:text-7xl font-light leading-tight mb-8">
+                  {collection.name}
+                </h1>
+                <p className="text-muted-foreground text-lg leading-relaxed max-w-md mb-8">
+                  {collection.description}
+                </p>
+                <div className="flex items-center gap-3">
+                  <span className="text-luxury-sm tracking-widest uppercase">Scroll to Explore</span>
+                  <div className="w-12 h-px bg-foreground" />
+                </div>
               </div>
             </div>
 
-            {/* Product Slides */}
+            {/* Product Rail */}
             {products.map((product, index) => (
               <div 
                 key={product.id}
-                className="flex-shrink-0 w-[40vw] h-full border-r border-border cursor-pointer group"
+                className="flex-shrink-0 h-full cursor-pointer group"
+                style={{ width: '33.333vw' }}
                 onClick={() => setSelectedProductId(product.id)}
               >
                 <div className="relative h-full">
                   <img
                     src={product.image}
                     alt={product.name}
-                    className="w-full h-full object-cover img-luxury"
+                    className="w-full h-full object-cover"
                   />
-                  {/* Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-charcoal/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   
-                  {/* Product Info */}
-                  <div className="absolute bottom-0 left-0 right-0 p-8">
-                    <span className="text-primary-foreground/60 text-luxury-xs block mb-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      Look {String(index + 1).padStart(2, '0')} / {products.length}
+                  {/* Hover Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-deep-charcoal/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  
+                  {/* Product Info on Hover */}
+                  <div className="absolute bottom-0 left-0 right-0 p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                    <span className="text-primary-foreground/60 text-luxury-xs block mb-2">
+                      {String(index + 1).padStart(2, '0')} / {products.length}
                     </span>
-                    <h3 className="font-serif text-2xl text-primary-foreground opacity-0 group-hover:opacity-100 transition-opacity">
+                    <h3 className="font-serif text-xl text-primary-foreground">
                       {product.name}
                     </h3>
-                    <p className="text-primary-foreground/80 text-sm mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <p className="text-primary-foreground/80 text-sm mt-1">
                       ${product.price}
                     </p>
                   </div>
@@ -252,7 +294,7 @@ const CollectionDetail = () => {
               <button
                 onClick={() => handleSelectStyle(selectedProduct.id)}
                 className={`btn-luxury-gold inline-flex items-center gap-3 justify-center ${
-                  isInAssortment(selectedProduct.id) ? 'bg-charcoal' : ''
+                  isInAssortment(selectedProduct.id) ? 'bg-deep-charcoal' : ''
                 }`}
               >
                 {isInAssortment(selectedProduct.id) ? (
@@ -277,7 +319,7 @@ const CollectionDetail = () => {
         <motion.div
           initial={{ y: 100 }}
           animate={{ y: 0 }}
-          className="fixed bottom-0 left-0 right-0 z-40 bg-charcoal border-t border-gold/30"
+          className="fixed bottom-0 left-0 right-0 z-40 bg-deep-charcoal border-t border-gold/30"
         >
           <div className="flex items-center justify-between px-8 py-4">
             <div className="flex items-center gap-4">
@@ -288,7 +330,7 @@ const CollectionDetail = () => {
                 {assortment.slice(0, 5).map((id) => {
                   const product = products.find(p => p.id === id);
                   return product ? (
-                    <div key={id} className="w-12 h-12 border-2 border-charcoal overflow-hidden">
+                    <div key={id} className="w-12 h-12 border-2 border-deep-charcoal overflow-hidden">
                       <img src={product.image} alt="" className="w-full h-full object-cover" />
                     </div>
                   ) : null;
