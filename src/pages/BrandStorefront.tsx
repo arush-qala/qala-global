@@ -91,57 +91,68 @@ const BrandStorefront = () => {
       {/* Back Button */}
       <Link 
         to="/discover"
-        className="fixed top-8 left-8 z-50 flex items-center gap-2 text-foreground hover:text-gold transition-colors"
+        className="fixed top-8 left-8 z-50 flex items-center gap-2 text-primary-foreground hover:text-gold transition-colors"
       >
         <ArrowLeft className="w-4 h-4" />
         <span className="text-luxury-sm">Back</span>
       </Link>
 
-      {/* Hero Section - White Background */}
-      <section className="relative min-h-screen bg-background flex items-end pb-24 px-8 lg:px-16">
-        {/* Hero Content */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-          className="max-w-3xl"
-        >
-          <span className="text-gold text-luxury-label mb-4 block">
-            {brand.location}
-          </span>
-          <h1 className="font-serif text-7xl lg:text-9xl font-light text-foreground mb-6">
-            {brand.name}
-          </h1>
-          <p className="text-muted-foreground text-lg leading-relaxed mb-8 max-w-xl">
-            {brand.description}
-          </p>
-          
-          {/* Feature Tags */}
-          <div className="flex flex-wrap gap-3 mb-8">
-            {brand.tags.map((tag) => (
-              <span 
-                key={tag} 
-                className="px-4 py-2 border border-foreground/30 text-foreground text-luxury-xs"
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
+      {/* Hero Section - Full Screen Image */}
+      <section className="relative h-screen">
+        <div className="absolute inset-0">
+          <img
+            src={heroImage}
+            alt={brand.name}
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-deep-charcoal via-deep-charcoal/40 to-transparent" />
+        </div>
 
-          {/* Play Brand Film CTA */}
-          <button className="group flex items-center gap-4 px-8 py-4 bg-foreground/5 border border-foreground/20 hover:bg-foreground/10 transition-all">
-            <Play className="w-5 h-5 text-foreground" fill="currentColor" />
-            <span className="text-foreground text-luxury-sm">Play Brand Film</span>
-          </button>
-        </motion.div>
+        {/* Hero Content */}
+        <div className="absolute inset-0 flex items-end pb-24 px-8 lg:px-16">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className="max-w-3xl"
+          >
+            <span className="text-gold text-luxury-label mb-4 block">
+              {brand.location}
+            </span>
+            <h1 className="font-serif text-7xl lg:text-9xl font-light text-primary-foreground mb-6">
+              {brand.name}
+            </h1>
+            <p className="text-primary-foreground/80 text-lg leading-relaxed mb-8 max-w-xl">
+              {brand.description}
+            </p>
+            
+            {/* Feature Tags */}
+            <div className="flex flex-wrap gap-3 mb-8">
+              {brand.tags.map((tag) => (
+                <span 
+                  key={tag} 
+                  className="px-4 py-2 border border-primary-foreground/30 text-primary-foreground text-luxury-xs"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+
+            {/* Play Brand Film CTA */}
+            <button className="group flex items-center gap-4 px-8 py-4 bg-primary-foreground/10 backdrop-blur-sm border border-primary-foreground/20 hover:bg-primary-foreground/20 transition-all">
+              <Play className="w-5 h-5 text-primary-foreground" fill="currentColor" />
+              <span className="text-primary-foreground text-luxury-sm">Play Brand Film</span>
+            </button>
+          </motion.div>
+        </div>
 
         {/* Actions */}
         <div className="absolute top-8 right-8 flex gap-4">
-          <button className="p-3 bg-foreground/5 hover:bg-foreground/10 transition-all">
-            <Heart className="w-5 h-5 text-foreground" strokeWidth={1.5} />
+          <button className="p-3 bg-primary-foreground/10 backdrop-blur-sm hover:bg-primary-foreground/20 transition-all">
+            <Heart className="w-5 h-5 text-primary-foreground" strokeWidth={1.5} />
           </button>
-          <button className="p-3 bg-foreground/5 hover:bg-foreground/10 transition-all">
-            <MessageCircle className="w-5 h-5 text-foreground" strokeWidth={1.5} />
+          <button className="p-3 bg-primary-foreground/10 backdrop-blur-sm hover:bg-primary-foreground/20 transition-all">
+            <MessageCircle className="w-5 h-5 text-primary-foreground" strokeWidth={1.5} />
           </button>
         </div>
       </section>
