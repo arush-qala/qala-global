@@ -9,7 +9,10 @@ import heroNaushadAli from '@/assets/images/home/hero-naushad-ali.png';
 import heroCapisvirleo from '@/assets/images/home/hero-capisvirleo.png';
 
 const heroImages: Record<string, string> = {
+  'asaii': heroCapisvirleo,
   'doodlage': heroDoodlage,
+  'margn': heroKharaKapas,
+  'akhl': heroNaushadAli,
   'ituvana': heroItuvana,
   'khara-kapas': heroKharaKapas,
   'naushad-ali': heroNaushadAli,
