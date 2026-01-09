@@ -184,7 +184,7 @@ const Discover = () => {
                   : 'text-taupe hover:text-foreground'
               }`}
             >
-              Label {index + 1}
+              {brand.name}
               {index === activeBrandIndex && (
                 <motion.div
                   layoutId="activeLabel"
