@@ -273,34 +273,34 @@ const ProductDetailOverlay = ({
               {/* Right Panel - Reveals on scroll (positioned absolutely within middle section) */}
               <motion.aside
                 style={{ opacity: panelOpacity, x: panelX }}
-                className="w-[360px] absolute right-0 top-0 h-screen border-l border-border bg-background overflow-y-auto"
+                className="w-[432px] absolute right-0 top-0 h-screen border-l border-border bg-background overflow-y-auto"
               >
-                <div className="h-full flex flex-col px-8 py-10">
+                <div className="h-full flex flex-col px-10 py-12">
                   {/* Product Header */}
                   <div>
-                    <span className="text-gold text-luxury-xs tracking-widest block mb-4">
+                    <span className="text-gold text-sm tracking-widest block mb-5">
                       {String(productIndex + 1).padStart(2, '0')} / {products.length}
                     </span>
 
-                    <h2 className="font-serif text-2xl lg:text-3xl leading-tight mb-6">
+                    <h2 className="font-serif text-3xl lg:text-4xl leading-tight mb-8">
                       {product.name}
                     </h2>
 
                     {/* Specs */}
-                    <div className="space-y-3 mb-6">
+                    <div className="space-y-4 mb-8">
                       <div className="flex">
-                        <span className="text-muted-foreground text-luxury-xs w-24">FABRIC:</span>
-                        <span className="text-sm">{product.fabricDetails}</span>
+                        <span className="text-muted-foreground text-sm w-28">FABRIC:</span>
+                        <span className="text-base">{product.fabricDetails}</span>
                       </div>
                       <div className="flex">
-                        <span className="text-muted-foreground text-luxury-xs w-24">FEELS LIKE:</span>
-                        <span className="text-sm">{product.feelsLike}</span>
+                        <span className="text-muted-foreground text-sm w-28">FEELS LIKE:</span>
+                        <span className="text-base">{product.feelsLike}</span>
                       </div>
                       <div className="flex">
-                        <span className="text-muted-foreground text-luxury-xs w-24">SIZE GUIDE:</span>
+                        <span className="text-muted-foreground text-sm w-28">SIZE GUIDE:</span>
                         <button
                           onClick={() => setShowSizeChart(true)}
-                          className="text-sm underline hover:text-gold transition-colors"
+                          className="text-base underline hover:text-gold transition-colors"
                         >
                           View Chart
                         </button>
@@ -310,7 +310,7 @@ const ProductDetailOverlay = ({
                     {/* CTA */}
                     <button
                       onClick={(e) => onSelectStyle(product.id, e)}
-                      className={`w-full py-4 flex items-center justify-center gap-2 transition-all mb-8 ${
+                      className={`w-full py-5 flex items-center justify-center gap-2 transition-all mb-10 ${
                         isInAssortment
                           ? 'bg-gold text-primary-foreground'
                           : 'bg-gold/80 hover:bg-gold text-primary-foreground'
@@ -318,22 +318,22 @@ const ProductDetailOverlay = ({
                     >
                       {isInAssortment ? (
                         <>
-                          <Check className="w-4 h-4" />
-                          <span className="text-luxury-sm tracking-widest">SELECTED</span>
+                          <Check className="w-5 h-5" />
+                          <span className="text-sm tracking-widest">SELECTED</span>
                         </>
                       ) : (
-                        <span className="text-luxury-sm tracking-widest">SELECT THIS STYLE</span>
+                        <span className="text-sm tracking-widest">SELECT THIS STYLE</span>
                       )}
                     </button>
                   </div>
 
                   {/* Virtual Trial Video */}
-                  <section className="mb-8">
+                  <section className="mb-10">
                     <div className="aspect-video w-full bg-muted border border-border relative overflow-hidden">
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="text-muted-foreground text-sm">You imagine it.</span>
+                        <span className="text-muted-foreground text-base">You imagine it.</span>
                       </div>
-                      <span className="absolute bottom-3 left-3 text-luxury-xs tracking-widest text-muted-foreground bg-background/80 px-2 py-1">
+                      <span className="absolute bottom-3 left-3 text-sm tracking-widest text-muted-foreground bg-background/80 px-2 py-1">
                         VIRTUAL TRIAL
                       </span>
                     </div>
@@ -341,12 +341,12 @@ const ProductDetailOverlay = ({
 
                   {/* Tabbed info */}
                   <section className="mt-auto">
-                    <div className="flex gap-4 mb-4 border-b border-border pb-3">
+                    <div className="flex gap-5 mb-5 border-b border-border pb-4">
                       {tabs.map((tab) => (
                         <button
                           key={tab}
                           onClick={() => setActiveTab(tab)}
-                          className={`text-luxury-xs tracking-widest transition-colors ${
+                          className={`text-sm tracking-widest transition-colors ${
                             activeTab === tab
                               ? 'text-foreground'
                               : 'text-muted-foreground hover:text-foreground'
@@ -357,7 +357,7 @@ const ProductDetailOverlay = ({
                       ))}
                     </div>
 
-                    <p className="text-sm text-muted-foreground leading-relaxed">
+                    <p className="text-base text-muted-foreground leading-relaxed">
                       {tabContent[activeTab]}
                     </p>
                   </section>
