@@ -63,7 +63,9 @@ const Footer = () => {
             <h4 className="text-luxury-sm mb-6 text-gold">Connect</h4>
             <div className="flex gap-4">
               <a 
-                href="#" 
+                href="https://www.instagram.com/qala.global/" 
+                target="_blank"
+                rel="noopener noreferrer"
                 className="p-2 border border-primary-foreground/20 hover:border-gold hover:text-gold transition-all"
                 aria-label="Instagram"
               >
