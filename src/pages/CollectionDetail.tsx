@@ -267,6 +267,11 @@ const CollectionDetail = () => {
   const [currentProductIndex, setCurrentProductIndex] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   
+  // Scroll to top on page load to ensure hero is visible
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [slug, collectionSlug]);
+  
   const brand = brands.find(b => b.slug === slug);
   const products = getProducts(slug || 'asaii');
   const selectedProduct = selectedProductIndex !== null ? products[selectedProductIndex] : null;
