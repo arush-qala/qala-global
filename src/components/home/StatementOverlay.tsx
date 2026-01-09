@@ -100,7 +100,7 @@ const StatementOverlay = ({ currentSlideIndex }: StatementOverlayProps) => {
               )}
             </AnimatePresence>
           </span>{" "}
-          and I want to source for {/* Season Dropdown */}
+          and want to source for {/* Season Dropdown */}
           <span ref={seasonRef} className="relative inline-block">
             <button
               onClick={() => {
