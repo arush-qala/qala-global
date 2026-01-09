@@ -14,11 +14,11 @@ import brand5 from '@/assets/images/discover/brand-5.jpg';
 import brand6 from '@/assets/images/discover/brand-6.jpg';
 
 const brandImages: Record<string, string[]> = {
-  'doodlage': [brand1, brand2, brand3, brand4, brand5, brand6],
-  'ituvana': [brand2, brand3, brand4, brand5, brand6, brand1],
-  'khara-kapas': [brand3, brand4, brand5, brand6, brand1, brand2],
-  'naushad-ali': [brand4, brand5, brand6, brand1, brand2, brand3],
-  'capisvirleo': [brand5, brand6, brand1, brand2, brand3, brand4],
+  'asaii': [brand1, brand2, brand3, brand4, brand5, brand6],
+  'doodlage': [brand2, brand3, brand4, brand5, brand6, brand1],
+  'margn': [brand3, brand4, brand5, brand6, brand1, brand2],
+  'akhl': [brand4, brand5, brand6, brand1, brand2, brand3],
+  'ituvana': [brand5, brand6, brand1, brand2, brand3, brand4],
 };
 
 const Discover = () => {
