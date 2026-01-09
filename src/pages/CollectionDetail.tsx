@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { motion, useScroll, useTransform, AnimatePresence, useMotionValueEvent } from 'framer-motion';
 import { ArrowLeft, Plus, Check, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { brands } from '@/data/brands';
+import { useAssortment } from '@/contexts/AssortmentContext';
 
 // Lookbook images for each brand (same as BrandStorefront)
 const brandLookbookImages: Record<string, string[]> = {
@@ -98,6 +99,8 @@ const ProductDetailOverlay = ({
   product,
   products,
   productIndex,
+  brandSlug,
+  brandName,
   onClose,
   onNavigate,
   onSelectStyle,
@@ -106,9 +109,11 @@ const ProductDetailOverlay = ({
   product: ReturnType<typeof getProducts>[0];
   products: ReturnType<typeof getProducts>;
   productIndex: number;
+  brandSlug: string;
+  brandName: string;
   onClose: () => void;
   onNavigate: (index: number) => void;
-  onSelectStyle: (id: string) => void;
+  onSelectStyle: (id: string, event: React.MouseEvent) => void;
   isInAssortment: boolean;
 }) => {
   const [activeTab, setActiveTab] = useState('DETAILS');
@@ -304,7 +309,7 @@ const ProductDetailOverlay = ({
 
                     {/* CTA */}
                     <button
-                      onClick={() => onSelectStyle(product.id)}
+                      onClick={(e) => onSelectStyle(product.id, e)}
                       className={`w-full py-4 flex items-center justify-center gap-2 transition-all mb-8 ${
                         isInAssortment
                           ? 'bg-gold text-primary-foreground'
@@ -429,10 +434,10 @@ const FlyingImage = ({
 const CollectionDetail = () => {
   const { slug, collectionSlug } = useParams<{ slug: string; collectionSlug: string }>();
   const [selectedProductIndex, setSelectedProductIndex] = useState<number | null>(null);
-  const [assortment, setAssortment] = useState<string[]>([]);
-  const [flyingImage, setFlyingImage] = useState<{ src: string; x: number; y: number } | null>(null);
   const [currentProductIndex, setCurrentProductIndex] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
+  
+  const { addProduct, removeProduct, isInAssortment } = useAssortment();
   
   // Scroll to top on page load to ensure hero is visible
   useEffect(() => {
@@ -478,27 +483,25 @@ const CollectionDetail = () => {
   // Use vw units directly for the transform
   const x = useTransform(scrollYProgress, [0, 1], ['0vw', `-${maxScrollVW}vw`]);
 
-  const handleSelectStyle = (productId: string, event?: React.MouseEvent) => {
+  const handleSelectStyle = (productId: string, event: React.MouseEvent) => {
     const product = products.find(p => p.id === productId);
+    if (!product) return;
     
-    if (!assortment.includes(productId) && product && event) {
-      // Trigger flying animation
-      const rect = (event.target as HTMLElement).getBoundingClientRect();
-      setFlyingImage({
-        src: product.image,
-        x: rect.left + rect.width / 2 - 32,
-        y: rect.top,
-      });
-    }
-    
-    if (assortment.includes(productId)) {
-      setAssortment(assortment.filter(id => id !== productId));
+    if (isInAssortment(productId)) {
+      removeProduct(productId);
     } else {
-      setAssortment([...assortment, productId]);
+      const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
+      addProduct({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        image: product.image,
+        brandSlug: slug || 'asaii',
+        brandName: brand?.name || 'Brand',
+        category: 'Apparel',
+      }, rect);
     }
   };
-
-  const isInAssortment = (productId: string) => assortment.includes(productId);
 
   if (!brand) {
     return (
@@ -625,55 +628,13 @@ const CollectionDetail = () => {
             product={selectedProduct}
             products={products}
             productIndex={selectedProductIndex}
+            brandSlug={slug || 'asaii'}
+            brandName={brand?.name || 'Brand'}
             onClose={() => setSelectedProductIndex(null)}
             onNavigate={(index) => setSelectedProductIndex(index)}
-            onSelectStyle={(id) => handleSelectStyle(id)}
+            onSelectStyle={handleSelectStyle}
             isInAssortment={isInAssortment(selectedProduct.id)}
           />
-        )}
-      </AnimatePresence>
-
-      {/* Flying Image Animation */}
-      <AnimatePresence>
-        {flyingImage && (
-          <FlyingImage
-            imageSrc={flyingImage.src}
-            startPosition={{ x: flyingImage.x, y: flyingImage.y }}
-            onComplete={() => setFlyingImage(null)}
-          />
-        )}
-      </AnimatePresence>
-
-      {/* Assortment Tray */}
-      <AnimatePresence>
-        {assortment.length > 0 && (
-          <motion.div
-            initial={{ y: 100 }}
-            animate={{ y: 0 }}
-            exit={{ y: 100 }}
-            className="fixed bottom-0 left-0 right-0 z-40 bg-deep-charcoal border-t border-gold/30"
-          >
-            <div className="flex items-center justify-between px-8 py-4">
-              <div className="flex items-center gap-4">
-                <span className="text-primary-foreground text-luxury-sm">
-                  {assortment.length} styles selected
-                </span>
-                <div className="flex -space-x-3">
-                  {assortment.slice(0, 5).map((id) => {
-                    const product = products.find(p => p.id === id);
-                    return product ? (
-                      <div key={id} className="w-12 h-12 border-2 border-deep-charcoal overflow-hidden">
-                        <img src={product.image} alt="" className="w-full h-full object-cover" />
-                      </div>
-                    ) : null;
-                  })}
-                </div>
-              </div>
-              <button className="btn-luxury-gold">
-                Proceed to Order
-              </button>
-            </div>
-          </motion.div>
         )}
       </AnimatePresence>
     </div>
