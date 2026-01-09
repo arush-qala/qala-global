@@ -81,17 +81,26 @@ const brandCollections: Record<string, { name: string; season: string; descripti
 // Mock products (using lookbook images as product images)
 const getProducts = (brandSlug: string) => {
   const images = brandLookbookImages[brandSlug] || brandLookbookImages['asaii'];
-  return images.map((image, index) => ({
-    id: `${brandSlug}-${index + 1}`,
-    name: ['Epidermis Crochet Applique Vest- Off White', 'Handwoven Wrap Blouse', 'Pleated Midi Skirt', 'Embroidered Jacket', 'Evening Gown', 'Tailored Suit Set'][index] || `Style ${index + 1}`,
-    price: [485, 295, 320, 650, 890, 720][index] || 399,
-    image,
-    images: [image, image, image], // Multiple images for detail view
-    fabricDetails: 'Woven',
-    feelsLike: 'Hand-crocheted applique, Patch pockets i...',
-    sizes: ['XS', 'S', 'M', 'L'],
-    description: 'Meticulously crafted with attention to architectural lines. This piece embodies the collection\'s ethos of structured fluidity. Designed for the modern wardrobe, offering versatility and timeless elegance.',
-  }));
+  return images.map((image, index) => {
+    // Generate multiple images for the product (using all available images rotated)
+    const productImages = [
+      image,
+      images[(index + 1) % images.length],
+      images[(index + 2) % images.length],
+    ];
+    
+    return {
+      id: `${brandSlug}-${index + 1}`,
+      name: ['Epidermis Crochet Applique Vest- Off White', 'Handwoven Wrap Blouse', 'Pleated Midi Skirt', 'Embroidered Jacket', 'Evening Gown', 'Tailored Suit Set'][index] || `Style ${index + 1}`,
+      price: [485, 295, 320, 650, 890, 720][index] || 399,
+      image,
+      images: productImages,
+      fabricDetails: 'Woven',
+      feelsLike: 'Hand-crocheted applique, Patch pockets i...',
+      sizes: ['XS', 'S', 'M', 'L'],
+      description: 'Meticulously crafted with attention to architectural lines. This piece embodies the collection\'s ethos of structured fluidity. Designed for the modern wardrobe, offering versatility and timeless elegance.',
+    };
+  });
 };
 
 // Product Detail Overlay Component
@@ -117,11 +126,13 @@ const ProductDetailOverlay = ({
   isInAssortment: boolean;
 }) => {
   const [activeTab, setActiveTab] = useState('DETAILS');
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const overlayRef = useRef<HTMLDivElement>(null);
 
   // Ensure the overlay always opens at the top "cover" state
   useEffect(() => {
     overlayRef.current?.scrollTo({ top: 0 });
+    setCurrentImageIndex(0);
   }, [product.id]);
 
   const { scrollYProgress } = useScroll({
@@ -261,12 +272,56 @@ const ProductDetailOverlay = ({
                 style={{ x: imageX }} 
                 className="absolute inset-0 flex justify-center pt-16"
               >
-                <div className="max-w-[520px] w-full">
-                  <img
-                    src={product.images[0]}
-                    alt={`${product.name}`}
-                    className="w-full h-[85vh] object-cover"
-                  />
+                <div className="max-w-[520px] w-full flex flex-col">
+                  {/* Main Image */}
+                  <div className="relative">
+                    <img
+                      src={product.images[currentImageIndex]}
+                      alt={`${product.name}`}
+                      className="w-full h-[70vh] object-cover"
+                    />
+                    
+                    {/* Image navigation arrows */}
+                    {product.images.length > 1 && (
+                      <>
+                        <button
+                          onClick={() => setCurrentImageIndex((prev) => 
+                            prev === 0 ? product.images.length - 1 : prev - 1
+                          )}
+                          className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-background/80 hover:bg-background flex items-center justify-center transition-colors"
+                        >
+                          <ChevronLeft className="w-5 h-5" />
+                        </button>
+                        <button
+                          onClick={() => setCurrentImageIndex((prev) => 
+                            prev === product.images.length - 1 ? 0 : prev + 1
+                          )}
+                          className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-background/80 hover:bg-background flex items-center justify-center transition-colors"
+                        >
+                          <ChevronRight className="w-5 h-5" />
+                        </button>
+                      </>
+                    )}
+                  </div>
+                  
+                  {/* Thumbnail strip */}
+                  <div className="flex gap-2 mt-4 justify-center">
+                    {product.images.map((img, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => setCurrentImageIndex(idx)}
+                        className={`w-16 h-20 overflow-hidden border-2 transition-colors ${
+                          currentImageIndex === idx ? 'border-gold' : 'border-transparent hover:border-muted'
+                        }`}
+                      >
+                        <img
+                          src={img}
+                          alt={`View ${idx + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </motion.div>
 
@@ -436,6 +491,7 @@ const CollectionDetail = () => {
   const [selectedProductIndex, setSelectedProductIndex] = useState<number | null>(null);
   const [currentProductIndex, setCurrentProductIndex] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
+  const stickyRef = useRef<HTMLDivElement>(null);
   
   const { addProduct, removeProduct, isInAssortment, setLastCollectionUrl } = useAssortment();
   
@@ -444,6 +500,22 @@ const CollectionDetail = () => {
     window.scrollTo(0, 0);
     setLastCollectionUrl(window.location.pathname);
   }, [slug, collectionSlug, setLastCollectionUrl]);
+
+  // Prevent horizontal scroll from triggering browser back
+  useEffect(() => {
+    const stickyElement = stickyRef.current;
+    if (!stickyElement) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      // If horizontal scroll detected, prevent default to avoid browser back
+      if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+        e.preventDefault();
+      }
+    };
+
+    stickyElement.addEventListener('wheel', handleWheel, { passive: false });
+    return () => stickyElement.removeEventListener('wheel', handleWheel);
+  }, []);
   
   const brand = brands.find(b => b.slug === slug);
   const products = getProducts(slug || 'asaii');
@@ -542,7 +614,7 @@ const CollectionDetail = () => {
 
       {/* Horizontal Scroll Container */}
       <div ref={containerRef} style={{ height: `${(products.length + 2) * 100}vh` }}>
-        <div className="sticky top-0 h-screen overflow-hidden">
+        <div ref={stickyRef} className="sticky top-0 h-screen overflow-hidden">
           <motion.div 
             style={{ x }}
             className="flex h-full pt-20"
@@ -575,6 +647,9 @@ const CollectionDetail = () => {
                   <span className="text-luxury-sm tracking-widest uppercase">Scroll to Explore</span>
                   <div className="w-12 h-px bg-foreground" />
                 </div>
+                <p className="text-muted-foreground text-sm mt-4">
+                  Click on any style to view details and add to your assortment
+                </p>
               </div>
             </div>
 
@@ -582,7 +657,7 @@ const CollectionDetail = () => {
             {products.map((product, index) => (
               <div 
                 key={product.id}
-                className="flex-shrink-0 h-full cursor-pointer group"
+                className="flex-shrink-0 h-full cursor-pointer group relative"
                 style={{ width: '33.333vw' }}
                 onClick={() => setSelectedProductIndex(index)}
               >
@@ -593,11 +668,14 @@ const CollectionDetail = () => {
                     className="w-full h-full object-cover"
                   />
                   
+                  {/* Always visible overlay hint */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-deep-charcoal/60 via-transparent to-transparent opacity-100 group-hover:opacity-0 transition-opacity duration-300" />
+                  
                   {/* Hover Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-deep-charcoal/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   
-                  {/* Product Info on Hover */}
-                  <div className="absolute bottom-0 left-0 right-0 p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                  {/* Product Info - always visible at bottom */}
+                  <div className="absolute bottom-0 left-0 right-0 p-6">
                     <span className="text-primary-foreground/60 text-luxury-xs block mb-2">
                       {String(index + 1).padStart(2, '0')} / {products.length}
                     </span>
@@ -607,6 +685,9 @@ const CollectionDetail = () => {
                     <p className="text-primary-foreground/80 text-sm mt-1">
                       ${product.price}
                     </p>
+                    <span className="text-primary-foreground/50 text-xs mt-2 block group-hover:text-primary-foreground transition-colors">
+                      Click to view details
+                    </span>
                   </div>
 
                   {/* In Assortment Badge */}
