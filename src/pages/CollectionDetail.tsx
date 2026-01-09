@@ -372,16 +372,19 @@ const CollectionDetail = () => {
 
   // Calculate scroll bounds:
   // - Start: 0% (hero visible on left)
-  // - End: when last product is fully visible (not scrolled past)
+  // - End: when last product is fully visible
   // Hero takes 100vw, each product takes 33.333vw
   // Total content width = 100vw (hero) + products.length * 33.333vw
-  // End scroll should show last 100vw of content
-  const productWidth = 33.333;
-  const heroWidth = 100;
-  const totalContentWidth = heroWidth + (products.length * productWidth);
-  // We want to stop when the last product is fully visible
-  // That means the rightmost edge of the last product aligns with the right edge of viewport
-  const maxScrollPercent = ((totalContentWidth - 100) / totalContentWidth) * 100;
+  const productWidthVW = 33.333;
+  const heroWidthVW = 100;
+  const viewportWidthVW = 100;
+  const totalContentWidthVW = heroWidthVW + (products.length * productWidthVW);
+  
+  // Max scroll = total content width - viewport width (so last product right edge = viewport right edge)
+  const maxScrollVW = totalContentWidthVW - viewportWidthVW;
+  
+  // Convert to percentage of total content width for the transform
+  const maxScrollPercent = (maxScrollVW / totalContentWidthVW) * 100;
   
   const x = useTransform(scrollYProgress, [0, 1], ["0%", `-${maxScrollPercent}%`]);
 
