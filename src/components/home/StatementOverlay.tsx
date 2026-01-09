@@ -29,8 +29,8 @@ const StatementOverlay = ({ currentSlideIndex }: StatementOverlayProps) => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.3 }}
       >
-        <div className="text-center px-4 pointer-events-auto bg-background/80 backdrop-blur-sm py-12 px-16 max-w-4xl">
-          <p className="font-serif text-2xl md:text-4xl lg:text-5xl font-light leading-relaxed text-foreground">
+        <div className="flex items-center justify-center gap-4 pointer-events-auto bg-background/80 backdrop-blur-sm py-6 px-12 w-full max-w-6xl">
+          <p className="font-serif text-xl md:text-2xl lg:text-3xl font-light text-foreground whitespace-nowrap">
             My Boutique is{' '}
             <button
               onClick={() => setShowSeasonModal(true)}
@@ -39,8 +39,7 @@ const StatementOverlay = ({ currentSlideIndex }: StatementOverlayProps) => {
               {selectedSeason}
               <ChevronDown className="w-4 h-4" />
             </button>
-            <br className="hidden md:block" />
-            <span className="block mt-2">& I want to source for{' '}</span>
+            {' '}& I want to source for{' '}
             <button
               onClick={() => setShowCategoryModal(true)}
               className="inline-flex items-center gap-1 text-gold hover:text-gold/80 transition-colors underline underline-offset-4 decoration-1"
@@ -52,7 +51,7 @@ const StatementOverlay = ({ currentSlideIndex }: StatementOverlayProps) => {
 
           <motion.button
             onClick={handleFind}
-            className="btn-luxury mt-10"
+            className="btn-luxury ml-6"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
