@@ -45,8 +45,16 @@ const CTACard = ({
 );
 
 const Experience = () => {
-  const { products } = useAssortment();
+  const { products, lastCollectionUrl } = useAssortment();
   const navigate = useNavigate();
+
+  const handleBack = () => {
+    if (lastCollectionUrl) {
+      navigate(lastCollectionUrl);
+    } else {
+      navigate(-1);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -54,11 +62,11 @@ const Experience = () => {
       <div className="fixed top-0 left-0 right-0 z-40 bg-background/80 backdrop-blur-sm border-b border-border">
         <div className="flex items-center justify-between px-8 py-6">
           <button 
-            onClick={() => navigate(-1)}
+            onClick={handleBack}
             className="flex items-center gap-2 hover:text-gold transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span className="text-luxury-sm tracking-widest uppercase">Back</span>
+            <span className="text-luxury-sm tracking-widest uppercase">Back to Collection</span>
           </button>
           
           <span className="text-luxury-sm tracking-widest">

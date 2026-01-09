@@ -25,6 +25,8 @@ interface AssortmentContextType {
   clearAssortment: () => void;
   flyingImage: FlyingImageData | null;
   clearFlyingImage: () => void;
+  lastCollectionUrl: string | null;
+  setLastCollectionUrl: (url: string) => void;
 }
 
 const AssortmentContext = createContext<AssortmentContextType | undefined>(undefined);
@@ -40,6 +42,7 @@ export const useAssortment = () => {
 export const AssortmentProvider = ({ children }: { children: ReactNode }) => {
   const [products, setProducts] = useState<AssortmentProduct[]>([]);
   const [flyingImage, setFlyingImage] = useState<FlyingImageData | null>(null);
+  const [lastCollectionUrl, setLastCollectionUrlState] = useState<string | null>(null);
 
   const addProduct = useCallback((product: AssortmentProduct, buttonRect?: DOMRect) => {
     setProducts(prev => {
@@ -76,6 +79,10 @@ export const AssortmentProvider = ({ children }: { children: ReactNode }) => {
     setFlyingImage(null);
   }, []);
 
+  const setLastCollectionUrl = useCallback((url: string) => {
+    setLastCollectionUrlState(url);
+  }, []);
+
   return (
     <AssortmentContext.Provider value={{
       products,
@@ -86,6 +93,8 @@ export const AssortmentProvider = ({ children }: { children: ReactNode }) => {
       clearAssortment,
       flyingImage,
       clearFlyingImage,
+      lastCollectionUrl,
+      setLastCollectionUrl,
     }}>
       {children}
     </AssortmentContext.Provider>

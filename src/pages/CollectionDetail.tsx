@@ -437,12 +437,13 @@ const CollectionDetail = () => {
   const [currentProductIndex, setCurrentProductIndex] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   
-  const { addProduct, removeProduct, isInAssortment } = useAssortment();
+  const { addProduct, removeProduct, isInAssortment, setLastCollectionUrl } = useAssortment();
   
-  // Scroll to top on page load to ensure hero is visible
+  // Scroll to top on page load and store collection URL for back navigation
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [slug, collectionSlug]);
+    setLastCollectionUrl(window.location.pathname);
+  }, [slug, collectionSlug, setLastCollectionUrl]);
   
   const brand = brands.find(b => b.slug === slug);
   const products = getProducts(slug || 'asaii');
