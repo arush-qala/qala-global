@@ -1,10 +1,9 @@
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Play, Heart, MessageCircle } from 'lucide-react';
-import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { brands } from '@/data/brands';
-
+import LookbookScroll from '@/components/brand/LookbookScroll';
 import heroDoodlage from '@/assets/images/home/hero-doodlage.jpg';
 import heroItuvana from '@/assets/images/home/hero-ituvana.jpg';
 import heroKharaKapas from '@/assets/images/home/hero-khara-kapas.jpg';
@@ -136,53 +135,8 @@ const BrandStorefront = () => {
         </div>
       </section>
 
-      {/* Lookbook Grid */}
-      <section className="py-16 px-8 lg:px-16 bg-sand">
-        <div className="max-w-7xl mx-auto">
-          <motion.h3
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            className="text-luxury-label text-center mb-12"
-          >
-            Latest Collection
-          </motion.h3>
-          
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {lookbookImages.map((img, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="relative aspect-[3/4] overflow-hidden group cursor-pointer"
-              >
-                <img
-                  src={img}
-                  alt={`Look ${index + 1}`}
-                  className="w-full h-full object-cover img-luxury"
-                />
-                <div className="absolute inset-0 bg-charcoal/0 group-hover:bg-charcoal/40 transition-all duration-500 flex items-end p-6">
-                  <span className="text-primary-foreground text-luxury-xs opacity-0 group-hover:opacity-100 transition-opacity">
-                    Look {String(index + 1).padStart(2, '0')}
-                  </span>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-
-          {/* CTA */}
-          <div className="text-center mt-12">
-            <Link
-              to={`/brands/${slug}/collections/spring-24`}
-              className="btn-luxury inline-flex items-center gap-3"
-            >
-              View Full Collection
-            </Link>
-          </div>
-        </div>
-      </section>
+      {/* Lookbook Horizontal Scroll */}
+      <LookbookScroll images={lookbookImages} slug={slug || ''} />
 
       {/* Visual Story - The Process */}
       <section className="py-32 px-8 lg:px-16 bg-background">
