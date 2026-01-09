@@ -112,10 +112,10 @@ const ProductDetailOverlay = ({
   isInAssortment: boolean;
 }) => {
   const [activeTab, setActiveTab] = useState('DETAILS');
-  const detailScrollRef = useRef<HTMLDivElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
   
   const { scrollYProgress } = useScroll({
-    target: detailScrollRef,
+    target: overlayRef,
     offset: ["start start", "end end"]
   });
 
@@ -135,8 +135,11 @@ const ProductDetailOverlay = ({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [productIndex, products.length, onNavigate, onClose]);
 
-  // Parallax effect: shift images from -6.5vw to -31.5vw as user scrolls
-  const imageX = useTransform(scrollYProgress, [0, 1], ['-6.5vw', '-31.5vw']);
+  // Parallax effect: shift center images left on scroll to reveal product details
+  // Start centered, then shift left by ~25vw to make room for details panel
+  const imageX = useTransform(scrollYProgress, [0, 0.5], ['0vw', '-12vw']);
+  const detailsOpacity = useTransform(scrollYProgress, [0.2, 0.5], [0, 1]);
+  const detailsX = useTransform(scrollYProgress, [0.2, 0.5], ['50px', '0px']);
 
   const prevProduct = productIndex > 0 ? products[productIndex - 1] : null;
   const nextProduct = productIndex < products.length - 1 ? products[productIndex + 1] : null;
@@ -148,7 +151,7 @@ const ProductDetailOverlay = ({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 bg-background overflow-hidden"
+      className="fixed inset-0 z-50 bg-background"
     >
       {/* Close Button */}
       <button
@@ -158,33 +161,38 @@ const ProductDetailOverlay = ({
         <X className="w-6 h-6" strokeWidth={1} />
       </button>
 
-      {/* Initial Landing View - 3-panel layout with peeking products */}
-      <div ref={detailScrollRef} className="h-full overflow-y-auto">
+      {/* Scroll container for parallax effect */}
+      <div ref={overlayRef} className="h-full overflow-y-auto">
+        {/* Extra height for scroll-based parallax */}
         <div className="min-h-[200vh]">
+          {/* Sticky 3-panel layout */}
           <div className="sticky top-0 h-screen flex">
-            {/* Left Edge - Previous Product Peek */}
+            {/* Left Edge - Previous Product Peek (fixed width, grayscale) */}
             <div 
-              className="w-[5vw] h-full flex-shrink-0 cursor-pointer relative overflow-hidden"
+              className="w-[7vw] flex-shrink-0 cursor-pointer relative overflow-hidden"
               onClick={() => prevProduct && onNavigate(productIndex - 1)}
             >
-              {prevProduct && (
-                <div className="absolute inset-0 grayscale opacity-60 hover:opacity-80 transition-opacity">
+              {prevProduct ? (
+                <div className="h-full grayscale opacity-40 hover:opacity-60 transition-opacity">
                   <img
                     src={prevProduct.image}
                     alt={prevProduct.name}
                     className="w-full h-full object-cover object-right"
                   />
                 </div>
+              ) : (
+                <div className="h-full bg-muted/20" />
               )}
             </div>
 
-            {/* Center - Main Product Images */}
-            <div className="flex-1 h-full flex items-center justify-center">
+            {/* Center Section - Product Images + Details (flex-1) */}
+            <div className="flex-1 h-full flex relative overflow-hidden">
+              {/* Product Images - shifts left on scroll */}
               <motion.div 
                 style={{ x: imageX }}
-                className="h-full overflow-y-auto py-8"
+                className="flex-1 h-full overflow-y-auto py-8 px-4"
               >
-                <div className="space-y-4 max-w-[45vw] mx-auto">
+                <div className="max-w-[420px] mx-auto space-y-4">
                   {product.images.map((img, idx) => (
                     <img
                       key={idx}
@@ -195,21 +203,91 @@ const ProductDetailOverlay = ({
                   ))}
                 </div>
               </motion.div>
+
+              {/* Product Details Panel - fades in on scroll */}
+              <motion.div 
+                style={{ opacity: detailsOpacity, x: detailsX }}
+                className="absolute right-4 top-0 h-full w-[340px] flex flex-col justify-center py-8 pointer-events-none"
+              >
+                <div className="pointer-events-auto">
+                  <span className="text-gold text-luxury-xs tracking-widest block mb-4">
+                    {String(productIndex + 1).padStart(2, '0')} / {products.length}
+                  </span>
+                  <h2 className="font-serif text-2xl lg:text-3xl leading-tight mb-4">
+                    {product.name}
+                  </h2>
+                  <p className="text-2xl font-light mb-6">${product.price}</p>
+                  
+                  <div className="space-y-4 mb-8">
+                    <div>
+                      <span className="text-muted-foreground text-luxury-xs block mb-1">Fabric Details</span>
+                      <span className="text-sm">{product.fabricDetails}</span>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground text-luxury-xs block mb-1">Feels Like</span>
+                      <span className="text-sm">{product.feelsLike}</span>
+                    </div>
+                  </div>
+
+                  {/* Tabs */}
+                  <div className="flex gap-4 mb-6 border-b border-border pb-3">
+                    {tabs.map(tab => (
+                      <button
+                        key={tab}
+                        onClick={() => setActiveTab(tab)}
+                        className={`text-luxury-xs tracking-widest transition-colors ${
+                          activeTab === tab ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
+                        }`}
+                      >
+                        {tab}
+                      </button>
+                    ))}
+                  </div>
+
+                  <p className="text-sm text-muted-foreground leading-relaxed mb-8">
+                    {product.description}
+                  </p>
+
+                  {/* Select Style Button */}
+                  <button
+                    onClick={() => onSelectStyle(product.id)}
+                    className={`w-full py-4 flex items-center justify-center gap-2 transition-all ${
+                      isInAssortment 
+                        ? 'bg-gold text-primary-foreground' 
+                        : 'border border-foreground hover:bg-foreground hover:text-background'
+                    }`}
+                  >
+                    {isInAssortment ? (
+                      <>
+                        <Check className="w-4 h-4" />
+                        <span className="text-luxury-sm tracking-widest">SELECTED</span>
+                      </>
+                    ) : (
+                      <>
+                        <Plus className="w-4 h-4" />
+                        <span className="text-luxury-sm tracking-widest">SELECT THIS STYLE</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </motion.div>
             </div>
 
-            {/* Right Edge - Next Product Peek */}
+            {/* Right Edge - Next Product Peek (fixed width, grayscale) */}
             <div 
-              className="w-[5vw] h-full flex-shrink-0 cursor-pointer relative overflow-hidden"
+              className="w-[7vw] flex-shrink-0 cursor-pointer relative overflow-hidden"
               onClick={() => nextProduct && onNavigate(productIndex + 1)}
             >
-              {nextProduct && (
-                <div className="absolute inset-0 grayscale opacity-60 hover:opacity-80 transition-opacity">
+              {nextProduct ? (
+                <div className="h-full grayscale opacity-40 hover:opacity-60 transition-opacity">
                   <img
                     src={nextProduct.image}
                     alt={nextProduct.name}
                     className="w-full h-full object-cover object-left"
                   />
                 </div>
+              ) : (
+                <div className="h-full bg-muted/20" />
               )}
             </div>
           </div>
