@@ -117,7 +117,7 @@ const Discover = () => {
                   {activeBrand?.name}
                 </h1>
 
-                <p className="text-muted-foreground leading-relaxed mb-8 max-w-md text-xl">
+                <p className="text-muted-foreground leading-relaxed mb-8 max-w-md text-lg">
                   {activeBrand?.story}
                 </p>
 
