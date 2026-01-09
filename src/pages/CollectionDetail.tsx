@@ -113,10 +113,14 @@ const ProductDetailOverlay = ({
 }) => {
   const [activeTab, setActiveTab] = useState('DETAILS');
   const overlayRef = useRef<HTMLDivElement>(null);
-  
+
+  // Ensure the overlay always opens at the top "cover" state
+  useEffect(() => {
+    overlayRef.current?.scrollTo({ top: 0 });
+  }, [product.id]);
+
   const { scrollYProgress } = useScroll({
-    target: overlayRef,
-    offset: ["start start", "end end"]
+    container: overlayRef,
   });
 
   // Keyboard navigation
@@ -130,22 +134,30 @@ const ProductDetailOverlay = ({
         onClose();
       }
     };
-    
+
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [productIndex, products.length, onNavigate, onClose]);
 
-  // Parallax effect: shift center images left on scroll to reveal product details
-  // Initially centered (0vw), shifts left as user scrolls to make room for details
-  const imageX = useTransform(scrollYProgress, [0, 0.3, 0.6], ['0vw', '0vw', '-12vw']);
-  // Details panel stays completely hidden until scroll begins, then fades in
-  const detailsOpacity = useTransform(scrollYProgress, [0, 0.3, 0.6], [0, 0, 1]);
-  const detailsX = useTransform(scrollYProgress, [0.3, 0.6], ['80px', '0px']);
+  // Parallax: the image stack glides left as the right panel "unpacks"
+  const imageX = useTransform(scrollYProgress, [0, 0.08, 0.3], ['0vw', '0vw', '-12vw']);
+
+  // Right panel reveal: keep only title/price/CTA visible at the top.
+  // As soon as the user scrolls, the dense content slides up + fades in.
+  const revealOpacity = useTransform(scrollYProgress, [0, 0.06, 0.18], [0, 0, 1]);
+  const revealY = useTransform(scrollYProgress, [0, 0.18], [220, 0]);
 
   const prevProduct = productIndex > 0 ? products[productIndex - 1] : null;
   const nextProduct = productIndex < products.length - 1 ? products[productIndex + 1] : null;
 
   const tabs = ['DETAILS', 'WASH & CARE', 'BULK PRICE', 'SHIPPING'];
+
+  const tabContent: Record<string, string> = {
+    DETAILS: product.description,
+    'WASH & CARE': 'Dry clean recommended. If washing at home, use cold water and a gentle cycle. Avoid tumble drying to preserve structure and surface texture.',
+    'BULK PRICE': 'Bulk pricing available on request. Share your required quantities and delivery timeline to receive tiered pricing and production lead times.',
+    SHIPPING: 'Ships worldwide. Standard dispatch within 7–10 business days (made-to-order timelines may vary). Duties and taxes may apply based on destination.',
+  };
 
   return (
     <motion.div
@@ -158,27 +170,27 @@ const ProductDetailOverlay = ({
       <button
         onClick={onClose}
         className="absolute top-8 right-8 z-50 p-2 hover:text-gold transition-colors"
+        aria-label="Close"
       >
         <X className="w-6 h-6" strokeWidth={1} />
       </button>
 
-      {/* Scroll container for parallax effect */}
-      <div ref={overlayRef} className="h-full overflow-y-auto">
-        {/* Extra height for scroll-based parallax */}
+      {/* Single scroll container (no nested scrolling) */}
+      <div ref={overlayRef} className="h-full overflow-y-auto overscroll-contain">
         <div className="min-h-[200vh]">
-          {/* Sticky 3-panel layout */}
-          <div className="sticky top-0 h-screen flex">
-            {/* Left Edge - Previous Product Peek (fixed width, grayscale) */}
-            <div 
-              className="w-[7vw] flex-shrink-0 cursor-pointer relative overflow-hidden"
+          <div className="flex min-h-[200vh]">
+            {/* Left Edge - Previous Product Peek (constant) */}
+            <div
+              className="w-[7vw] sticky top-0 h-screen flex-shrink-0 cursor-pointer relative overflow-hidden"
               onClick={() => prevProduct && onNavigate(productIndex - 1)}
             >
               {prevProduct ? (
-                <div className="h-full grayscale opacity-40 hover:opacity-60 transition-opacity">
+                <div className="absolute inset-0 grayscale opacity-40 hover:opacity-60 transition-opacity">
                   <img
                     src={prevProduct.image}
                     alt={prevProduct.name}
                     className="w-full h-full object-cover object-right"
+                    loading="lazy"
                   />
                 </div>
               ) : (
@@ -186,75 +198,47 @@ const ProductDetailOverlay = ({
               )}
             </div>
 
-            {/* Center Section - Product Images + Details (flex-1) */}
-            <div className="flex-1 h-full flex relative overflow-hidden">
-              {/* Product Images - shifts left on scroll */}
-              <motion.div 
-                style={{ x: imageX }}
-                className="flex-1 h-full overflow-y-auto py-8 px-4"
-              >
-                <div className="max-w-[420px] mx-auto space-y-4">
+            {/* Center Column - Image Stack (scrolls vertically with the overlay) */}
+            <div className="flex-1">
+              <div className="pt-16 pb-[60vh] px-4">
+                <motion.div style={{ x: imageX }} className="mx-auto max-w-[520px] space-y-6">
                   {product.images.map((img, idx) => (
-                    <img
+                    <div
                       key={idx}
-                      src={img}
-                      alt={`${product.name} - View ${idx + 1}`}
-                      className="w-full object-cover"
-                    />
+                      className={idx === 0 ? 'h-[88vh]' : 'h-[80vh]'}
+                    >
+                      <img
+                        src={img}
+                        alt={`${product.name} - View ${idx + 1}`}
+                        className="w-full h-full object-cover"
+                        loading={idx === 0 ? 'eager' : 'lazy'}
+                      />
+                    </div>
                   ))}
-                </div>
-              </motion.div>
+                </motion.div>
+              </div>
+            </div>
 
-              {/* Product Details Panel - fades in on scroll */}
-              <motion.div 
-                style={{ opacity: detailsOpacity, x: detailsX }}
-                className="absolute right-4 top-0 h-full w-[340px] flex flex-col justify-center py-8 pointer-events-none"
-              >
-                <div className="pointer-events-auto">
+            {/* Right Panel (constant) */}
+            <aside className="w-[400px] sticky top-0 h-screen flex-shrink-0 border-l border-border bg-background">
+              <div className="h-full flex flex-col px-8 py-10">
+                {/* Always-visible essentials */}
+                <div>
                   <span className="text-gold text-luxury-xs tracking-widest block mb-4">
                     {String(productIndex + 1).padStart(2, '0')} / {products.length}
                   </span>
+
                   <h2 className="font-serif text-2xl lg:text-3xl leading-tight mb-4">
                     {product.name}
                   </h2>
+
                   <p className="text-2xl font-light mb-6">${product.price}</p>
-                  
-                  <div className="space-y-4 mb-8">
-                    <div>
-                      <span className="text-muted-foreground text-luxury-xs block mb-1">Fabric Details</span>
-                      <span className="text-sm">{product.fabricDetails}</span>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground text-luxury-xs block mb-1">Feels Like</span>
-                      <span className="text-sm">{product.feelsLike}</span>
-                    </div>
-                  </div>
 
-                  {/* Tabs */}
-                  <div className="flex gap-4 mb-6 border-b border-border pb-3">
-                    {tabs.map(tab => (
-                      <button
-                        key={tab}
-                        onClick={() => setActiveTab(tab)}
-                        className={`text-luxury-xs tracking-widest transition-colors ${
-                          activeTab === tab ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
-                        }`}
-                      >
-                        {tab}
-                      </button>
-                    ))}
-                  </div>
-
-                  <p className="text-sm text-muted-foreground leading-relaxed mb-8">
-                    {product.description}
-                  </p>
-
-                  {/* Select Style Button */}
                   <button
                     onClick={() => onSelectStyle(product.id)}
                     className={`w-full py-4 flex items-center justify-center gap-2 transition-all ${
-                      isInAssortment 
-                        ? 'bg-gold text-primary-foreground' 
+                      isInAssortment
+                        ? 'bg-gold text-primary-foreground'
                         : 'border border-foreground hover:bg-foreground hover:text-background'
                     }`}
                   >
@@ -271,20 +255,71 @@ const ProductDetailOverlay = ({
                     )}
                   </button>
                 </div>
-              </motion.div>
-            </div>
 
-            {/* Right Edge - Next Product Peek (fixed width, grayscale) */}
-            <div 
-              className="w-[7vw] flex-shrink-0 cursor-pointer relative overflow-hidden"
+                {/* Revealed details (hidden until the user scrolls) */}
+                <motion.div style={{ opacity: revealOpacity, y: revealY }} className="mt-10 space-y-8">
+                  {/* Virtual Trial Video (placeholder container) */}
+                  <section>
+                    <h3 className="text-luxury-xs tracking-widest text-muted-foreground mb-3">
+                      VIRTUAL TRIAL
+                    </h3>
+                    <div className="aspect-video w-full bg-muted border border-border flex items-center justify-center">
+                      <span className="text-luxury-xs tracking-widest text-muted-foreground">
+                        VIDEO
+                      </span>
+                    </div>
+                  </section>
+
+                  {/* Specs */}
+                  <section className="space-y-4">
+                    <div>
+                      <span className="text-muted-foreground text-luxury-xs block mb-1">Fabric Details</span>
+                      <span className="text-sm">{product.fabricDetails}</span>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground text-luxury-xs block mb-1">Feels Like</span>
+                      <span className="text-sm">{product.feelsLike}</span>
+                    </div>
+                  </section>
+
+                  {/* Tabbed info */}
+                  <section>
+                    <div className="flex gap-4 mb-4 border-b border-border pb-3">
+                      {tabs.map((tab) => (
+                        <button
+                          key={tab}
+                          onClick={() => setActiveTab(tab)}
+                          className={`text-luxury-xs tracking-widest transition-colors ${
+                            activeTab === tab
+                              ? 'text-foreground'
+                              : 'text-muted-foreground hover:text-foreground'
+                          }`}
+                        >
+                          {tab}
+                        </button>
+                      ))}
+                    </div>
+
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {tabContent[activeTab]}
+                    </p>
+                  </section>
+                </motion.div>
+              </div>
+            </aside>
+
+            {/* Right Edge - Next Product Peek (constant) */}
+            <div
+              className="w-[7vw] sticky top-0 h-screen flex-shrink-0 cursor-pointer relative overflow-hidden"
               onClick={() => nextProduct && onNavigate(productIndex + 1)}
             >
               {nextProduct ? (
-                <div className="h-full grayscale opacity-40 hover:opacity-60 transition-opacity">
+                <div className="absolute inset-0 grayscale opacity-40 hover:opacity-60 transition-opacity">
                   <img
                     src={nextProduct.image}
                     alt={nextProduct.name}
                     className="w-full h-full object-cover object-left"
+                    loading="lazy"
                   />
                 </div>
               ) : (
@@ -297,6 +332,7 @@ const ProductDetailOverlay = ({
     </motion.div>
   );
 };
+
 
 // Flying Image Animation Component
 const FlyingImage = ({
