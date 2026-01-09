@@ -297,22 +297,19 @@ const CollectionDetail = () => {
   });
 
   // Calculate scroll bounds:
-  // - Start: 0% (hero visible on left)
-  // - End: when last product is fully visible
   // Hero takes 100vw, each product takes 33.333vw
   // Total content width = 100vw (hero) + products.length * 33.333vw
+  // We need to scroll until the last product's right edge aligns with viewport right edge
   const productWidthVW = 33.333;
   const heroWidthVW = 100;
-  const viewportWidthVW = 100;
   const totalContentWidthVW = heroWidthVW + (products.length * productWidthVW);
   
-  // Max scroll = total content width - viewport width (so last product right edge = viewport right edge)
-  const maxScrollVW = totalContentWidthVW - viewportWidthVW;
+  // Max scroll distance = total content width - viewport width (100vw)
+  // This gives us how much we need to translate left in vw units
+  const maxScrollVW = totalContentWidthVW - 100;
   
-  // Convert to percentage of total content width for the transform
-  const maxScrollPercent = (maxScrollVW / totalContentWidthVW) * 100;
-  
-  const x = useTransform(scrollYProgress, [0, 1], ["0%", `-${maxScrollPercent}%`]);
+  // Use vw units directly for the transform
+  const x = useTransform(scrollYProgress, [0, 1], ['0vw', `-${maxScrollVW}vw`]);
 
   const handleSelectStyle = (productId: string, event?: React.MouseEvent) => {
     const product = products.find(p => p.id === productId);
