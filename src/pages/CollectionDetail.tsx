@@ -136,10 +136,11 @@ const ProductDetailOverlay = ({
   }, [productIndex, products.length, onNavigate, onClose]);
 
   // Parallax effect: shift center images left on scroll to reveal product details
-  // Start centered, then shift left by ~25vw to make room for details panel
-  const imageX = useTransform(scrollYProgress, [0, 0.5], ['0vw', '-12vw']);
-  const detailsOpacity = useTransform(scrollYProgress, [0.2, 0.5], [0, 1]);
-  const detailsX = useTransform(scrollYProgress, [0.2, 0.5], ['50px', '0px']);
+  // Initially centered (0vw), shifts left as user scrolls to make room for details
+  const imageX = useTransform(scrollYProgress, [0, 0.3, 0.6], ['0vw', '0vw', '-12vw']);
+  // Details panel stays completely hidden until scroll begins, then fades in
+  const detailsOpacity = useTransform(scrollYProgress, [0, 0.3, 0.6], [0, 0, 1]);
+  const detailsX = useTransform(scrollYProgress, [0.3, 0.6], ['80px', '0px']);
 
   const prevProduct = productIndex > 0 ? products[productIndex - 1] : null;
   const nextProduct = productIndex < products.length - 1 ? products[productIndex + 1] : null;
