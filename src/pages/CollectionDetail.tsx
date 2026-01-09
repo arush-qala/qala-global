@@ -140,12 +140,11 @@ const ProductDetailOverlay = ({
   }, [productIndex, products.length, onNavigate, onClose]);
 
   // Parallax: the image stack glides left as the right panel "unpacks"
-  const imageX = useTransform(scrollYProgress, [0, 0.08, 0.3], ['0vw', '0vw', '-12vw']);
+  const imageX = useTransform(scrollYProgress, [0, 0.15, 0.4], ['0vw', '0vw', '-18vw']);
 
-  // Right panel reveal: keep only title/price/CTA visible at the top.
-  // As soon as the user scrolls, the dense content slides up + fades in.
-  const revealOpacity = useTransform(scrollYProgress, [0, 0.06, 0.18], [0, 0, 1]);
-  const revealY = useTransform(scrollYProgress, [0, 0.18], [220, 0]);
+  // Right panel reveal: completely hidden at start, slides in on scroll
+  const panelOpacity = useTransform(scrollYProgress, [0, 0.12, 0.25], [0, 0, 1]);
+  const panelX = useTransform(scrollYProgress, [0, 0.12, 0.25], ['100%', '100%', '0%']);
 
   const prevProduct = productIndex > 0 ? products[productIndex - 1] : null;
   const nextProduct = productIndex < products.length - 1 ? products[productIndex + 1] : null;
@@ -158,6 +157,8 @@ const ProductDetailOverlay = ({
     'BULK PRICE': 'Bulk pricing available on request. Share your required quantities and delivery timeline to receive tiered pricing and production lead times.',
     SHIPPING: 'Ships worldwide. Standard dispatch within 7–10 business days (made-to-order timelines may vary). Duties and taxes may apply based on destination.',
   };
+
+  const [showSizeChart, setShowSizeChart] = useState(false);
 
   return (
     <motion.div
@@ -175,7 +176,57 @@ const ProductDetailOverlay = ({
         <X className="w-6 h-6" strokeWidth={1} />
       </button>
 
-      {/* Single scroll container (no nested scrolling) */}
+      {/* Size Chart Overlay */}
+      <AnimatePresence>
+        {showSizeChart && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[60] bg-background/90 backdrop-blur-sm flex items-center justify-center"
+            onClick={() => setShowSizeChart(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-background border border-border p-8 max-w-2xl w-full mx-4"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="font-serif text-xl">Size Guide</h3>
+                <button onClick={() => setShowSizeChart(false)} className="p-1 hover:text-gold">
+                  <X className="w-5 h-5" strokeWidth={1} />
+                </button>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-border">
+                      <th className="text-left py-3 px-2 text-muted-foreground font-normal">SIZE</th>
+                      <th className="text-left py-3 px-2 text-muted-foreground font-normal">CHEST (in)</th>
+                      <th className="text-left py-3 px-2 text-muted-foreground font-normal">WAIST (in)</th>
+                      <th className="text-left py-3 px-2 text-muted-foreground font-normal">LENGTH (in)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {['XS', 'S', 'M', 'L', 'XL'].map((size, i) => (
+                      <tr key={size} className="border-b border-border/50">
+                        <td className="py-3 px-2">{size}</td>
+                        <td className="py-3 px-2">{36 + i * 2}</td>
+                        <td className="py-3 px-2">{30 + i * 2}</td>
+                        <td className="py-3 px-2">{27 + i}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Single scroll container */}
       <div ref={overlayRef} className="h-full overflow-y-auto overscroll-contain">
         <div className="min-h-[200vh]">
           <div className="flex min-h-[200vh]">
@@ -198,10 +249,10 @@ const ProductDetailOverlay = ({
               )}
             </div>
 
-            {/* Center Column - Image Stack (scrolls vertically with the overlay) */}
-            <div className="flex-1">
+            {/* Center Column - Image Stack (centered on open, shifts left on scroll) */}
+            <div className="flex-1 flex justify-center">
               <div className="pt-16 pb-[60vh] px-4">
-                <motion.div style={{ x: imageX }} className="mx-auto max-w-[520px] space-y-6">
+                <motion.div style={{ x: imageX }} className="max-w-[520px] space-y-6">
                   {product.images.map((img, idx) => (
                     <div
                       key={idx}
@@ -219,27 +270,50 @@ const ProductDetailOverlay = ({
               </div>
             </div>
 
-            {/* Right Panel (constant) */}
-            <aside className="w-[400px] sticky top-0 h-screen flex-shrink-0 border-l border-border bg-background">
-              <div className="h-full flex flex-col px-8 py-10">
-                {/* Always-visible essentials */}
+            {/* Right Panel - Reveals on scroll */}
+            <motion.aside
+              style={{ opacity: panelOpacity, x: panelX }}
+              className="w-[400px] sticky top-0 h-screen flex-shrink-0 border-l border-border bg-background"
+            >
+              <div className="h-full flex flex-col px-8 py-10 overflow-y-auto">
+                {/* Product Header */}
                 <div>
                   <span className="text-gold text-luxury-xs tracking-widest block mb-4">
                     {String(productIndex + 1).padStart(2, '0')} / {products.length}
                   </span>
 
-                  <h2 className="font-serif text-2xl lg:text-3xl leading-tight mb-4">
+                  <h2 className="font-serif text-2xl lg:text-3xl leading-tight mb-6">
                     {product.name}
                   </h2>
 
-                  <p className="text-2xl font-light mb-6">${product.price}</p>
+                  {/* Specs */}
+                  <div className="space-y-3 mb-6">
+                    <div className="flex">
+                      <span className="text-muted-foreground text-luxury-xs w-24">FABRIC:</span>
+                      <span className="text-sm">{product.fabricDetails}</span>
+                    </div>
+                    <div className="flex">
+                      <span className="text-muted-foreground text-luxury-xs w-24">FEELS LIKE:</span>
+                      <span className="text-sm">{product.feelsLike}</span>
+                    </div>
+                    <div className="flex">
+                      <span className="text-muted-foreground text-luxury-xs w-24">SIZE GUIDE:</span>
+                      <button
+                        onClick={() => setShowSizeChart(true)}
+                        className="text-sm underline hover:text-gold transition-colors"
+                      >
+                        View Chart
+                      </button>
+                    </div>
+                  </div>
 
+                  {/* CTA */}
                   <button
                     onClick={() => onSelectStyle(product.id)}
-                    className={`w-full py-4 flex items-center justify-center gap-2 transition-all ${
+                    className={`w-full py-4 flex items-center justify-center gap-2 transition-all mb-8 ${
                       isInAssortment
                         ? 'bg-gold text-primary-foreground'
-                        : 'border border-foreground hover:bg-foreground hover:text-background'
+                        : 'bg-gold/80 hover:bg-gold text-primary-foreground'
                     }`}
                   >
                     {isInAssortment ? (
@@ -248,65 +322,47 @@ const ProductDetailOverlay = ({
                         <span className="text-luxury-sm tracking-widest">SELECTED</span>
                       </>
                     ) : (
-                      <>
-                        <Plus className="w-4 h-4" />
-                        <span className="text-luxury-sm tracking-widest">SELECT THIS STYLE</span>
-                      </>
+                      <span className="text-luxury-sm tracking-widest">SELECT THIS STYLE</span>
                     )}
                   </button>
                 </div>
 
-                {/* Revealed details (hidden until the user scrolls) */}
-                <motion.div style={{ opacity: revealOpacity, y: revealY }} className="mt-10 space-y-8">
-                  {/* Virtual Trial Video (placeholder container) */}
-                  <section>
-                    <h3 className="text-luxury-xs tracking-widest text-muted-foreground mb-3">
+                {/* Virtual Trial Video */}
+                <section className="mb-8">
+                  <div className="aspect-video w-full bg-muted border border-border relative overflow-hidden">
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="text-muted-foreground text-sm">You imagine it.</span>
+                    </div>
+                    <span className="absolute bottom-3 left-3 text-luxury-xs tracking-widest text-muted-foreground bg-background/80 px-2 py-1">
                       VIRTUAL TRIAL
-                    </h3>
-                    <div className="aspect-video w-full bg-muted border border-border flex items-center justify-center">
-                      <span className="text-luxury-xs tracking-widest text-muted-foreground">
-                        VIDEO
-                      </span>
-                    </div>
-                  </section>
+                    </span>
+                  </div>
+                </section>
 
-                  {/* Specs */}
-                  <section className="space-y-4">
-                    <div>
-                      <span className="text-muted-foreground text-luxury-xs block mb-1">Fabric Details</span>
-                      <span className="text-sm">{product.fabricDetails}</span>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground text-luxury-xs block mb-1">Feels Like</span>
-                      <span className="text-sm">{product.feelsLike}</span>
-                    </div>
-                  </section>
+                {/* Tabbed info */}
+                <section className="mt-auto">
+                  <div className="flex gap-4 mb-4 border-b border-border pb-3">
+                    {tabs.map((tab) => (
+                      <button
+                        key={tab}
+                        onClick={() => setActiveTab(tab)}
+                        className={`text-luxury-xs tracking-widest transition-colors ${
+                          activeTab === tab
+                            ? 'text-foreground'
+                            : 'text-muted-foreground hover:text-foreground'
+                        }`}
+                      >
+                        {tab}
+                      </button>
+                    ))}
+                  </div>
 
-                  {/* Tabbed info */}
-                  <section>
-                    <div className="flex gap-4 mb-4 border-b border-border pb-3">
-                      {tabs.map((tab) => (
-                        <button
-                          key={tab}
-                          onClick={() => setActiveTab(tab)}
-                          className={`text-luxury-xs tracking-widest transition-colors ${
-                            activeTab === tab
-                              ? 'text-foreground'
-                              : 'text-muted-foreground hover:text-foreground'
-                          }`}
-                        >
-                          {tab}
-                        </button>
-                      ))}
-                    </div>
-
-                    <p className="text-sm text-muted-foreground leading-relaxed">
-                      {tabContent[activeTab]}
-                    </p>
-                  </section>
-                </motion.div>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {tabContent[activeTab]}
+                  </p>
+                </section>
               </div>
-            </aside>
+            </motion.aside>
 
             {/* Right Edge - Next Product Peek (constant) */}
             <div
