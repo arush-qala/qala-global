@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, useMotionValueEvent } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
 interface LookbookScrollProps {
@@ -9,27 +9,59 @@ interface LookbookScrollProps {
 
 const LookbookScroll = ({ images, slug }: LookbookScrollProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const stickyRef = useRef<HTMLDivElement>(null);
   const [containerHeight, setContainerHeight] = useState(0);
+  const [hasReachedEnd, setHasReachedEnd] = useState(false);
 
-  // Calculate the total scroll distance needed (images at 1/3 viewport width each)
+  // Calculate the total scroll distance needed
+  // Each image is 1/3 viewport width, CTA slide is 1 viewport width
+  // We want the CTA to be centered when scroll ends
   useEffect(() => {
     if (containerRef.current) {
-      const totalWidth = (images.length / 3) * window.innerWidth;
-      setContainerHeight(totalWidth);
+      // Total content: images (each 33.33vw) + CTA (100vw)
+      // We need enough scroll distance to reveal all images + center the CTA
+      const imagesWidth = images.length * (window.innerWidth / 3);
+      // Add viewport height for scroll distance
+      setContainerHeight(imagesWidth + window.innerHeight * 0.5);
     }
   }, [images.length]);
+
+  // Prevent horizontal scroll from triggering browser back
+  useEffect(() => {
+    const stickyElement = stickyRef.current;
+    if (!stickyElement) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      // If horizontal scroll detected, prevent default to avoid browser back
+      if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+        e.preventDefault();
+      }
+    };
+
+    stickyElement.addEventListener('wheel', handleWheel, { passive: false });
+    return () => stickyElement.removeEventListener('wheel', handleWheel);
+  }, []);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ['start start', 'end end'],
   });
 
-  // Transform vertical scroll to horizontal movement (each image is 1/3 of viewport)
-  const totalImagesWidth = (images.length + 1) * (100 / 3); // +1 for CTA slide
+  // Track when we've reached the end
+  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+    setHasReachedEnd(latest >= 0.98);
+  });
+
+  // Calculate max scroll: images take (n * 33.33vw), CTA takes 100vw
+  // We want to stop when CTA is centered (shifted by 50vw from right edge)
+  const totalImagesWidth = images.length * (100 / 3);
+  // Stop when CTA button is centered - don't scroll past that point
+  const maxScroll = totalImagesWidth;
+  
   const x = useTransform(
     scrollYProgress,
     [0, 1],
-    ['0%', `-${totalImagesWidth - 100}%`]
+    ['0%', `-${maxScroll}%`]
   );
 
   return (
@@ -38,14 +70,17 @@ const LookbookScroll = ({ images, slug }: LookbookScrollProps) => {
       className="relative bg-sand"
       style={{ height: `${containerHeight}px` }}
     >
-      {/* Sticky container that stays in viewport */}
-      <div className="sticky top-0 h-screen overflow-hidden flex flex-col">
+      {/* Sticky container - reduced height (70vh instead of 100vh) */}
+      <div 
+        ref={stickyRef}
+        className="sticky top-0 h-[70vh] overflow-hidden flex flex-col"
+      >
         {/* Header */}
         <motion.h3
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="text-luxury-label text-center py-8"
+          className="text-luxury-label text-center py-6"
         >
           Latest Collection
         </motion.h3>
@@ -93,7 +128,7 @@ const LookbookScroll = ({ images, slug }: LookbookScrollProps) => {
         </div>
 
         {/* Progress indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2">
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2">
           {images.map((_, index) => (
             <ProgressDot
               key={index}
@@ -109,11 +144,10 @@ const LookbookScroll = ({ images, slug }: LookbookScrollProps) => {
           />
         </div>
 
-        {/* Scroll hint */}
+        {/* Scroll hint - hide when reached end */}
         <motion.div
-          className="absolute bottom-8 right-8 text-luxury-xs text-muted-foreground"
-          initial={{ opacity: 1 }}
-          animate={{ opacity: 1 }}
+          className="absolute bottom-6 right-8 text-luxury-xs text-muted-foreground"
+          animate={{ opacity: hasReachedEnd ? 0 : 1 }}
         >
           Scroll to explore
         </motion.div>
