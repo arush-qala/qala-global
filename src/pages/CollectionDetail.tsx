@@ -158,37 +158,33 @@ const ProductDetailOverlay = ({
         <X className="w-6 h-6" strokeWidth={1} />
       </button>
 
-      {/* Scrollable container for parallax */}
+      {/* Initial Landing View - 3-panel layout with peeking products */}
       <div ref={detailScrollRef} className="h-full overflow-y-auto">
         <div className="min-h-[200vh]">
-          <div className="sticky top-0 h-screen">
-            {/* 3-Column Grid Layout */}
-            <div className="h-full flex">
-              {/* Left Column - Previous Product Preview (14vw) */}
-              <div 
-                className="w-[14vw] h-full flex-shrink-0 cursor-pointer relative overflow-hidden"
-                onClick={() => prevProduct && onNavigate(productIndex - 1)}
-              >
-                {prevProduct && (
-                  <div className="absolute inset-0 opacity-40 hover:opacity-60 transition-opacity">
-                    <img
-                      src={prevProduct.image}
-                      alt={prevProduct.name}
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
-                      <ChevronLeft className="w-8 h-8 text-foreground" />
-                    </div>
-                  </div>
-                )}
-              </div>
+          <div className="sticky top-0 h-screen flex">
+            {/* Left Edge - Previous Product Peek */}
+            <div 
+              className="w-[5vw] h-full flex-shrink-0 cursor-pointer relative overflow-hidden"
+              onClick={() => prevProduct && onNavigate(productIndex - 1)}
+            >
+              {prevProduct && (
+                <div className="absolute inset-0 grayscale opacity-60 hover:opacity-80 transition-opacity">
+                  <img
+                    src={prevProduct.image}
+                    alt={prevProduct.name}
+                    className="w-full h-full object-cover object-right"
+                  />
+                </div>
+              )}
+            </div>
 
-              {/* Center Column - Product Images with Parallax */}
+            {/* Center - Main Product Images */}
+            <div className="flex-1 h-full flex items-center justify-center">
               <motion.div 
                 style={{ x: imageX }}
-                className="flex-1 h-full overflow-y-auto py-8 px-4"
+                className="h-full overflow-y-auto py-8"
               >
-                <div className="space-y-4 max-w-[500px] mx-auto">
+                <div className="space-y-4 max-w-[45vw] mx-auto">
                   {product.images.map((img, idx) => (
                     <img
                       key={idx}
@@ -199,95 +195,20 @@ const ProductDetailOverlay = ({
                   ))}
                 </div>
               </motion.div>
+            </div>
 
-              {/* Right Column - Fixed Product Info Panel (~400px) */}
-              <div className="w-[400px] h-full flex-shrink-0 bg-background flex flex-col justify-start pt-16 px-8 overflow-y-auto">
-                {/* Product Title */}
-                <h2 className="font-serif text-2xl lg:text-3xl font-light leading-tight mb-6">
-                  {product.name}
-                </h2>
-
-                {/* Specifications */}
-                <div className="space-y-3 mb-6 text-sm">
-                  <div className="flex">
-                    <span className="text-muted-foreground w-24 uppercase tracking-wider text-xs">Fabric:</span>
-                    <span>{product.fabricDetails}</span>
-                  </div>
-                  <div className="flex">
-                    <span className="text-muted-foreground w-24 uppercase tracking-wider text-xs">Feels Like:</span>
-                    <span className="text-muted-foreground">{product.feelsLike}</span>
-                  </div>
-                  <div className="flex items-center">
-                    <span className="text-muted-foreground w-24 uppercase tracking-wider text-xs">Size Guide:</span>
-                    <button className="underline text-foreground hover:text-gold transition-colors">View Chart</button>
-                  </div>
-                </div>
-
-                {/* Select This Style Button */}
-                <button
-                  onClick={() => onSelectStyle(product.id)}
-                  className={`w-full py-4 px-6 text-sm uppercase tracking-widest transition-colors mb-8 ${
-                    isInAssortment 
-                      ? 'bg-deep-charcoal text-primary-foreground' 
-                      : 'bg-gold text-primary-foreground hover:bg-gold/90'
-                  }`}
-                >
-                  {isInAssortment ? 'Added to Assortment' : 'Select This Style'}
-                </button>
-
-                {/* Virtual Trial Box */}
-                <div className="bg-muted aspect-video mb-8 flex items-center justify-center relative">
-                  <span className="text-primary-foreground text-center">Curiosity looks good on you.</span>
-                  <span className="absolute bottom-2 left-2 text-xs text-primary-foreground/60 uppercase tracking-wider">Virtual Trial</span>
-                </div>
-
-                {/* Tabs */}
-                <div className="flex gap-6 border-b border-border mb-4">
-                  {tabs.map((tab) => (
-                    <button
-                      key={tab}
-                      onClick={() => setActiveTab(tab)}
-                      className={`pb-2 text-xs tracking-wider transition-colors ${
-                        activeTab === tab 
-                          ? 'text-foreground border-b border-foreground' 
-                          : 'text-muted-foreground hover:text-foreground'
-                      }`}
-                    >
-                      {tab}
-                    </button>
-                  ))}
-                </div>
-
-                {/* Tab Content */}
-                <div className="text-sm text-muted-foreground leading-relaxed">
-                  {activeTab === 'DETAILS' && (
-                    <p>{product.description}</p>
-                  )}
-                  {activeTab === 'WASH & CARE' && (
-                    <p>Dry clean only. Store in a cool, dry place. Avoid direct sunlight.</p>
-                  )}
-                  {activeTab === 'BULK PRICE' && (
-                    <p>Contact us for bulk pricing on orders of 10+ pieces.</p>
-                  )}
-                  {activeTab === 'SHIPPING' && (
-                    <p>Ships within 2-3 weeks. International shipping available.</p>
-                  )}
-                </div>
-              </div>
-
-              {/* Right Edge - Next Product Preview (hidden, for symmetry) */}
+            {/* Right Edge - Next Product Peek */}
+            <div 
+              className="w-[5vw] h-full flex-shrink-0 cursor-pointer relative overflow-hidden"
+              onClick={() => nextProduct && onNavigate(productIndex + 1)}
+            >
               {nextProduct && (
-                <div 
-                  className="w-[14vw] h-full flex-shrink-0 cursor-pointer relative overflow-hidden"
-                  onClick={() => onNavigate(productIndex + 1)}
-                >
-                  <div className="absolute inset-0 opacity-40 hover:opacity-60 transition-opacity">
-                    <img
-                      src={nextProduct.image}
-                      alt={nextProduct.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
+                <div className="absolute inset-0 grayscale opacity-60 hover:opacity-80 transition-opacity">
+                  <img
+                    src={nextProduct.image}
+                    alt={nextProduct.name}
+                    className="w-full h-full object-cover object-left"
+                  />
                 </div>
               )}
             </div>
