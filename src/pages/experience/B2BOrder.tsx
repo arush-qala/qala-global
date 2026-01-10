@@ -1,32 +1,32 @@
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { ArrowLeft, Minus, Plus } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { useAssortment } from '@/contexts/AssortmentContext';
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { ArrowLeft, Minus, Plus } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useAssortment } from "@/contexts/AssortmentContext";
 
 const B2BOrder = () => {
   const navigate = useNavigate();
   const { products } = useAssortment();
   const [quantities, setQuantities] = useState<Record<string, Record<string, number>>>({});
   const [activeProduct, setActiveProduct] = useState<string | null>(products[0]?.id || null);
-  const sizes = ['XS', 'S', 'M', 'L', 'XL'];
+  const sizes = ["XS", "S", "M", "L", "XL"];
 
   const updateQuantity = (productId: string, size: string, delta: number) => {
-    setQuantities(prev => {
+    setQuantities((prev) => {
       const productQty = prev[productId] || {};
       const current = productQty[size] || 0;
       const newQty = Math.max(0, current + delta);
       return {
         ...prev,
-        [productId]: { ...productQty, [size]: newQty }
+        [productId]: { ...productQty, [size]: newQty },
       };
     });
   };
 
   const setQuantity = (productId: string, size: string, value: number) => {
-    setQuantities(prev => ({
+    setQuantities((prev) => ({
       ...prev,
-      [productId]: { ...(prev[productId] || {}), [size]: Math.max(0, value) }
+      [productId]: { ...(prev[productId] || {}), [size]: Math.max(0, value) },
     }));
   };
 
@@ -46,9 +46,9 @@ const B2BOrder = () => {
   // Tiered pricing discount
   const getDiscount = (units: number) => {
     if (units >= 500) return 0.25;
-    if (units >= 200) return 0.20;
+    if (units >= 200) return 0.2;
     if (units >= 100) return 0.15;
-    if (units >= 50) return 0.10;
+    if (units >= 50) return 0.1;
     return 0;
   };
 
@@ -58,15 +58,15 @@ const B2BOrder = () => {
   const discountAmount = subtotal * discount;
   const finalTotal = subtotal - discountAmount;
 
-  const activeProductData = products.find(p => p.id === activeProduct);
+  const activeProductData = products.find((p) => p.id === activeProduct);
 
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
       <div className="fixed top-0 left-0 right-0 z-40 bg-background border-b border-border">
         <div className="flex items-center justify-between px-8 py-6">
-          <button 
-            onClick={() => navigate('/experience')}
+          <button
+            onClick={() => navigate("/experience")}
             className="flex items-center gap-2 hover:text-gold transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
@@ -90,9 +90,7 @@ const B2BOrder = () => {
                     key={product.id}
                     onClick={() => setActiveProduct(product.id)}
                     className={`w-full flex items-center gap-4 p-3 border transition-colors text-left ${
-                      activeProduct === product.id 
-                        ? 'border-gold bg-gold/5' 
-                        : 'border-border hover:border-gold/30'
+                      activeProduct === product.id ? "border-gold bg-gold/5" : "border-border hover:border-gold/30"
                     }`}
                   >
                     <div className="w-16 h-20 flex-shrink-0 overflow-hidden">
@@ -101,9 +99,7 @@ const B2BOrder = () => {
                     <div className="flex-1 min-w-0">
                       <p className="text-luxury-xs text-muted-foreground mb-1">{product.brandName}</p>
                       <p className="font-serif text-sm truncate">{product.name}</p>
-                      {qty > 0 && (
-                        <p className="text-gold text-xs mt-1">{qty} units</p>
-                      )}
+                      {qty > 0 && <p className="text-gold text-xs mt-1">{qty} units</p>}
                     </div>
                   </button>
                 );
@@ -119,8 +115,8 @@ const B2BOrder = () => {
               {/* Product Hero */}
               <div className="flex gap-8 mb-12">
                 <div className="w-80 aspect-[3/4] flex-shrink-0 overflow-hidden">
-                  <img 
-                    src={activeProductData.image} 
+                  <img
+                    src={activeProductData.image}
                     alt={activeProductData.name}
                     className="w-full h-full object-cover"
                   />
@@ -130,7 +126,7 @@ const B2BOrder = () => {
                   <h1 className="font-serif text-3xl mb-2">{activeProductData.name}</h1>
                   <p className="text-gold text-xl mb-4">${activeProductData.price} / unit</p>
                   <p className="text-muted-foreground text-sm max-w-md">
-                    Enter quantities per size below. Orders are processed in increments of 10 units.
+                    Enter quantities per size below. Orders are processed per unit.
                   </p>
                 </div>
               </div>
@@ -139,7 +135,7 @@ const B2BOrder = () => {
               <div className="mb-8">
                 <h3 className="text-luxury-xs text-muted-foreground mb-4">QUANTITY BY SIZE</h3>
                 <div className="grid grid-cols-5 gap-4">
-                  {sizes.map(size => {
+                  {sizes.map((size) => {
                     const qty = quantities[activeProductData.id]?.[size] || 0;
                     return (
                       <div key={size} className="text-center">
@@ -147,7 +143,7 @@ const B2BOrder = () => {
                         <div className="border border-border p-4">
                           <div className="flex items-center justify-center gap-2 mb-2">
                             <button
-                              onClick={() => updateQuantity(activeProductData.id, size, -10)}
+                              onClick={() => updateQuantity(activeProductData.id, size, -1)}
                               className="w-8 h-8 flex items-center justify-center bg-muted hover:bg-muted/80 transition-colors"
                             >
                               <Minus className="w-4 h-4" />
@@ -155,13 +151,13 @@ const B2BOrder = () => {
                             <input
                               type="number"
                               min="0"
-                              step="10"
+                              step="1"
                               value={qty}
                               onChange={(e) => setQuantity(activeProductData.id, size, parseInt(e.target.value) || 0)}
                               className="w-20 text-center bg-background border border-border py-2 font-serif text-xl"
                             />
                             <button
-                              onClick={() => updateQuantity(activeProductData.id, size, 10)}
+                              onClick={() => updateQuantity(activeProductData.id, size, 1)}
                               className="w-8 h-8 flex items-center justify-center bg-muted hover:bg-muted/80 transition-colors"
                             >
                               <Plus className="w-4 h-4" />
@@ -182,7 +178,8 @@ const B2BOrder = () => {
                 <div className="flex justify-between items-center">
                   <span className="text-muted-foreground">Product Total</span>
                   <span className="font-serif text-xl">
-                    {getProductTotal(activeProductData.id)} units · ${(getProductTotal(activeProductData.id) * activeProductData.price).toLocaleString()}
+                    {getProductTotal(activeProductData.id)} units · $
+                    {(getProductTotal(activeProductData.id) * activeProductData.price).toLocaleString()}
                   </span>
                 </div>
               </div>
@@ -218,11 +215,8 @@ const B2BOrder = () => {
               <p className="text-primary-foreground font-serif text-xl">${finalTotal.toLocaleString()}</p>
             </div>
           </div>
-          
-          <button 
-            className="btn-luxury-gold"
-            disabled={totalUnits === 0}
-          >
+
+          <button className="btn-luxury-gold" disabled={totalUnits === 0}>
             Request Quote
           </button>
         </div>
