@@ -154,6 +154,15 @@ const SampleCrate = () => {
           <button 
             className="btn-luxury-gold"
             disabled={selectedItems.size === 0}
+            onClick={() => {
+              const checkoutProducts = selectedProducts.map(p => ({
+                ...p,
+                size: selectedSizes[p.id] || 'M'
+              }));
+              navigate('/experience/sample-crate/checkout', { 
+                state: { selectedProducts: checkoutProducts } 
+              });
+            }}
           >
             Proceed to Checkout
           </button>
