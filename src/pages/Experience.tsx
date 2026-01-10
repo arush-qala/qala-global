@@ -63,7 +63,7 @@ const Experience = () => {
             <span className="text-luxury-sm tracking-widest uppercase text-base">Back to Collection</span>
           </button>
           
-          <span className="text-luxury-sm tracking-widest">
+          <span className="text-luxury-sm tracking-widest text-base">
             {products.length} STYLES IN YOUR SELECTION
           </span>
         </div>
