@@ -1,1 +1,4 @@
 project_id = "rygkyymbqakvmsowsoed"
+
+[functions.import-catalog]
+verify_jwt = false
