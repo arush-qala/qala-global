@@ -43,8 +43,8 @@ const SampleCrate = () => {
           opacity: 1,
           y: 0
         }} className="text-center">
-            <h1 className="font-serif text-4xl lg:text-5xl mb-4">Curate Your Sample Crate</h1>
-            <p className="text-muted-foreground max-w-xl mx-auto">
+            <h1 className="font-serif text-4xl mb-4 lg:text-6xl">Curate Your Sample Crate</h1>
+            <p className="text-muted-foreground max-w-xl mx-auto text-lg">
               Select up to 5 pieces to experience in person. Feel the fabrics, assess the quality, 
               and make informed buying decisions.
             </p>
@@ -79,9 +79,9 @@ const SampleCrate = () => {
                   {/* Product Info */}
                   <div className="flex items-start justify-between">
                     <div>
-                      <p className="text-luxury-xs text-muted-foreground mb-1">{product.brandName}</p>
-                      <h3 className="font-serif text-lg mb-1">{product.name}</h3>
-                      <p className="text-gold">${product.price}</p>
+                      <p className="text-luxury-xs text-muted-foreground mb-1 text-lg">{product.brandName}</p>
+                      <h3 className="font-serif mb-1 text-xl">{product.name}</h3>
+                      <p className="text-gold text-xl">${product.price}</p>
                     </div>
                     
                     {isSelected && <select value={selectedSizes[product.id] || ''} onChange={e => setSelectedSizes({
