@@ -1,114 +1,133 @@
-import { useState, useRef, useEffect, useMemo } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { motion, useScroll, useTransform, AnimatePresence, useMotionValueEvent } from 'framer-motion';
-import { ArrowLeft, Plus, Check, X, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
-import { brands } from '@/data/brands';
-import { useAssortment } from '@/contexts/AssortmentContext';
-import { useCollection } from '@/hooks/useCollections';
-import { useProductsByCollection, ProductWithDetails } from '@/hooks/useProducts';
-import { useBrand } from '@/hooks/useBrands';
+import { useState, useRef, useEffect } from "react";
+import { useParams, Link } from "react-router-dom";
+import { motion, useScroll, useTransform, AnimatePresence, useMotionValueEvent } from "framer-motion";
+import { ArrowLeft, Plus, Check, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { brands } from "@/data/brands";
+import { useAssortment } from "@/contexts/AssortmentContext";
 
-// Fallback lookbook images for each brand (used when no products in DB)
+// Lookbook images for each brand (same as BrandStorefront)
 const brandLookbookImages: Record<string, string[]> = {
-  'asaii': [
-    '/images/discover/asaii/1.webp',
-    '/images/discover/asaii/2.webp',
-    '/images/discover/asaii/3.webp',
-    '/images/discover/asaii/4.webp',
-    '/images/discover/asaii/5.webp',
-    '/images/discover/asaii/6.webp',
+  asaii: [
+    "/images/discover/asaii/1.webp",
+    "/images/discover/asaii/2.webp",
+    "/images/discover/asaii/3.webp",
+    "/images/discover/asaii/4.webp",
+    "/images/discover/asaii/5.webp",
+    "/images/discover/asaii/6.webp",
   ],
-  'doodlage': [
-    '/images/discover/doodlage/1.jpg',
-    '/images/discover/doodlage/2.webp',
-    '/images/discover/doodlage/3.webp',
-    '/images/discover/doodlage/4.webp',
-    '/images/discover/doodlage/5.webp',
-    '/images/discover/doodlage/6.webp',
+  doodlage: [
+    "/images/discover/doodlage/1.jpg",
+    "/images/discover/doodlage/2.webp",
+    "/images/discover/doodlage/3.webp",
+    "/images/discover/doodlage/4.webp",
+    "/images/discover/doodlage/5.webp",
+    "/images/discover/doodlage/6.webp",
   ],
-  'margn': [
-    '/images/discover/margn/1.webp',
-    '/images/discover/margn/2.webp',
-    '/images/discover/margn/3.webp',
-    '/images/discover/margn/4.webp',
-    '/images/discover/margn/5.webp',
-    '/images/discover/margn/6.webp',
+  margn: [
+    "/images/discover/margn/1.webp",
+    "/images/discover/margn/2.webp",
+    "/images/discover/margn/3.webp",
+    "/images/discover/margn/4.webp",
+    "/images/discover/margn/5.webp",
+    "/images/discover/margn/6.webp",
   ],
-  'akhl-studio': [
-    '/images/discover/akhl-studio/1.webp',
-    '/images/discover/akhl-studio/2.webp',
-    '/images/discover/akhl-studio/3.webp',
-    '/images/discover/akhl-studio/4.webp',
-    '/images/discover/akhl-studio/5.webp',
-    '/images/discover/akhl-studio/6.webp',
+  "akhl-studio": [
+    "/images/discover/akhl-studio/1.webp",
+    "/images/discover/akhl-studio/2.webp",
+    "/images/discover/akhl-studio/3.webp",
+    "/images/discover/akhl-studio/4.webp",
+    "/images/discover/akhl-studio/5.webp",
+    "/images/discover/akhl-studio/6.webp",
   ],
-  'akhl_studio': [
-    '/images/discover/akhl-studio/1.webp',
-    '/images/discover/akhl-studio/2.webp',
-    '/images/discover/akhl-studio/3.webp',
-    '/images/discover/akhl-studio/4.webp',
-    '/images/discover/akhl-studio/5.webp',
-    '/images/discover/akhl-studio/6.webp',
-  ],
-  'ituvana': [
-    '/images/discover/ituvana/1.webp',
-    '/images/discover/ituvana/2.webp',
-    '/images/discover/ituvana/3.webp',
-    '/images/discover/ituvana/4.webp',
-    '/images/discover/ituvana/5.webp',
-    '/images/discover/ituvana/6.webp',
+  ituvana: [
+    "/images/discover/ituvana/1.webp",
+    "/images/discover/ituvana/2.webp",
+    "/images/discover/ituvana/3.webp",
+    "/images/discover/ituvana/4.webp",
+    "/images/discover/ituvana/5.webp",
+    "/images/discover/ituvana/6.webp",
   ],
 };
 
-// Helper to transform DB product to display format
-interface DisplayProduct {
-  id: string;
-  name: string;
-  price: number;
-  image: string;
-  images: string[];
-  fabricDetails: string;
-  feelsLike: string;
-  sizes: string[];
-  description: string;
-  careGuide?: string;
-}
+// Mock collection data per brand
+const brandCollections: Record<string, { name: string; season: string; description: string }[]> = {
+  asaii: [
+    {
+      name: "Human Rituals",
+      season: "Spring Summer, Trans Seasonal",
+      description: "A celebration of the everyday rituals that define our humanity.",
+    },
+    { name: "Autumn Whispers", season: "Fall Winter", description: "Quiet elegance for the cooler months." },
+    { name: "Urban Nomad", season: "Spring Summer", description: "Contemporary pieces for the modern wanderer." },
+  ],
+  doodlage: [
+    {
+      name: "Human Rituals",
+      season: "Spring Summer, Trans Seasonal",
+      description: "Upcycled fashion that tells a story of renewal.",
+    },
+    {
+      name: "Zero Waste",
+      season: "Trans Seasonal",
+      description: "Every scrap has a purpose, every piece has a story.",
+    },
+    { name: "Patchwork Dreams", season: "Fall Winter", description: "Handcrafted patchwork celebrating imperfection." },
+  ],
+  margn: [
+    {
+      name: "Human Rituals",
+      season: "Spring Summer, Trans Seasonal",
+      description: "Minimalist designs rooted in tradition.",
+    },
+    { name: "Silent Lines", season: "Fall Winter", description: "Structured silhouettes with a whisper of drama." },
+    { name: "Canvas Stories", season: "Spring Summer", description: "Where art meets wearable expression." },
+  ],
+  "akhl-studio": [
+    {
+      name: "Human Rituals",
+      season: "Spring Summer, Trans Seasonal",
+      description: "Bold expressions of contemporary craft.",
+    },
+    { name: "Rebel Heritage", season: "Trans Seasonal", description: "Traditional techniques with a modern edge." },
+    { name: "Night Bloom", season: "Fall Winter", description: "Dark florals and midnight textures." },
+  ],
+  ituvana: [
+    {
+      name: "Human Rituals",
+      season: "Spring Summer, Trans Seasonal",
+      description: "Natural fibres celebrating slow fashion.",
+    },
+    { name: "Earth Tones", season: "Trans Seasonal", description: "Colors borrowed from the earth itself." },
+    { name: "Coastal Calm", season: "Spring Summer", description: "Breezy silhouettes inspired by the sea." },
+  ],
+};
 
-const transformProductsToDisplay = (dbProducts: ProductWithDetails[], brandSlug: string): DisplayProduct[] => {
-  if (dbProducts.length === 0) {
-    // Fallback to mock data if no products in DB
-    const images = brandLookbookImages[brandSlug] || brandLookbookImages['asaii'];
-    return images.map((image, index) => ({
-      id: `${brandSlug}-${index + 1}`,
-      name: ['Epidermis Crochet Applique Vest- Off White', 'Handwoven Wrap Blouse', 'Pleated Midi Skirt', 'Embroidered Jacket', 'Evening Gown', 'Tailored Suit Set'][index] || `Style ${index + 1}`,
-      price: [485, 295, 320, 650, 890, 720][index] || 399,
-      image,
-      images: [image, images[(index + 1) % images.length], images[(index + 2) % images.length]],
-      fabricDetails: 'Woven',
-      feelsLike: 'Hand-crocheted applique, Patch pockets...',
-      sizes: ['XS', 'S', 'M', 'L'],
-      description: 'Meticulously crafted with attention to architectural lines. This piece embodies the collection\'s ethos of structured fluidity.',
-    }));
-  }
-
-  return dbProducts.map((p) => {
-    const mainImage = p.images[0]?.image_url || brandLookbookImages[brandSlug]?.[0] || '/images/discover/asaii/1.webp';
-    const allImages = p.images.length > 0 
-      ? p.images.map(img => img.image_url)
-      : [mainImage];
-    const price = p.variants[0]?.price || 0;
+// Mock products (using lookbook images as product images)
+const getProducts = (brandSlug: string) => {
+  const images = brandLookbookImages[brandSlug] || brandLookbookImages["asaii"];
+  return images.map((image, index) => {
+    // Generate multiple images for the product (using all available images rotated)
+    const productImages = [image, images[(index + 1) % images.length], images[(index + 2) % images.length]];
 
     return {
-      id: p.id,
-      name: p.title,
-      price,
-      image: mainImage,
-      images: allImages,
-      fabricDetails: p.fabric_type || 'Woven',
-      feelsLike: p.description?.substring(0, 50) || 'Hand-crafted details...',
-      sizes: ['XS', 'S', 'M', 'L'],
-      description: p.description || p.product_story || 'Meticulously crafted with attention to detail.',
-      careGuide: p.care_guide || undefined,
+      id: `${brandSlug}-${index + 1}`,
+      name:
+        [
+          "Epidermis Crochet Applique Vest- Off White",
+          "Handwoven Wrap Blouse",
+          "Pleated Midi Skirt",
+          "Embroidered Jacket",
+          "Evening Gown",
+          "Tailored Suit Set",
+        ][index] || `Style ${index + 1}`,
+      price: [485, 295, 320, 650, 890, 720][index] || 399,
+      image,
+      images: productImages,
+      fabricDetails: "Woven",
+      feelsLike: "Hand-crocheted applique, Patch pockets i...",
+      sizes: ["XS", "S", "M", "L"],
+      description:
+        "Meticulously crafted with attention to architectural lines. This piece embodies the collection's ethos of structured fluidity. Designed for the modern wardrobe, offering versatility and timeless elegance.",
     };
   });
 };
@@ -125,8 +144,8 @@ const ProductDetailOverlay = ({
   onSelectStyle,
   isInAssortment,
 }: {
-  product: DisplayProduct;
-  products: DisplayProduct[];
+  product: ReturnType<typeof getProducts>[0];
+  products: ReturnType<typeof getProducts>;
   productIndex: number;
   brandSlug: string;
   brandName: string;
@@ -135,12 +154,14 @@ const ProductDetailOverlay = ({
   onSelectStyle: (id: string, event: React.MouseEvent) => void;
   isInAssortment: boolean;
 }) => {
-  const [activeTab, setActiveTab] = useState('DETAILS');
+  const [activeTab, setActiveTab] = useState("DETAILS");
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const overlayRef = useRef<HTMLDivElement>(null);
 
   // Ensure the overlay always opens at the top "cover" state
   useEffect(() => {
     overlayRef.current?.scrollTo({ top: 0 });
+    setCurrentImageIndex(0);
   }, [product.id]);
 
   const { scrollYProgress } = useScroll({
@@ -150,36 +171,39 @@ const ProductDetailOverlay = ({
   // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowLeft' && productIndex > 0) {
+      if (e.key === "ArrowLeft" && productIndex > 0) {
         onNavigate(productIndex - 1);
-      } else if (e.key === 'ArrowRight' && productIndex < products.length - 1) {
+      } else if (e.key === "ArrowRight" && productIndex < products.length - 1) {
         onNavigate(productIndex + 1);
-      } else if (e.key === 'Escape') {
+      } else if (e.key === "Escape") {
         onClose();
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [productIndex, products.length, onNavigate, onClose]);
 
   // Parallax: the image stack glides left as the right panel "unpacks"
-  const imageX = useTransform(scrollYProgress, [0, 0.15, 0.4], ['0vw', '0vw', '-18vw']);
+  const imageX = useTransform(scrollYProgress, [0, 0.15, 0.4], ["0vw", "0vw", "-18vw"]);
 
   // Right panel reveal: completely hidden at start, slides in on scroll
-  const panelOpacity = useTransform(scrollYProgress, [0, 0.12, 0.25], [0, 0, 1]);
-  const panelX = useTransform(scrollYProgress, [0, 0.12, 0.25], ['100%', '100%', '0%']);
+  const panelOpacity = useTransform(scrollYProgress, [0, 0.05], [0, 1]);
+  const panelX = useTransform(scrollYProgress, [0, 0.05], ["100%", "0%"]);
 
   const prevProduct = productIndex > 0 ? products[productIndex - 1] : null;
   const nextProduct = productIndex < products.length - 1 ? products[productIndex + 1] : null;
 
-  const tabs = ['DETAILS', 'WASH & CARE', 'BULK PRICE', 'SHIPPING'];
+  const tabs = ["DETAILS", "WASH & CARE", "BULK PRICE", "SHIPPING"];
 
   const tabContent: Record<string, string> = {
     DETAILS: product.description,
-    'WASH & CARE': 'Dry clean recommended. If washing at home, use cold water and a gentle cycle. Avoid tumble drying to preserve structure and surface texture.',
-    'BULK PRICE': 'Bulk pricing available on request. Share your required quantities and delivery timeline to receive tiered pricing and production lead times.',
-    SHIPPING: 'Ships worldwide. Standard dispatch within 7–10 business days (made-to-order timelines may vary). Duties and taxes may apply based on destination.',
+    "WASH & CARE":
+      "Dry clean recommended. If washing at home, use cold water and a gentle cycle. Avoid tumble drying to preserve structure and surface texture.",
+    "BULK PRICE":
+      "Bulk pricing available on request. Share your required quantities and delivery timeline to receive tiered pricing and production lead times.",
+    SHIPPING:
+      "Ships worldwide. Standard dispatch within 7–10 business days (made-to-order timelines may vary). Duties and taxes may apply based on destination.",
   };
 
   const [showSizeChart, setShowSizeChart] = useState(false);
@@ -234,7 +258,7 @@ const ProductDetailOverlay = ({
                     </tr>
                   </thead>
                   <tbody>
-                    {['XS', 'S', 'M', 'L', 'XL'].map((size, i) => (
+                    {["XS", "S", "M", "L", "XL"].map((size, i) => (
                       <tr key={size} className="border-b border-border/50">
                         <td className="py-3 px-2">{size}</td>
                         <td className="py-3 px-2">{36 + i * 2}</td>
@@ -275,22 +299,54 @@ const ProductDetailOverlay = ({
 
             {/* Middle Section - Fixed 86vw containing images + details panel */}
             <div className="w-[86vw] flex-shrink-0 sticky top-0 h-screen overflow-hidden">
-              {/* Image Column - shifts left on scroll, contains vertical scrolling images */}
-              <motion.div 
-                style={{ x: imageX }} 
-                className="absolute inset-0 flex justify-center pt-16"
-              >
-                <div className="max-w-[520px] w-full h-full overflow-y-auto hide-scrollbar">
-                  {/* Display all product images vertically - scrolling through them reveals the right panel */}
-                  {product.images.map((img, idx) => (
-                    <div key={idx} className="relative mb-4 last:mb-0">
-                      <img
-                        src={img}
-                        alt={`${product.name} - View ${idx + 1}`}
-                        className="w-full object-cover"
-                      />
-                    </div>
-                  ))}
+              {/* Image Column - shifts left on scroll */}
+              <motion.div style={{ x: imageX }} className="absolute inset-0 flex justify-center pt-16">
+                <div className="max-w-[520px] w-full flex flex-col">
+                  {/* Main Image */}
+                  <div className="relative">
+                    <img
+                      src={product.images[currentImageIndex]}
+                      alt={`${product.name}`}
+                      className="w-full h-[70vh] object-cover"
+                    />
+
+                    {/* Image navigation arrows */}
+                    {product.images.length > 1 && (
+                      <>
+                        <button
+                          onClick={() =>
+                            setCurrentImageIndex((prev) => (prev === 0 ? product.images.length - 1 : prev - 1))
+                          }
+                          className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-background/80 hover:bg-background flex items-center justify-center transition-colors"
+                        >
+                          <ChevronLeft className="w-5 h-5" />
+                        </button>
+                        <button
+                          onClick={() =>
+                            setCurrentImageIndex((prev) => (prev === product.images.length - 1 ? 0 : prev + 1))
+                          }
+                          className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-background/80 hover:bg-background flex items-center justify-center transition-colors"
+                        >
+                          <ChevronRight className="w-5 h-5" />
+                        </button>
+                      </>
+                    )}
+                  </div>
+
+                  {/* Thumbnail strip */}
+                  <div className="flex gap-2 mt-4 justify-center">
+                    {product.images.map((img, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => setCurrentImageIndex(idx)}
+                        className={`w-16 h-20 overflow-hidden border-2 transition-colors ${
+                          currentImageIndex === idx ? "border-gold" : "border-transparent hover:border-muted"
+                        }`}
+                      >
+                        <img src={img} alt={`View ${idx + 1}`} className="w-full h-full object-cover" />
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </motion.div>
 
@@ -303,12 +359,10 @@ const ProductDetailOverlay = ({
                   {/* Product Header */}
                   <div>
                     <span className="text-gold text-sm tracking-widest block mb-5">
-                      {String(productIndex + 1).padStart(2, '0')} / {products.length}
+                      {String(productIndex + 1).padStart(2, "0")} / {products.length}
                     </span>
 
-                    <h2 className="font-serif text-3xl lg:text-4xl leading-tight mb-8">
-                      {product.name}
-                    </h2>
+                    <h2 className="font-serif text-3xl lg:text-4xl leading-tight mb-8">{product.name}</h2>
 
                     {/* Specs */}
                     <div className="space-y-4 mb-8">
@@ -336,8 +390,8 @@ const ProductDetailOverlay = ({
                       onClick={(e) => onSelectStyle(product.id, e)}
                       className={`w-full py-5 flex items-center justify-center gap-2 transition-all mb-10 ${
                         isInAssortment
-                          ? 'bg-gold text-primary-foreground'
-                          : 'bg-gold/80 hover:bg-gold text-primary-foreground'
+                          ? "bg-gold text-primary-foreground"
+                          : "bg-gold/80 hover:bg-gold text-primary-foreground"
                       }`}
                     >
                       {isInAssortment ? (
@@ -371,9 +425,7 @@ const ProductDetailOverlay = ({
                           key={tab}
                           onClick={() => setActiveTab(tab)}
                           className={`text-sm tracking-widest transition-colors ${
-                            activeTab === tab
-                              ? 'text-foreground'
-                              : 'text-muted-foreground hover:text-foreground'
+                            activeTab === tab ? "text-foreground" : "text-muted-foreground hover:text-foreground"
                           }`}
                         >
                           {tab}
@@ -381,9 +433,7 @@ const ProductDetailOverlay = ({
                       ))}
                     </div>
 
-                    <p className="text-base text-muted-foreground leading-relaxed">
-                      {tabContent[activeTab]}
-                    </p>
+                    <p className="text-base text-muted-foreground leading-relaxed">{tabContent[activeTab]}</p>
                   </section>
                 </div>
               </motion.aside>
@@ -414,7 +464,6 @@ const ProductDetailOverlay = ({
   );
 };
 
-
 // Flying Image Animation Component
 const FlyingImage = ({
   imageSrc,
@@ -432,21 +481,21 @@ const FlyingImage = ({
 
   return (
     <motion.div
-      initial={{ 
-        x: startPosition.x, 
+      initial={{
+        x: startPosition.x,
         y: startPosition.y,
         scale: 1,
         opacity: 1,
       }}
-      animate={{ 
-        x: window.innerWidth / 2 - 24, 
+      animate={{
+        x: window.innerWidth / 2 - 24,
         y: window.innerHeight - 60,
         scale: 0.3,
         opacity: 0.8,
       }}
-      transition={{ 
-        duration: 0.5, 
-        ease: [0.32, 0.72, 0, 1] 
+      transition={{
+        duration: 0.5,
+        ease: [0.32, 0.72, 0, 1],
       }}
       className="fixed z-[100] w-16 h-16 rounded overflow-hidden shadow-lg pointer-events-none"
     >
@@ -461,20 +510,9 @@ const CollectionDetail = () => {
   const [currentProductIndex, setCurrentProductIndex] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const stickyRef = useRef<HTMLDivElement>(null);
-  
+
   const { addProduct, removeProduct, isInAssortment, setLastCollectionUrl } = useAssortment();
-  
-  // Fetch data from database
-  const { data: dbCollection, isLoading: collectionLoading } = useCollection(collectionSlug || '');
-  const { data: dbProducts, isLoading: productsLoading } = useProductsByCollection(collectionSlug || '');
-  const { data: dbBrand } = useBrand(slug || '');
-  
-  // Transform products to display format
-  const products = useMemo(() => 
-    transformProductsToDisplay(dbProducts || [], slug || 'asaii'),
-    [dbProducts, slug]
-  );
-  
+
   // Scroll to top on page load and store collection URL for back navigation
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -493,28 +531,25 @@ const CollectionDetail = () => {
       }
     };
 
-    stickyElement.addEventListener('wheel', handleWheel, { passive: false });
-    return () => stickyElement.removeEventListener('wheel', handleWheel);
+    stickyElement.addEventListener("wheel", handleWheel, { passive: false });
+    return () => stickyElement.removeEventListener("wheel", handleWheel);
   }, []);
-  
-  // Fallback to static data if DB data not available
-  const brand = dbBrand || brands.find(b => b.slug === slug);
+
+  const brand = brands.find((b) => b.slug === slug);
+  const products = getProducts(slug || "asaii");
   const selectedProduct = selectedProductIndex !== null ? products[selectedProductIndex] : null;
 
-  // Get collection info from DB or use fallback
-  const collection = dbCollection || {
-    title: collectionSlug?.replace(/-/g, ' ').replace(/_/g, ' ') || 'Collection',
-    description: 'Explore our curated collection of unique pieces.',
-    seasonality: 'Trans Seasonal',
-    tagline: '',
-  };
+  // Get collection info based on slug or default to first
+  const collections = brandCollections[slug || "asaii"] || brandCollections["asaii"];
+  const collection =
+    collections.find((c) => c.name.toLowerCase().replace(/\s+/g, "-") === collectionSlug) || collections[0];
 
-  // Hero image is the first product image or fallback
-  const heroImage = products[0]?.image || (brandLookbookImages[slug || ''] || brandLookbookImages['asaii'])[0];
+  // Hero image is the first lookbook image
+  const heroImage = (brandLookbookImages[slug || ""] || brandLookbookImages["asaii"])[0];
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start start", "end end"]
+    offset: ["start start", "end end"],
   });
 
   // Track scroll progress to update product counter
@@ -529,32 +564,35 @@ const CollectionDetail = () => {
   // We need to scroll until the last product's right edge aligns with viewport right edge
   const productWidthVW = 33.333;
   const heroWidthVW = 100;
-  const totalContentWidthVW = heroWidthVW + (products.length * productWidthVW);
-  
+  const totalContentWidthVW = heroWidthVW + products.length * productWidthVW;
+
   // Max scroll distance = total content width - viewport width (100vw)
   // This gives us how much we need to translate left in vw units
   const maxScrollVW = totalContentWidthVW - 100;
-  
+
   // Use vw units directly for the transform
-  const x = useTransform(scrollYProgress, [0, 1], ['0vw', `-${maxScrollVW}vw`]);
+  const x = useTransform(scrollYProgress, [0, 1], ["0vw", `-${maxScrollVW}vw`]);
 
   const handleSelectStyle = (productId: string, event: React.MouseEvent) => {
-    const product = products.find(p => p.id === productId);
+    const product = products.find((p) => p.id === productId);
     if (!product) return;
-    
+
     if (isInAssortment(productId)) {
       removeProduct(productId);
     } else {
       const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
-      addProduct({
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        image: product.image,
-        brandSlug: slug || 'asaii',
-        brandName: brand?.name || 'Brand',
-        category: 'Apparel',
-      }, rect);
+      addProduct(
+        {
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          image: product.image,
+          brandSlug: slug || "asaii",
+          brandName: brand?.name || "Brand",
+          category: "Apparel",
+        },
+        rect,
+      );
     }
   };
 
@@ -571,20 +609,17 @@ const CollectionDetail = () => {
       {/* Fixed Header */}
       <div className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm">
         <div className="flex items-center justify-between px-8 py-6">
-          <Link 
-            to={`/brands/${slug}`}
-            className="flex items-center gap-2 hover:text-gold transition-colors"
-          >
+          <Link to={`/brands/${slug}`} className="flex items-center gap-2 hover:text-gold transition-colors">
             <ArrowLeft className="w-4 h-4" />
             <span className="text-luxury-sm tracking-widest uppercase">Back to Brand</span>
           </Link>
-          
+
           {/* Scroll Progress Indicator */}
           <div className="flex items-center gap-4">
             <div className="w-32 h-px bg-border relative overflow-hidden">
-              <motion.div 
+              <motion.div
                 className="absolute inset-y-0 left-0 bg-gold"
-                style={{ width: useTransform(scrollYProgress, [0, 1], ['0%', '100%']) }}
+                style={{ width: useTransform(scrollYProgress, [0, 1], ["0%", "100%"]) }}
               />
             </div>
             <span className="text-luxury-xs text-muted-foreground min-w-[40px]">
@@ -597,84 +632,55 @@ const CollectionDetail = () => {
       {/* Horizontal Scroll Container */}
       <div ref={containerRef} style={{ height: `${(products.length + 2) * 100}vh` }}>
         <div ref={stickyRef} className="sticky top-0 h-screen overflow-hidden">
-          <motion.div 
-            style={{ x }}
-            className="flex h-full pt-20"
-          >
+          <motion.div style={{ x }} className="flex h-full pt-20">
             {/* Hero Slide - Collection Thumbnail + Info */}
             <div className="flex-shrink-0 w-screen h-full flex">
               {/* Left: Collection Thumbnail */}
               <div className="w-1/2 h-full p-8 flex items-center justify-center">
                 <div className="w-full max-w-[500px] h-[85%]">
-                  <img
-                    src={heroImage}
-                    alt={collection.title}
-                    className="w-full h-full object-cover"
-                  />
+                  <img src={heroImage} alt={collection.name} className="w-full h-full object-cover" />
                 </div>
               </div>
-              
+
               {/* Right: Collection Info */}
               <div className="w-1/2 h-full flex flex-col justify-center pr-16">
-                <span className="text-gold text-luxury-xs tracking-widest mb-6">
-                  {(collection.seasonality || 'TRANS SEASONAL').toUpperCase()}
-                </span>
-                <h1 className="font-serif text-5xl lg:text-7xl font-light leading-tight mb-8">
-                  {collection.title}
-                </h1>
-                <p className="text-muted-foreground text-lg leading-relaxed max-w-md mb-8">
-                  {collection.description || collection.tagline}
-                </p>
-                
-                {/* Call to action instruction */}
-                <div className="bg-gold/10 border border-gold/30 p-6 mb-8 max-w-md">
-                  <p className="text-foreground text-sm font-medium mb-2">
-                    How to Select Styles
-                  </p>
-                  <p className="text-muted-foreground text-sm leading-relaxed">
-                    Click on any style to view it in detail. Scroll through the images to explore different angles, then add your favorites to your assortment.
-                  </p>
-                </div>
-                
+                <span className="text-gold text-luxury-xs tracking-widest mb-6">{collection.season.toUpperCase()}</span>
+                <h1 className="font-serif text-5xl lg:text-7xl font-light leading-tight mb-8">{collection.name}</h1>
+                <p className="text-muted-foreground text-lg leading-relaxed max-w-md mb-8">{collection.description}</p>
                 <div className="flex items-center gap-3">
                   <span className="text-luxury-sm tracking-widest uppercase">Scroll to Explore</span>
                   <div className="w-12 h-px bg-foreground" />
                 </div>
+                <p className="text-muted-foreground text-sm mt-4">
+                  Click on any style to view details and add to your assortment
+                </p>
               </div>
             </div>
 
             {/* Product Rail */}
             {products.map((product, index) => (
-              <div 
+              <div
                 key={product.id}
                 className="flex-shrink-0 h-full cursor-pointer group relative"
-                style={{ width: '33.333vw' }}
+                style={{ width: "33.333vw" }}
                 onClick={() => setSelectedProductIndex(index)}
               >
                 <div className="relative h-full">
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full h-full object-cover"
-                  />
-                  
+                  <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+
                   {/* Always visible overlay hint */}
                   <div className="absolute inset-0 bg-gradient-to-t from-deep-charcoal/60 via-transparent to-transparent opacity-100 group-hover:opacity-0 transition-opacity duration-300" />
-                  
+
                   {/* Hover Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-deep-charcoal/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  
+
                   {/* Product Info - always visible at bottom */}
                   <div className="absolute bottom-0 left-0 right-0 p-6">
                     <span className="text-primary-foreground/60 text-luxury-xs block mb-2">
-                      {String(index + 1).padStart(2, '0')} / {products.length}
+                      {String(index + 1).padStart(2, "0")} / {products.length}
                     </span>
-                    <h3 className="font-serif text-xl text-primary-foreground">
-                      {product.name}
-                    </h3>
-                    <p className="text-primary-foreground/80 text-sm mt-1">
-                      ${product.price}
-                    </p>
+                    <h3 className="font-serif text-xl text-primary-foreground">{product.name}</h3>
+                    <p className="text-primary-foreground/80 text-sm mt-1">${product.price}</p>
                     <span className="text-primary-foreground/50 text-xs mt-2 block group-hover:text-primary-foreground transition-colors">
                       Click to view details
                     </span>
@@ -700,8 +706,8 @@ const CollectionDetail = () => {
             product={selectedProduct}
             products={products}
             productIndex={selectedProductIndex}
-            brandSlug={slug || 'asaii'}
-            brandName={brand?.name || 'Brand'}
+            brandSlug={slug || "asaii"}
+            brandName={brand?.name || "Brand"}
             onClose={() => setSelectedProductIndex(null)}
             onNavigate={(index) => setSelectedProductIndex(index)}
             onSelectStyle={handleSelectStyle}
