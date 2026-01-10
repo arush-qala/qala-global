@@ -136,13 +136,11 @@ const ProductDetailOverlay = ({
   isInAssortment: boolean;
 }) => {
   const [activeTab, setActiveTab] = useState('DETAILS');
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const overlayRef = useRef<HTMLDivElement>(null);
 
   // Ensure the overlay always opens at the top "cover" state
   useEffect(() => {
     overlayRef.current?.scrollTo({ top: 0 });
-    setCurrentImageIndex(0);
   }, [product.id]);
 
   const { scrollYProgress } = useScroll({
@@ -277,61 +275,22 @@ const ProductDetailOverlay = ({
 
             {/* Middle Section - Fixed 86vw containing images + details panel */}
             <div className="w-[86vw] flex-shrink-0 sticky top-0 h-screen overflow-hidden">
-              {/* Image Column - shifts left on scroll */}
+              {/* Image Column - shifts left on scroll, contains vertical scrolling images */}
               <motion.div 
                 style={{ x: imageX }} 
                 className="absolute inset-0 flex justify-center pt-16"
               >
-                <div className="max-w-[520px] w-full flex flex-col">
-                  {/* Main Image */}
-                  <div className="relative">
-                    <img
-                      src={product.images[currentImageIndex]}
-                      alt={`${product.name}`}
-                      className="w-full h-[70vh] object-cover"
-                    />
-                    
-                    {/* Image navigation arrows */}
-                    {product.images.length > 1 && (
-                      <>
-                        <button
-                          onClick={() => setCurrentImageIndex((prev) => 
-                            prev === 0 ? product.images.length - 1 : prev - 1
-                          )}
-                          className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-background/80 hover:bg-background flex items-center justify-center transition-colors"
-                        >
-                          <ChevronLeft className="w-5 h-5" />
-                        </button>
-                        <button
-                          onClick={() => setCurrentImageIndex((prev) => 
-                            prev === product.images.length - 1 ? 0 : prev + 1
-                          )}
-                          className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-background/80 hover:bg-background flex items-center justify-center transition-colors"
-                        >
-                          <ChevronRight className="w-5 h-5" />
-                        </button>
-                      </>
-                    )}
-                  </div>
-                  
-                  {/* Thumbnail strip */}
-                  <div className="flex gap-2 mt-4 justify-center">
-                    {product.images.map((img, idx) => (
-                      <button
-                        key={idx}
-                        onClick={() => setCurrentImageIndex(idx)}
-                        className={`w-16 h-20 overflow-hidden border-2 transition-colors ${
-                          currentImageIndex === idx ? 'border-gold' : 'border-transparent hover:border-muted'
-                        }`}
-                      >
-                        <img
-                          src={img}
-                          alt={`View ${idx + 1}`}
-                          className="w-full h-full object-cover"
-                        />
-                      </button>
-                    ))}
-                  </div>
+                <div className="max-w-[520px] w-full h-full overflow-y-auto hide-scrollbar">
+                  {/* Display all product images vertically - scrolling through them reveals the right panel */}
+                  {product.images.map((img, idx) => (
+                    <div key={idx} className="relative mb-4 last:mb-0">
+                      <img
+                        src={img}
+                        alt={`${product.name} - View ${idx + 1}`}
+                        className="w-full object-cover"
+                      />
+                    </div>
+                  ))}
                 </div>
               </motion.div>
 
@@ -666,13 +625,21 @@ const CollectionDetail = () => {
                 <p className="text-muted-foreground text-lg leading-relaxed max-w-md mb-8">
                   {collection.description || collection.tagline}
                 </p>
+                
+                {/* Call to action instruction */}
+                <div className="bg-gold/10 border border-gold/30 p-6 mb-8 max-w-md">
+                  <p className="text-foreground text-sm font-medium mb-2">
+                    How to Select Styles
+                  </p>
+                  <p className="text-muted-foreground text-sm leading-relaxed">
+                    Click on any style to view it in detail. Scroll through the images to explore different angles, then add your favorites to your assortment.
+                  </p>
+                </div>
+                
                 <div className="flex items-center gap-3">
                   <span className="text-luxury-sm tracking-widest uppercase">Scroll to Explore</span>
                   <div className="w-12 h-px bg-foreground" />
                 </div>
-                <p className="text-muted-foreground text-sm mt-4">
-                  Click on any style to view details and add to your assortment
-                </p>
               </div>
             </div>
 

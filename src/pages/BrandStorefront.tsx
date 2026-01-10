@@ -6,29 +6,33 @@ import { brands } from '@/data/brands';
 import LookbookScroll from '@/components/brand/LookbookScroll';
 import { useCollectionsByBrand } from '@/hooks/useCollections';
 import { useBrand } from '@/hooks/useBrands';
-import heroDoodlage from '@/assets/images/home/hero-doodlage.jpg';
-import heroItuvana from '@/assets/images/home/hero-ituvana.jpg';
-import heroKharaKapas from '@/assets/images/home/hero-khara-kapas.jpg';
-import heroNaushadAli from '@/assets/images/home/hero-naushad-ali.jpg';
-import heroCapisvirleo from '@/assets/images/home/hero-capisvirleo.jpg';
 
+// Hero images from GitHub repo - using public folder paths
 const heroImages: Record<string, string> = {
-  'doodlage': heroDoodlage,
-  'ituvana': heroItuvana,
-  'khara-kapas': heroKharaKapas,
-  'naushad-ali': heroNaushadAli,
-  'capisvirleo': heroCapisvirleo,
-  'asaii': heroDoodlage,
-  'margn': heroKharaKapas,
-  'akhl-studio': heroNaushadAli,
-  'akhl_studio': heroNaushadAli
+  'doodlage': '/images/home/Q_BB_Doodlage.png',
+  'ituvana': '/images/home/Q_BB_Ituvana.png',
+  'khara-kapas': '/images/home/Q_BB_Khara_Kapas.png',
+  'naushad-ali': '/images/home/Q_BB_NaushadAli.png',
+  'capisvirleo': '/images/home/Q_BB_Capisvirleo.png',
+  'asaii': '/images/home/Q_BB_Doodlage.png',
+  'margn': '/images/home/Q_BB_Khara_Kapas.png',
+  'akhl-studio': '/images/home/Q_BB_NaushadAli.png',
+  'akhl_studio': '/images/home/Q_BB_NaushadAli.png'
 };
 
-// Lookbook images for each brand from public folder
+// Lookbook images for each brand - using real lookbook pages for Doodlage and Margn
 const brandLookbookImages: Record<string, string[]> = {
   'asaii': ['/images/discover/asaii/1.webp', '/images/discover/asaii/2.webp', '/images/discover/asaii/3.webp', '/images/discover/asaii/4.webp', '/images/discover/asaii/5.webp', '/images/discover/asaii/6.webp'],
-  'doodlage': ['/images/discover/doodlage/1.jpg', '/images/discover/doodlage/2.webp', '/images/discover/doodlage/3.webp', '/images/discover/doodlage/4.webp', '/images/discover/doodlage/5.webp', '/images/discover/doodlage/6.webp'],
-  'margn': ['/images/discover/margn/1.webp', '/images/discover/margn/2.webp', '/images/discover/margn/3.webp', '/images/discover/margn/4.webp', '/images/discover/margn/5.webp', '/images/discover/margn/6.webp'],
+  'doodlage': [
+    '/lookbooks/doodlage/page-01.jpg', '/lookbooks/doodlage/page-02.jpg', '/lookbooks/doodlage/page-03.jpg',
+    '/lookbooks/doodlage/page-04.jpg', '/lookbooks/doodlage/page-05.jpg', '/lookbooks/doodlage/page-06.jpg',
+    '/lookbooks/doodlage/page-07.jpg', '/lookbooks/doodlage/page-08.jpg'
+  ],
+  'margn': [
+    '/lookbooks/margn/page-01.jpg', '/lookbooks/margn/page-02.jpg', '/lookbooks/margn/page-03.jpg',
+    '/lookbooks/margn/page-04.jpg', '/lookbooks/margn/page-05.jpg', '/lookbooks/margn/page-06.jpg',
+    '/lookbooks/margn/page-07.jpg', '/lookbooks/margn/page-08.jpg'
+  ],
   'akhl-studio': ['/images/discover/akhl-studio/1.webp', '/images/discover/akhl-studio/2.webp', '/images/discover/akhl-studio/3.webp', '/images/discover/akhl-studio/4.webp', '/images/discover/akhl-studio/5.webp', '/images/discover/akhl-studio/6.webp'],
   'akhl_studio': ['/images/discover/akhl-studio/1.webp', '/images/discover/akhl-studio/2.webp', '/images/discover/akhl-studio/3.webp', '/images/discover/akhl-studio/4.webp', '/images/discover/akhl-studio/5.webp', '/images/discover/akhl-studio/6.webp'],
   'ituvana': ['/images/discover/ituvana/1.webp', '/images/discover/ituvana/2.webp', '/images/discover/ituvana/3.webp', '/images/discover/ituvana/4.webp', '/images/discover/ituvana/5.webp', '/images/discover/ituvana/6.webp']
@@ -58,7 +62,7 @@ const BrandStorefront = () => {
     );
   }
   
-  const heroImage = heroImages[slug || ''] || heroDoodlage;
+  const heroImage = heroImages[slug || ''] || '/images/home/Q_BB_Doodlage.png';
 
   // Use DB collections or fallback mock data
   const moreCollections = (dbCollections && dbCollections.length > 0)
