@@ -1,11 +1,14 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion, useScroll, useTransform, AnimatePresence, useMotionValueEvent } from 'framer-motion';
-import { ArrowLeft, Plus, Check, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Plus, Check, X, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 import { brands } from '@/data/brands';
 import { useAssortment } from '@/contexts/AssortmentContext';
+import { useCollection } from '@/hooks/useCollections';
+import { useProductsByCollection, ProductWithDetails } from '@/hooks/useProducts';
+import { useBrand } from '@/hooks/useBrands';
 
-// Lookbook images for each brand (same as BrandStorefront)
+// Fallback lookbook images for each brand (used when no products in DB)
 const brandLookbookImages: Record<string, string[]> = {
   'asaii': [
     '/images/discover/asaii/1.webp',
@@ -39,6 +42,14 @@ const brandLookbookImages: Record<string, string[]> = {
     '/images/discover/akhl-studio/5.webp',
     '/images/discover/akhl-studio/6.webp',
   ],
+  'akhl_studio': [
+    '/images/discover/akhl-studio/1.webp',
+    '/images/discover/akhl-studio/2.webp',
+    '/images/discover/akhl-studio/3.webp',
+    '/images/discover/akhl-studio/4.webp',
+    '/images/discover/akhl-studio/5.webp',
+    '/images/discover/akhl-studio/6.webp',
+  ],
   'ituvana': [
     '/images/discover/ituvana/1.webp',
     '/images/discover/ituvana/2.webp',
@@ -49,56 +60,55 @@ const brandLookbookImages: Record<string, string[]> = {
   ],
 };
 
-// Mock collection data per brand
-const brandCollections: Record<string, { name: string; season: string; description: string }[]> = {
-  'asaii': [
-    { name: 'Human Rituals', season: 'Spring Summer, Trans Seasonal', description: 'A celebration of the everyday rituals that define our humanity.' },
-    { name: 'Autumn Whispers', season: 'Fall Winter', description: 'Quiet elegance for the cooler months.' },
-    { name: 'Urban Nomad', season: 'Spring Summer', description: 'Contemporary pieces for the modern wanderer.' },
-  ],
-  'doodlage': [
-    { name: 'Human Rituals', season: 'Spring Summer, Trans Seasonal', description: 'Upcycled fashion that tells a story of renewal.' },
-    { name: 'Zero Waste', season: 'Trans Seasonal', description: 'Every scrap has a purpose, every piece has a story.' },
-    { name: 'Patchwork Dreams', season: 'Fall Winter', description: 'Handcrafted patchwork celebrating imperfection.' },
-  ],
-  'margn': [
-    { name: 'Human Rituals', season: 'Spring Summer, Trans Seasonal', description: 'Minimalist designs rooted in tradition.' },
-    { name: 'Silent Lines', season: 'Fall Winter', description: 'Structured silhouettes with a whisper of drama.' },
-    { name: 'Canvas Stories', season: 'Spring Summer', description: 'Where art meets wearable expression.' },
-  ],
-  'akhl-studio': [
-    { name: 'Human Rituals', season: 'Spring Summer, Trans Seasonal', description: 'Bold expressions of contemporary craft.' },
-    { name: 'Rebel Heritage', season: 'Trans Seasonal', description: 'Traditional techniques with a modern edge.' },
-    { name: 'Night Bloom', season: 'Fall Winter', description: 'Dark florals and midnight textures.' },
-  ],
-  'ituvana': [
-    { name: 'Human Rituals', season: 'Spring Summer, Trans Seasonal', description: 'Natural fibres celebrating slow fashion.' },
-    { name: 'Earth Tones', season: 'Trans Seasonal', description: 'Colors borrowed from the earth itself.' },
-    { name: 'Coastal Calm', season: 'Spring Summer', description: 'Breezy silhouettes inspired by the sea.' },
-  ],
-};
+// Helper to transform DB product to display format
+interface DisplayProduct {
+  id: string;
+  name: string;
+  price: number;
+  image: string;
+  images: string[];
+  fabricDetails: string;
+  feelsLike: string;
+  sizes: string[];
+  description: string;
+  careGuide?: string;
+}
 
-// Mock products (using lookbook images as product images)
-const getProducts = (brandSlug: string) => {
-  const images = brandLookbookImages[brandSlug] || brandLookbookImages['asaii'];
-  return images.map((image, index) => {
-    // Generate multiple images for the product (using all available images rotated)
-    const productImages = [
-      image,
-      images[(index + 1) % images.length],
-      images[(index + 2) % images.length],
-    ];
-    
-    return {
+const transformProductsToDisplay = (dbProducts: ProductWithDetails[], brandSlug: string): DisplayProduct[] => {
+  if (dbProducts.length === 0) {
+    // Fallback to mock data if no products in DB
+    const images = brandLookbookImages[brandSlug] || brandLookbookImages['asaii'];
+    return images.map((image, index) => ({
       id: `${brandSlug}-${index + 1}`,
       name: ['Epidermis Crochet Applique Vest- Off White', 'Handwoven Wrap Blouse', 'Pleated Midi Skirt', 'Embroidered Jacket', 'Evening Gown', 'Tailored Suit Set'][index] || `Style ${index + 1}`,
       price: [485, 295, 320, 650, 890, 720][index] || 399,
       image,
-      images: productImages,
+      images: [image, images[(index + 1) % images.length], images[(index + 2) % images.length]],
       fabricDetails: 'Woven',
-      feelsLike: 'Hand-crocheted applique, Patch pockets i...',
+      feelsLike: 'Hand-crocheted applique, Patch pockets...',
       sizes: ['XS', 'S', 'M', 'L'],
-      description: 'Meticulously crafted with attention to architectural lines. This piece embodies the collection\'s ethos of structured fluidity. Designed for the modern wardrobe, offering versatility and timeless elegance.',
+      description: 'Meticulously crafted with attention to architectural lines. This piece embodies the collection\'s ethos of structured fluidity.',
+    }));
+  }
+
+  return dbProducts.map((p) => {
+    const mainImage = p.images[0]?.image_url || brandLookbookImages[brandSlug]?.[0] || '/images/discover/asaii/1.webp';
+    const allImages = p.images.length > 0 
+      ? p.images.map(img => img.image_url)
+      : [mainImage];
+    const price = p.variants[0]?.price || 0;
+
+    return {
+      id: p.id,
+      name: p.title,
+      price,
+      image: mainImage,
+      images: allImages,
+      fabricDetails: p.fabric_type || 'Woven',
+      feelsLike: p.description?.substring(0, 50) || 'Hand-crafted details...',
+      sizes: ['XS', 'S', 'M', 'L'],
+      description: p.description || p.product_story || 'Meticulously crafted with attention to detail.',
+      careGuide: p.care_guide || undefined,
     };
   });
 };
@@ -115,8 +125,8 @@ const ProductDetailOverlay = ({
   onSelectStyle,
   isInAssortment,
 }: {
-  product: ReturnType<typeof getProducts>[0];
-  products: ReturnType<typeof getProducts>;
+  product: DisplayProduct;
+  products: DisplayProduct[];
   productIndex: number;
   brandSlug: string;
   brandName: string;
@@ -495,6 +505,17 @@ const CollectionDetail = () => {
   
   const { addProduct, removeProduct, isInAssortment, setLastCollectionUrl } = useAssortment();
   
+  // Fetch data from database
+  const { data: dbCollection, isLoading: collectionLoading } = useCollection(collectionSlug || '');
+  const { data: dbProducts, isLoading: productsLoading } = useProductsByCollection(collectionSlug || '');
+  const { data: dbBrand } = useBrand(slug || '');
+  
+  // Transform products to display format
+  const products = useMemo(() => 
+    transformProductsToDisplay(dbProducts || [], slug || 'asaii'),
+    [dbProducts, slug]
+  );
+  
   // Scroll to top on page load and store collection URL for back navigation
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -517,18 +538,20 @@ const CollectionDetail = () => {
     return () => stickyElement.removeEventListener('wheel', handleWheel);
   }, []);
   
-  const brand = brands.find(b => b.slug === slug);
-  const products = getProducts(slug || 'asaii');
+  // Fallback to static data if DB data not available
+  const brand = dbBrand || brands.find(b => b.slug === slug);
   const selectedProduct = selectedProductIndex !== null ? products[selectedProductIndex] : null;
 
-  // Get collection info based on slug or default to first
-  const collections = brandCollections[slug || 'asaii'] || brandCollections['asaii'];
-  const collection = collections.find(c => 
-    c.name.toLowerCase().replace(/\s+/g, '-') === collectionSlug
-  ) || collections[0];
+  // Get collection info from DB or use fallback
+  const collection = dbCollection || {
+    title: collectionSlug?.replace(/-/g, ' ').replace(/_/g, ' ') || 'Collection',
+    description: 'Explore our curated collection of unique pieces.',
+    seasonality: 'Trans Seasonal',
+    tagline: '',
+  };
 
-  // Hero image is the first lookbook image
-  const heroImage = (brandLookbookImages[slug || ''] || brandLookbookImages['asaii'])[0];
+  // Hero image is the first product image or fallback
+  const heroImage = products[0]?.image || (brandLookbookImages[slug || ''] || brandLookbookImages['asaii'])[0];
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -626,7 +649,7 @@ const CollectionDetail = () => {
                 <div className="w-full max-w-[500px] h-[85%]">
                   <img
                     src={heroImage}
-                    alt={collection.name}
+                    alt={collection.title}
                     className="w-full h-full object-cover"
                   />
                 </div>
@@ -635,13 +658,13 @@ const CollectionDetail = () => {
               {/* Right: Collection Info */}
               <div className="w-1/2 h-full flex flex-col justify-center pr-16">
                 <span className="text-gold text-luxury-xs tracking-widest mb-6">
-                  {collection.season.toUpperCase()}
+                  {(collection.seasonality || 'TRANS SEASONAL').toUpperCase()}
                 </span>
                 <h1 className="font-serif text-5xl lg:text-7xl font-light leading-tight mb-8">
-                  {collection.name}
+                  {collection.title}
                 </h1>
                 <p className="text-muted-foreground text-lg leading-relaxed max-w-md mb-8">
-                  {collection.description}
+                  {collection.description || collection.tagline}
                 </p>
                 <div className="flex items-center gap-3">
                   <span className="text-luxury-sm tracking-widest uppercase">Scroll to Explore</span>
