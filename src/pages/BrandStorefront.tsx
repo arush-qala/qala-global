@@ -1,14 +1,17 @@
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Play, Heart, MessageCircle } from 'lucide-react';
+import { ArrowLeft, Play, Heart, MessageCircle, Loader2 } from 'lucide-react';
 import Footer from '@/components/layout/Footer';
 import { brands } from '@/data/brands';
 import LookbookScroll from '@/components/brand/LookbookScroll';
+import { useCollectionsByBrand } from '@/hooks/useCollections';
+import { useBrand } from '@/hooks/useBrands';
 import heroDoodlage from '@/assets/images/home/hero-doodlage.jpg';
 import heroItuvana from '@/assets/images/home/hero-ituvana.jpg';
 import heroKharaKapas from '@/assets/images/home/hero-khara-kapas.jpg';
 import heroNaushadAli from '@/assets/images/home/hero-naushad-ali.jpg';
 import heroCapisvirleo from '@/assets/images/home/hero-capisvirleo.jpg';
+
 const heroImages: Record<string, string> = {
   'doodlage': heroDoodlage,
   'ituvana': heroItuvana,
@@ -17,7 +20,8 @@ const heroImages: Record<string, string> = {
   'capisvirleo': heroCapisvirleo,
   'asaii': heroDoodlage,
   'margn': heroKharaKapas,
-  'akhl-studio': heroNaushadAli
+  'akhl-studio': heroNaushadAli,
+  'akhl_studio': heroNaushadAli
 };
 
 // Lookbook images for each brand from public folder
@@ -26,36 +30,52 @@ const brandLookbookImages: Record<string, string[]> = {
   'doodlage': ['/images/discover/doodlage/1.jpg', '/images/discover/doodlage/2.webp', '/images/discover/doodlage/3.webp', '/images/discover/doodlage/4.webp', '/images/discover/doodlage/5.webp', '/images/discover/doodlage/6.webp'],
   'margn': ['/images/discover/margn/1.webp', '/images/discover/margn/2.webp', '/images/discover/margn/3.webp', '/images/discover/margn/4.webp', '/images/discover/margn/5.webp', '/images/discover/margn/6.webp'],
   'akhl-studio': ['/images/discover/akhl-studio/1.webp', '/images/discover/akhl-studio/2.webp', '/images/discover/akhl-studio/3.webp', '/images/discover/akhl-studio/4.webp', '/images/discover/akhl-studio/5.webp', '/images/discover/akhl-studio/6.webp'],
+  'akhl_studio': ['/images/discover/akhl-studio/1.webp', '/images/discover/akhl-studio/2.webp', '/images/discover/akhl-studio/3.webp', '/images/discover/akhl-studio/4.webp', '/images/discover/akhl-studio/5.webp', '/images/discover/akhl-studio/6.webp'],
   'ituvana': ['/images/discover/ituvana/1.webp', '/images/discover/ituvana/2.webp', '/images/discover/ituvana/3.webp', '/images/discover/ituvana/4.webp', '/images/discover/ituvana/5.webp', '/images/discover/ituvana/6.webp']
 };
-const BrandStorefront = () => {
-  const {
-    slug
-  } = useParams<{
-    slug: string;
-  }>();
-  const brand = brands.find(b => b.slug === slug);
-  if (!brand) {
-    return <div className="min-h-screen flex items-center justify-center">
-        <p>Brand not found</p>
-      </div>;
-  }
-  const heroImage = heroImages[brand.slug] || heroDoodlage;
 
-  // Mock collections data for "More Collections" section
-  const moreCollections = [{
-    name: 'Autumn Whispers',
-    season: 'Fall Winter',
-    image: (brandLookbookImages[slug || ''] || brandLookbookImages['asaii'])[0]
-  }, {
-    name: 'Urban Nomad',
-    season: 'Spring Summer',
-    image: (brandLookbookImages[slug || ''] || brandLookbookImages['asaii'])[2]
-  }, {
-    name: 'Minimalist Dreams',
-    season: 'Trans Seasonal',
-    image: (brandLookbookImages[slug || ''] || brandLookbookImages['asaii'])[4]
-  }];
+const BrandStorefront = () => {
+  const { slug } = useParams<{ slug: string }>();
+  
+  // Fetch data from database
+  const { data: dbCollections, isLoading: collectionsLoading } = useCollectionsByBrand(slug || '');
+  const { data: dbBrand } = useBrand(slug || '');
+  
+  // Fallback to static data
+  const staticBrand = brands.find(b => b.slug === slug);
+  
+  // Unified brand data
+  const brandName = dbBrand?.name || staticBrand?.name || 'Brand';
+  const brandDescription = dbBrand?.description || staticBrand?.description || '';
+  const brandStory = dbBrand?.brand_story || staticBrand?.story || '';
+  const brandLocation = staticBrand?.location || 'India';
+  
+  if (!dbBrand && !staticBrand) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p>Brand not found</p>
+      </div>
+    );
+  }
+  
+  const heroImage = heroImages[slug || ''] || heroDoodlage;
+
+  // Use DB collections or fallback mock data
+  const moreCollections = (dbCollections && dbCollections.length > 0)
+    ? dbCollections.slice(0, 3).map(c => ({
+        name: c.title,
+        handle: c.handle,
+        season: c.seasonality || 'Trans Seasonal',
+        image: c.thumbnail_image || (brandLookbookImages[slug || ''] || brandLookbookImages['asaii'])[0]
+      }))
+    : [
+        { name: 'Autumn Whispers', handle: 'autumn-whispers', season: 'Fall Winter', image: (brandLookbookImages[slug || ''] || brandLookbookImages['asaii'])[0] },
+        { name: 'Urban Nomad', handle: 'urban-nomad', season: 'Spring Summer', image: (brandLookbookImages[slug || ''] || brandLookbookImages['asaii'])[2] },
+        { name: 'Minimalist Dreams', handle: 'minimalist-dreams', season: 'Trans Seasonal', image: (brandLookbookImages[slug || ''] || brandLookbookImages['asaii'])[4] }
+      ];
+
+  // Use brand tags from DB or static
+  const brandTags = (dbBrand?.usp_tags?.split(',').map(t => t.trim()).filter(Boolean)) || staticBrand?.tags || [];
   return <div className="min-h-screen bg-background">
       {/* Back Button */}
       <Link to="/discover" className="fixed top-8 left-8 z-50 flex items-center gap-2 text-primary-foreground hover:text-gold transition-colors">
@@ -66,7 +86,7 @@ const BrandStorefront = () => {
       {/* Hero Section - Full Screen Image */}
       <section className="relative h-screen">
         <div className="absolute inset-0">
-          <img src={heroImage} alt={brand.name} className="w-full h-full object-cover" />
+          <img src={heroImage} alt={brandName} className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-deep-charcoal via-deep-charcoal/40 to-transparent" />
         </div>
 
@@ -83,18 +103,18 @@ const BrandStorefront = () => {
           delay: 0.3
         }} className="max-w-3xl">
             <span className="text-gold text-luxury-label mb-4 block">
-              {brand.location}
+              {brandLocation}
             </span>
             <h1 className="font-serif text-7xl lg:text-9xl font-light text-primary-foreground mb-6">
-              {brand.name}
+              {brandName}
             </h1>
             <p className="text-primary-foreground/80 text-lg leading-relaxed mb-8 max-w-xl">
-              {brand.description}
+              {brandDescription}
             </p>
             
             {/* Feature Tags */}
             <div className="flex flex-wrap gap-3 mb-8">
-              {brand.tags.map(tag => <span key={tag} className="px-4 py-2 border border-primary-foreground/30 text-primary-foreground text-luxury-xs">
+              {brandTags.map((tag: string) => <span key={tag} className="px-4 py-2 border border-primary-foreground/30 text-primary-foreground text-luxury-xs">
                   {tag}
                 </span>)}
             </div>
@@ -143,7 +163,7 @@ const BrandStorefront = () => {
         }} transition={{
           delay: 0.1
         }} className="text-muted-foreground leading-loose text-xl">
-            {brand.story}
+            {brandStory}
           </motion.p>
         </div>
       </section>
@@ -221,7 +241,7 @@ const BrandStorefront = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {moreCollections.map((collection, index) => <Link key={collection.name} to={`/brands/${slug}/collections/${collection.name.toLowerCase().replace(/\s+/g, '-')}`}>
+            {moreCollections.map((collection, index) => <Link key={collection.handle || collection.name} to={`/brands/${slug}/collections/${collection.handle || collection.name.toLowerCase().replace(/\s+/g, '-')}`}>
                 <motion.div initial={{
               opacity: 0,
               y: 20
