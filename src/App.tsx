@@ -12,6 +12,7 @@ import BrandStorefront from "./pages/BrandStorefront";
 import CollectionDetail from "./pages/CollectionDetail";
 import Experience from "./pages/Experience";
 import SampleCrate from "./pages/experience/SampleCrate";
+import SampleCrateCheckout from "./pages/experience/SampleCrateCheckout";
 import B2BOrder from "./pages/experience/B2BOrder";
 import PrivateShowcase from "./pages/experience/PrivateShowcase";
 import TradeShow from "./pages/experience/TradeShow";
@@ -33,6 +34,7 @@ const App = () => (
             <Route path="/brands/:slug/collections/:collectionSlug" element={<CollectionDetail />} />
             <Route path="/experience" element={<Experience />} />
             <Route path="/experience/sample-crate" element={<SampleCrate />} />
+            <Route path="/experience/sample-crate/checkout" element={<SampleCrateCheckout />} />
             <Route path="/experience/b2b-order" element={<B2BOrder />} />
             <Route path="/experience/private-showcase" element={<PrivateShowcase />} />
             <Route path="/experience/trade-show" element={<TradeShow />} />
