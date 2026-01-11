@@ -334,20 +334,7 @@ const ProductDetailOverlay = ({
                     )}
                   </div>
 
-                  {/* Thumbnail strip */}
-                  <div className="flex gap-2 mt-4 justify-center">
-                    {product.images.map((img, idx) => (
-                      <button
-                        key={idx}
-                        onClick={() => setCurrentImageIndex(idx)}
-                        className={`w-16 h-20 overflow-hidden border-2 transition-colors ${
-                          currentImageIndex === idx ? "border-gold" : "border-transparent hover:border-muted"
-                        }`}
-                      >
-                        <img src={img} alt={`View ${idx + 1}`} className="w-full h-full object-cover" />
-                      </button>
-                    ))}
-                  </div>
+                  {/* Thumbnail strip - hidden per design refinement, navigation via arrows only */}
                 </div>
               </motion.div>
 
