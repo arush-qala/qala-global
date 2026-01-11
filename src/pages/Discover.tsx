@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, RefreshCw } from 'lucide-react';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import CTAGuidance from '@/components/layout/CTAGuidance';
 import { brands } from '@/data/brands';
 const brandImages: Record<string, string[]> = {
   'asaii': ['/images/discover/asaii/1.webp', '/images/discover/asaii/2.webp', '/images/discover/asaii/3.webp', '/images/discover/asaii/4.webp', '/images/discover/asaii/5.webp', '/images/discover/asaii/6.webp'],
@@ -34,6 +35,7 @@ const Discover = () => {
   };
   return <div className="min-h-screen bg-background">
       <Header />
+      <CTAGuidance message="Explore brands below → Select a brand to visit their store or discover similar options" />
       
       <main className="pt-24 pb-32">
         {/* Filter Indicator */}

@@ -4,6 +4,7 @@ import { motion, useScroll, useTransform, AnimatePresence, useMotionValueEvent }
 import { ArrowLeft, Plus, Check, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { brands } from "@/data/brands";
 import { useAssortment } from "@/contexts/AssortmentContext";
+import CTAGuidance from "@/components/layout/CTAGuidance";
 
 // Lookbook images for each brand (same as BrandStorefront)
 const brandLookbookImages: Record<string, string[]> = {
@@ -606,6 +607,9 @@ const CollectionDetail = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* CTA Guidance */}
+      <CTAGuidance message="Select products to add to your assortment cart" />
+
       {/* Fixed Header */}
       <div className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm">
         <div className="flex items-center justify-between px-8 py-6">

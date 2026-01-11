@@ -2,6 +2,7 @@ import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Play, Heart, MessageCircle, Loader2 } from 'lucide-react';
 import Footer from '@/components/layout/Footer';
+import CTAGuidance from '@/components/layout/CTAGuidance';
 import { brands } from '@/data/brands';
 import LookbookScroll from '@/components/brand/LookbookScroll';
 import { useCollectionsByBrand } from '@/hooks/useCollections';
@@ -81,6 +82,12 @@ const BrandStorefront = () => {
   // Use brand tags from DB or static
   const brandTags = (dbBrand?.usp_tags?.split(',').map(t => t.trim()).filter(Boolean)) || staticBrand?.tags || [];
   return <div className="min-h-screen bg-background">
+      {/* CTA Guidance */}
+      <CTAGuidance 
+        message="Scroll to explore the brand's story → Browse featured looks and collections" 
+        className="text-primary-foreground [&>div]:bg-charcoal/60 [&>div]:border-primary-foreground/20"
+      />
+
       {/* Back Button */}
       <Link to="/discover" className="fixed top-8 left-8 z-50 flex items-center gap-2 text-primary-foreground hover:text-gold transition-colors">
         <ArrowLeft className="w-4 h-4" />
