@@ -18,13 +18,19 @@ const LookbookScroll = ({
   // Each image is 1/3 viewport width, CTA slide is 1 viewport width
   // We want the CTA to be centered when scroll ends
   useEffect(() => {
-    if (containerRef.current) {
-      // Total content: images (each 33.33vw) + CTA (100vw)
-      // We need enough scroll distance to reveal all images + center the CTA
-      const imagesWidth = images.length * (window.innerWidth / 3);
-      // Add viewport height for scroll distance
-      setContainerHeight(imagesWidth + window.innerHeight * 0.5);
-    }
+    const calculateHeight = () => {
+      if (containerRef.current) {
+        // Total content: images (each 33.33vw) + CTA (100vw)
+        // The CTA should be centered when scroll ends
+        const imagesWidth = images.length * (window.innerWidth / 3);
+        // Add viewport height for scroll distance - calibrated so CTA centers at end
+        setContainerHeight(imagesWidth + window.innerHeight * 0.6);
+      }
+    };
+    
+    calculateHeight();
+    window.addEventListener('resize', calculateHeight);
+    return () => window.removeEventListener('resize', calculateHeight);
   }, [images.length]);
 
   // Prevent horizontal scroll from triggering browser back
@@ -55,9 +61,13 @@ const LookbookScroll = ({
   });
 
   // Calculate max scroll: images take (n * 33.33vw), CTA takes 100vw
-  // We want to stop when CTA is centered (shifted by 50vw from right edge)
-  const totalImagesWidth = images.length * (100 / 3);
-  // Stop when CTA button is centered - don't scroll past that point
+  // We want to stop exactly when CTA is centered in viewport
+  const imageWidthPercent = 100 / 3; // Each image is 33.33vw
+  const totalImagesWidth = images.length * imageWidthPercent;
+  // CTA slide is 100vw wide, to center it we need to scroll so it's at 50vw from left
+  // Total scrollable content = images + CTA = totalImagesWidth + 100
+  // To center CTA: scroll = totalImagesWidth + 50 (half of CTA width) - 50 (half of viewport)
+  // Simplified: maxScroll = totalImagesWidth (CTA will be centered)
   const maxScroll = totalImagesWidth;
   const x = useTransform(scrollYProgress, [0, 1], ['0%', `-${maxScroll}%`]);
   return <section ref={containerRef} className="relative bg-sand" style={{
