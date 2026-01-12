@@ -61,8 +61,8 @@ export const AssortmentProvider = ({ children }: { children: ReactNode }) => {
       });
     }
     
-    // Open tray when product is added
-    setIsTrayOpen(true);
+    // NOTE: Removed auto-open tray behavior for seamless browsing flow
+    // Tray now only opens when user explicitly clicks on the bottom indicator
   }, []);
 
   const removeProduct = useCallback((id: string) => {
