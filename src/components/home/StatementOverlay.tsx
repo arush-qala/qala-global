@@ -8,13 +8,7 @@ interface StatementOverlayProps {
   currentSlideIndex: number;
 }
 
-const categoryOptions = [
-  "Dresses",
-  "Tops",
-  "Shirts",
-  "Pants",
-  "Jackets",
-];
+const categoryOptions = ["Dresses", "Tops", "Shirts", "Pants", "Jackets"];
 
 const styleOptions = [
   "Spring/Summer",
@@ -72,9 +66,7 @@ const FullScreenSelector = ({
             </button>
 
             {/* Title */}
-            <h3 className="font-serif text-2xl font-light text-center mb-8">
-              {title}
-            </h3>
+            <h3 className="font-serif text-2xl font-light text-center mb-8">{title}</h3>
 
             {/* Options grid */}
             <div className="grid grid-cols-2 gap-3">
@@ -123,10 +115,9 @@ const StatementOverlay = ({ currentSlideIndex }: StatementOverlayProps) => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.3 }}
       >
-        <div className="flex items-center justify-center gap-4 pointer-events-auto bg-background/80 backdrop-blur-sm py-6 px-12 w-full max-w-6xl">
+        <div className="flex items-center justify-center gap-4 pointer-events-auto bg-background/80 backdrop-blur-sm py-6 px-8 w-full max-w-6xl">
           <p className="font-serif text-xl md:text-2xl lg:text-3xl font-light text-foreground whitespace-nowrap flex items-center flex-wrap gap-x-2">
-            I am looking for{" "}
-            {/* Category Selector Trigger */}
+            I am looking for {/* Category Selector Trigger */}
             <button
               onClick={() => setShowCategorySelector(true)}
               className="inline-flex items-center gap-1 text-gold hover:text-gold/80 transition-colors underline underline-offset-4 decoration-1"
@@ -134,8 +125,7 @@ const StatementOverlay = ({ currentSlideIndex }: StatementOverlayProps) => {
               {selectedCategory}
               <ChevronDown className="w-4 h-4" />
             </button>{" "}
-            in{" "}
-            {/* Style Selector Trigger */}
+            in {/* Style Selector Trigger */}
             <button
               onClick={() => setShowStyleSelector(true)}
               className="inline-flex items-center gap-1 text-gold hover:text-gold/80 transition-colors underline underline-offset-4 decoration-1"
