@@ -1,162 +1,241 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useCallback } from 'react';
 import { motion, useScroll, useTransform, useMotionValueEvent } from 'framer-motion';
 import { Link } from 'react-router-dom';
+
 interface LookbookScrollProps {
   images: string[];
   slug: string;
 }
+
 const LookbookScroll = ({
   images,
   slug
 }: LookbookScrollProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const stickyRef = useRef<HTMLDivElement>(null);
-  const [containerHeight, setContainerHeight] = useState(0);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
+  const [endSpacerPx, setEndSpacerPx] = useState(0);
+  const [scrollProgress, setScrollProgress] = useState(0);
   const [hasReachedEnd, setHasReachedEnd] = useState(false);
 
-  // Calculate the total scroll distance needed
-  // Each image is 1/3 viewport width, CTA slide is 1 viewport width
-  // We want the CTA to be centered when scroll ends - no overscroll
+  // Compute end spacer to center CTA at scroll end
+  const computeEndSpacer = useCallback(() => {
+    if (!scrollRef.current || !ctaRef.current) return;
+    
+    const scrollWidth = scrollRef.current.clientWidth;
+    const ctaWidth = ctaRef.current.clientWidth;
+    const spacer = Math.max(0, (scrollWidth / 2) - (ctaWidth / 2));
+    
+    setEndSpacerPx(spacer);
+    
+    // Debug logging
+    const maxScrollLeft = scrollRef.current.scrollWidth - scrollRef.current.clientWidth;
+    console.log('[LookbookScroll] Debug:', {
+      'scrollRef.clientWidth': scrollWidth,
+      'ctaRef.clientWidth': ctaWidth,
+      'endSpacerPx': spacer,
+      'maxScrollLeft': maxScrollLeft
+    });
+  }, []);
+
   useEffect(() => {
-    const calculateHeight = () => {
-      if (containerRef.current) {
-        const vw = window.innerWidth;
-        const imageWidth = vw / 3; // Each image is 33.33vw
-        const totalImagesWidth = images.length * imageWidth;
-        // CTA is 100vw wide. To center it, we need to scroll so its center is at viewport center.
-        // Total content width = totalImagesWidth + 100vw (CTA)
-        // Final scroll position: we want CTA center at viewport center
-        // CTA starts at x = totalImagesWidth, CTA center is at totalImagesWidth + 50vw
-        // To center: scroll = totalImagesWidth + 50vw - 50vw = totalImagesWidth
-        // So maxScroll in vw = (totalImagesWidth / vw) * 100 = images.length * 33.33
-        // The container height drives the scroll - calibrate so scrollYProgress=1 means CTA centered
-        const scrollDistance = totalImagesWidth; // This is the exact translateX needed
-        // Container height = viewport height + scroll distance (converted to vh equivalent)
-        setContainerHeight(window.innerHeight + scrollDistance * 0.8);
+    // Initial computation
+    const timer = setTimeout(computeEndSpacer, 100);
+    
+    window.addEventListener('resize', computeEndSpacer);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('resize', computeEndSpacer);
+    };
+  }, [computeEndSpacer]);
+
+  // Re-compute when images change
+  useEffect(() => {
+    computeEndSpacer();
+  }, [images.length, computeEndSpacer]);
+
+  // Track scroll progress for indicators
+  useEffect(() => {
+    const scrollElement = scrollRef.current;
+    if (!scrollElement) return;
+
+    const handleScroll = () => {
+      const maxScroll = scrollElement.scrollWidth - scrollElement.clientWidth;
+      if (maxScroll > 0) {
+        const progress = scrollElement.scrollLeft / maxScroll;
+        setScrollProgress(progress);
+        setHasReachedEnd(progress >= 0.98);
       }
     };
-    
-    calculateHeight();
-    window.addEventListener('resize', calculateHeight);
-    return () => window.removeEventListener('resize', calculateHeight);
-  }, [images.length]);
+
+    scrollElement.addEventListener('scroll', handleScroll, { passive: true });
+    return () => scrollElement.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Prevent horizontal scroll from triggering browser back
   useEffect(() => {
-    const stickyElement = stickyRef.current;
-    if (!stickyElement) return;
+    const scrollElement = scrollRef.current;
+    if (!scrollElement) return;
+    
     const handleWheel = (e: WheelEvent) => {
       // If horizontal scroll detected, prevent default to avoid browser back
       if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
         e.preventDefault();
+        scrollElement.scrollLeft += e.deltaX;
       }
     };
-    stickyElement.addEventListener('wheel', handleWheel, {
-      passive: false
-    });
-    return () => stickyElement.removeEventListener('wheel', handleWheel);
+    
+    scrollElement.addEventListener('wheel', handleWheel, { passive: false });
+    return () => scrollElement.removeEventListener('wheel', handleWheel);
   }, []);
-  const {
-    scrollYProgress
-  } = useScroll({
-    target: containerRef,
-    offset: ['start start', 'end end']
-  });
 
-  // Track when we've reached the end
-  useMotionValueEvent(scrollYProgress, "change", latest => {
-    setHasReachedEnd(latest >= 0.98);
-  });
+  const totalSlides = images.length + 1; // images + CTA
 
-  // Calculate max scroll to stop exactly when CTA is horizontally centered
-  // Images: n images × 33.33vw each
-  // CTA slide: 100vw wide
-  // To center CTA in viewport: translate = totalImagesWidth (in vw)
-  // At this point, CTA's left edge is at 0, and since CTA is 100vw, its center is at 50vw = viewport center
-  const imageWidthPercent = 100 / 3; // Each image is 33.33vw
-  const totalImagesWidth = images.length * imageWidthPercent;
-  // This is the exact percentage to translate so CTA is centered
-  const maxScroll = totalImagesWidth;
-  const x = useTransform(scrollYProgress, [0, 1], ['0%', `-${maxScroll}%`]);
-  return <section ref={containerRef} className="relative bg-sand" style={{
-    height: `${containerHeight}px`
-  }}>
-      {/* Sticky container - reduced height (70vh instead of 100vh) */}
-      <div ref={stickyRef} className="sticky top-0 h-[70vh] overflow-hidden flex flex-col">
-        {/* Header */}
-        <motion.h3 initial={{
-        opacity: 0
-      }} whileInView={{
-        opacity: 1
-      }} viewport={{
-        once: true
-      }} className="text-luxury-label text-center py-6 text-2xl">
-          FEATURED LOOKBOOK 
-        </motion.h3>
+  return (
+    <section ref={containerRef} className="relative bg-sand">
+      {/* Header */}
+      <motion.h3
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        className="text-luxury-label text-center py-6 text-2xl"
+      >
+        FEATURED LOOKBOOK
+      </motion.h3>
 
-        {/* Horizontal scroll container */}
-        <div className="flex-1 relative overflow-hidden">
-          <motion.div className="flex h-full absolute top-0 left-0" style={{
-          x
-        }}>
-            {images.map((img, index) => <div key={index} className="h-full flex-shrink-0 relative group cursor-pointer" style={{
-            width: `${100 / 3}vw`
-          }}>
-                <img src={img} alt={`Look ${index + 1}`} className="w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-charcoal/0 group-hover:bg-charcoal/30 transition-all duration-500 flex items-end p-6">
-                  <span className="text-primary-foreground text-luxury-xs opacity-0 group-hover:opacity-100 transition-opacity">
-                    Look {String(index + 1).padStart(2, '0')}
-                  </span>
-                </div>
-              </div>)}
-            
-            {/* Final slide with CTA */}
-            <div className="w-screen h-full flex-shrink-0 flex items-center justify-center px-4 lg:px-16">
-              <div className="text-center">
-                <h4 className="font-serif text-3xl lg:text-4xl font-light mb-8">
-                  Explore the Full Collection
-                </h4>
-                <Link to={`/brands/${slug}/collections/spring-24`} className="btn-luxury inline-flex items-center gap-3">
-                  View Full Collection
-                </Link>
+      {/* Horizontal scroll container - actual overflow scroll */}
+      <div
+        ref={scrollRef}
+        className="h-[60vh] overflow-x-auto overflow-y-hidden scroll-smooth"
+        style={{
+          scrollSnapType: 'x mandatory',
+          WebkitOverflowScrolling: 'touch',
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none',
+        }}
+      >
+        <style>{`
+          div[class*="overflow-x-auto"]::-webkit-scrollbar {
+            display: none;
+          }
+        `}</style>
+        
+        <div className="flex h-full" style={{ paddingRight: 0 }}>
+          {/* Image slides */}
+          {images.map((img, index) => (
+            <div
+              key={index}
+              className="h-full flex-shrink-0 relative group cursor-pointer"
+              style={{
+                width: `${100 / 3}vw`,
+                scrollSnapAlign: 'start',
+              }}
+            >
+              <img
+                src={img}
+                alt={`Look ${index + 1}`}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-charcoal/0 group-hover:bg-charcoal/30 transition-all duration-500 flex items-end p-6">
+                <span className="text-primary-foreground text-luxury-xs opacity-0 group-hover:opacity-100 transition-opacity">
+                  Look {String(index + 1).padStart(2, '0')}
+                </span>
               </div>
             </div>
-          </motion.div>
-        </div>
+          ))}
 
-        {/* Progress indicator */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2">
-          {images.map((_, index) => <ProgressDot key={index} index={index} total={images.length} scrollProgress={scrollYProgress} />)}
-          <ProgressDot index={images.length} total={images.length + 1} scrollProgress={scrollYProgress} />
-        </div>
+          {/* CTA slide */}
+          <div
+            ref={ctaRef}
+            className="h-full flex-shrink-0 flex items-center justify-center px-4 lg:px-16"
+            style={{
+              width: '100vw',
+              scrollSnapAlign: 'center',
+            }}
+          >
+            <div className="text-center">
+              <h4 className="font-serif text-3xl lg:text-4xl font-light mb-8">
+                Explore the Full Collection
+              </h4>
+              <Link
+                to={`/brands/${slug}/collections/spring-24`}
+                className="btn-luxury inline-flex items-center gap-3"
+              >
+                View Full Collection
+              </Link>
+            </div>
+          </div>
 
-        {/* Scroll hint - hide when reached end */}
-        <motion.div className="absolute bottom-6 right-8 text-luxury-xs text-muted-foreground" animate={{
-        opacity: hasReachedEnd ? 0 : 1
-      }}>
-          Scroll to explore
-        </motion.div>
+          {/* Computed end spacer - ensures CTA centers exactly at scroll end */}
+          <div
+            aria-hidden="true"
+            style={{
+              width: endSpacerPx,
+              flexShrink: 0,
+              flexGrow: 0,
+            }}
+          />
+        </div>
       </div>
-    </section>;
+
+      {/* Progress indicator */}
+      <div className="flex justify-center py-6">
+        <div className="flex items-center gap-2">
+          {images.map((_, index) => (
+            <ProgressDotSimple
+              key={index}
+              index={index}
+              total={totalSlides}
+              progress={scrollProgress}
+            />
+          ))}
+          <ProgressDotSimple
+            index={images.length}
+            total={totalSlides}
+            progress={scrollProgress}
+          />
+        </div>
+      </div>
+
+      {/* Scroll hint - hide when reached end */}
+      <motion.div
+        className="absolute bottom-6 right-8 text-luxury-xs text-muted-foreground"
+        animate={{ opacity: hasReachedEnd ? 0 : 1 }}
+      >
+        Scroll to explore
+      </motion.div>
+    </section>
+  );
 };
 
-// Progress dot component
-const ProgressDot = ({
+// Simple progress dot component for actual scroll-based progress
+const ProgressDotSimple = ({
   index,
   total,
-  scrollProgress
+  progress
 }: {
   index: number;
   total: number;
-  scrollProgress: ReturnType<typeof useScroll>['scrollYProgress'];
+  progress: number;
 }) => {
   const start = index / total;
   const end = (index + 1) / total;
-  const opacity = useTransform(scrollProgress, [start, end], [0.3, 1]);
-  const scale = useTransform(scrollProgress, [start, end], [1, 1.5]);
-  return <motion.div className="w-2 h-2 rounded-full bg-charcoal" style={{
-    opacity,
-    scale
-  }} />;
+  
+  // Calculate opacity and scale based on progress
+  const isActive = progress >= start && progress < end;
+  const isPast = progress >= end;
+  const opacity = isActive ? 1 : isPast ? 0.6 : 0.3;
+  const scale = isActive ? 1.5 : 1;
+
+  return (
+    <div
+      className="w-2 h-2 rounded-full bg-charcoal transition-all duration-300"
+      style={{
+        opacity,
+        transform: `scale(${scale})`,
+      }}
+    />
+  );
 };
+
 export default LookbookScroll;
