@@ -158,16 +158,49 @@ const ProductDetailOverlay = ({
   const [activeTab, setActiveTab] = useState("DETAILS");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const overlayRef = useRef<HTMLDivElement>(null);
+  const imageContainerRef = useRef<HTMLDivElement>(null);
+  
+  // State-based panel visibility - triggered on first scroll
+  const [rightPanelVisible, setRightPanelVisible] = useState(false);
+  const hasScrolledRef = useRef(false);
 
-  // Ensure the overlay always opens at the top "cover" state
+  // Reset state when product changes
   useEffect(() => {
     overlayRef.current?.scrollTo({ top: 0 });
+    imageContainerRef.current?.scrollTo({ top: 0 });
     setCurrentImageIndex(0);
+    setRightPanelVisible(false);
+    hasScrolledRef.current = false;
   }, [product.id]);
 
-  const { scrollYProgress } = useScroll({
-    container: overlayRef,
-  });
+  // Listen for ANY scroll on image container to reveal right panel
+  useEffect(() => {
+    const imageContainer = imageContainerRef.current;
+    if (!imageContainer) return;
+
+    const handleScroll = () => {
+      if (!hasScrolledRef.current && imageContainer.scrollTop > 0) {
+        hasScrolledRef.current = true;
+        setRightPanelVisible(true);
+      }
+    };
+
+    const handleWheel = (e: WheelEvent) => {
+      // Trigger on any vertical wheel movement
+      if (!hasScrolledRef.current && Math.abs(e.deltaY) > 0) {
+        hasScrolledRef.current = true;
+        setRightPanelVisible(true);
+      }
+    };
+
+    imageContainer.addEventListener('scroll', handleScroll, { passive: true });
+    imageContainer.addEventListener('wheel', handleWheel, { passive: true });
+    
+    return () => {
+      imageContainer.removeEventListener('scroll', handleScroll);
+      imageContainer.removeEventListener('wheel', handleWheel);
+    };
+  }, [product.id]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -184,15 +217,6 @@ const ProductDetailOverlay = ({
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [productIndex, products.length, onNavigate, onClose]);
-
-  // Parallax: the image stack glides left as the right panel "unpacks"
-  const imageX = useTransform(scrollYProgress, [0, 0.15, 0.4], ["0vw", "0vw", "-18vw"]);
-
-  // Right panel reveal: starts completely hidden (opacity 0, off-screen)
-  // Triggers immediately on ANY scroll (even 1px) - using very small threshold
-  // scrollYProgress of 0.01 ≈ 2vh scroll which is ~15-20px
-  const panelOpacity = useTransform(scrollYProgress, [0, 0.005, 0.02], [0, 0, 1]);
-  const panelX = useTransform(scrollYProgress, [0, 0.005, 0.02], ["100%", "100%", "0%"]);
 
   const prevProduct = productIndex > 0 ? products[productIndex - 1] : null;
   const nextProduct = productIndex < products.length - 1 ? products[productIndex + 1] : null;
@@ -302,8 +326,13 @@ const ProductDetailOverlay = ({
 
             {/* Middle Section - Fixed 86vw containing images + details panel */}
             <div className="w-[86vw] flex-shrink-0 sticky top-0 h-screen overflow-hidden">
-              {/* Image Column - shifts left on scroll, now with vertical scroll for multi-image stack */}
-              <motion.div style={{ x: imageX }} className="absolute inset-0 flex justify-center pt-16 overflow-y-auto hide-scrollbar">
+              {/* Image Column - shifts left when panel reveals */}
+              <motion.div 
+                ref={imageContainerRef}
+                animate={{ x: rightPanelVisible ? "-18vw" : "0vw" }}
+                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                className="absolute inset-0 flex justify-center pt-16 overflow-y-auto hide-scrollbar"
+              >
                 <div className="max-w-[520px] w-full flex flex-col pb-16">
                   {/* Multi-Image Vertical Stack */}
                   {(() => {
@@ -325,9 +354,14 @@ const ProductDetailOverlay = ({
                 </div>
               </motion.div>
 
-              {/* Right Panel - Reveals on scroll (positioned absolutely within middle section) */}
+              {/* Right Panel - Reveals on first scroll */}
               <motion.aside
-                style={{ opacity: panelOpacity, x: panelX }}
+                initial={{ opacity: 0, x: "100%" }}
+                animate={{ 
+                  opacity: rightPanelVisible ? 1 : 0, 
+                  x: rightPanelVisible ? "0%" : "100%" 
+                }}
+                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                 className="w-[432px] absolute right-0 top-0 h-screen border-l border-border bg-background overflow-y-auto"
               >
                 <div className="h-full flex flex-col px-10 py-12">
