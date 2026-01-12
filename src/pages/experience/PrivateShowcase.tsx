@@ -39,9 +39,9 @@ const PrivateShowcase = () => {
             className="flex items-center gap-2 hover:text-gold transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span className="text-luxury-sm tracking-widest uppercase">Back</span>
+            <span className="text-sm tracking-widest uppercase">Back</span>
           </button>
-          <span className="text-luxury-sm tracking-widest">PRIVATE SHOWCASE</span>
+          <span className="text-sm tracking-widest">PRIVATE SHOWCASE</span>
           <div className="w-20" />
         </div>
       </div>
@@ -87,8 +87,8 @@ const PrivateShowcase = () => {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
             >
-              <h1 className="font-serif text-3xl mb-4">Schedule Your Showcase</h1>
-              <p className="text-muted-foreground mb-8 leading-relaxed">
+              <h1 className="font-serif text-4xl lg:text-5xl mb-4">Schedule Your Showcase</h1>
+              <p className="text-muted-foreground mb-8 leading-relaxed text-lg">
                 Our brand representative will bring your curated selection directly to your boutique. 
                 Experience the fabrics, discuss styling opportunities, and place orders with 
                 personalized guidance.
@@ -238,7 +238,7 @@ const PrivateShowcase = () => {
       >
         <div className="max-w-6xl mx-auto px-8 py-6 flex items-center justify-between">
           <div>
-            <p className="text-primary-foreground text-luxury-sm mb-1">
+            <p className="text-primary-foreground text-sm mb-1">
               {products.length} pieces in your selection
             </p>
             <p className="text-muted-foreground text-xs">

@@ -84,9 +84,9 @@ const TradeShow = () => {
             className="flex items-center gap-2 hover:text-gold transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span className="text-luxury-sm tracking-widest uppercase">Back</span>
+            <span className="text-sm tracking-widest uppercase">Back</span>
           </button>
-          <span className="text-luxury-sm tracking-widest">TRADE SHOWS</span>
+          <span className="text-sm tracking-widest">TRADE SHOWS</span>
           <div className="w-20" />
         </div>
       </div>
@@ -99,8 +99,8 @@ const TradeShow = () => {
             animate={{ opacity: 1, y: 0 }}
             className="text-center"
           >
-            <h1 className="font-serif text-4xl lg:text-5xl mb-4">Meet Us In Person</h1>
-            <p className="text-muted-foreground max-w-xl mx-auto">
+            <h1 className="font-serif text-4xl lg:text-6xl mb-4">Meet Us In Person</h1>
+            <p className="text-muted-foreground max-w-xl mx-auto text-lg">
               Experience our collections at the world's premier fashion events. 
               Book exclusive booth appointments for personalized consultations.
             </p>
@@ -233,7 +233,7 @@ const TradeShow = () => {
       >
         <div className="max-w-6xl mx-auto px-8 py-6 flex items-center justify-between">
           <div>
-            <p className="text-primary-foreground text-luxury-sm mb-1">
+            <p className="text-primary-foreground text-sm mb-1">
               {selectedEvents.size} event{selectedEvents.size !== 1 ? 's' : ''} selected
             </p>
             <p className="text-muted-foreground text-xs">
