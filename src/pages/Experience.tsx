@@ -87,7 +87,9 @@ const Experience = () => {
 
           {/* Selection Preview */}
           {products.length > 0 && <div className="flex justify-center gap-2 mb-16">
-              {products.slice(0, 8).map((product, index) => {})}
+              {products.slice(0, 8).map((product, index) => (
+                <div key={product.id || index} className="w-16 h-16 border border-border bg-muted" />
+              ))}
               {products.length > 8 && <div className="w-16 h-16 border border-border flex items-center justify-center bg-muted">
                   <span className="text-muted-foreground text-sm">+{products.length - 8}</span>
                 </div>}
