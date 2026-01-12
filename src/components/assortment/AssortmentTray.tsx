@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAssortment } from '@/contexts/AssortmentContext';
 import { AssortmentReview } from './AssortmentReview';
@@ -6,8 +7,12 @@ import { AssortmentReview } from './AssortmentReview';
 export const AssortmentTray = () => {
   const { products } = useAssortment();
   const [isReviewOpen, setIsReviewOpen] = useState(false);
+  const location = useLocation();
 
-  if (products.length === 0) return null;
+  // Hide on homepage
+  const isHomepage = location.pathname === '/';
+  
+  if (products.length === 0 || isHomepage) return null;
 
   return (
     <>

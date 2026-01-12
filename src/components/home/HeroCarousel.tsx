@@ -50,8 +50,6 @@ const HeroCarousel = ({ onSlideChange, currentIndex }: HeroCarouselProps) => {
             alt={heroSlides[currentIndex].brandName}
             className="w-full h-full object-cover"
           />
-          {/* Overlay gradient */}
-          <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-background/20" />
         </motion.div>
       </AnimatePresence>
     </div>
