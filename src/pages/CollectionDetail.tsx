@@ -300,41 +300,26 @@ const ProductDetailOverlay = ({
 
             {/* Middle Section - Fixed 86vw containing images + details panel */}
             <div className="w-[86vw] flex-shrink-0 sticky top-0 h-screen overflow-hidden">
-              {/* Image Column - shifts left on scroll */}
-              <motion.div style={{ x: imageX }} className="absolute inset-0 flex justify-center pt-16">
-                <div className="max-w-[520px] w-full flex flex-col">
-                  {/* Main Image */}
-                  <div className="relative">
-                    <img
-                      src={product.images[currentImageIndex]}
-                      alt={`${product.name}`}
-                      className="w-full h-[70vh] object-cover"
-                    />
-
-                    {/* Image navigation arrows */}
-                    {product.images.length > 1 && (
-                      <>
-                        <button
-                          onClick={() =>
-                            setCurrentImageIndex((prev) => (prev === 0 ? product.images.length - 1 : prev - 1))
-                          }
-                          className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-background/80 hover:bg-background flex items-center justify-center transition-colors"
-                        >
-                          <ChevronLeft className="w-5 h-5" />
-                        </button>
-                        <button
-                          onClick={() =>
-                            setCurrentImageIndex((prev) => (prev === product.images.length - 1 ? 0 : prev + 1))
-                          }
-                          className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-background/80 hover:bg-background flex items-center justify-center transition-colors"
-                        >
-                          <ChevronRight className="w-5 h-5" />
-                        </button>
-                      </>
-                    )}
-                  </div>
-
-                  {/* Thumbnail strip - hidden per design refinement, navigation via arrows only */}
+              {/* Image Column - shifts left on scroll, now with vertical scroll for multi-image stack */}
+              <motion.div style={{ x: imageX }} className="absolute inset-0 flex justify-center pt-16 overflow-y-auto hide-scrollbar">
+                <div className="max-w-[520px] w-full flex flex-col pb-16">
+                  {/* Multi-Image Vertical Stack */}
+                  {(() => {
+                    // Fallback: if only 1 image, duplicate to show 3 images
+                    const displayImages = product.images.length === 1 
+                      ? [product.images[0], product.images[0], product.images[0]]
+                      : product.images;
+                    
+                    return displayImages.map((img, idx) => (
+                      <div key={idx} className={idx > 0 ? "mt-6" : ""}>
+                        <img
+                          src={img}
+                          alt={`${product.name} - View ${idx + 1}`}
+                          className="w-full aspect-[3/4] object-cover"
+                        />
+                      </div>
+                    ));
+                  })()}
                 </div>
               </motion.div>
 

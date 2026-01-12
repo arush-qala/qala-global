@@ -13,8 +13,8 @@ const CTAGuidance = ({ message, className = '' }: CTAGuidanceProps) => {
       transition={{ duration: 0.6, delay: 0.3, ease: [0.4, 0, 0.2, 1] }}
       className={`fixed top-20 right-8 z-40 max-w-xs ${className}`}
     >
-      <div className="px-4 py-3 bg-background/90 backdrop-blur-sm border border-border/50 shadow-sm">
-        <p className="text-sm font-light text-muted-foreground leading-relaxed tracking-wide">
+      <div className="px-4 py-3 bg-charcoal/95 backdrop-blur-md border border-foreground/10 shadow-lg">
+        <p className="text-sm font-light text-primary-foreground/90 leading-relaxed tracking-wide drop-shadow-sm">
           {message}
         </p>
       </div>
