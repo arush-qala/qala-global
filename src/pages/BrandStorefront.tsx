@@ -24,68 +24,71 @@ const heroImages: Record<string, string> = {
 // Lookbook images for each brand - using real lookbook pages for Doodlage and Margn
 const brandLookbookImages: Record<string, string[]> = {
   'asaii': ['/images/discover/asaii/1.webp', '/images/discover/asaii/2.webp', '/images/discover/asaii/3.webp', '/images/discover/asaii/4.webp', '/images/discover/asaii/5.webp', '/images/discover/asaii/6.webp'],
-  'doodlage': [
-    '/lookbooks/doodlage/page-01.jpg', '/lookbooks/doodlage/page-02.jpg', '/lookbooks/doodlage/page-03.jpg',
-    '/lookbooks/doodlage/page-04.jpg', '/lookbooks/doodlage/page-05.jpg', '/lookbooks/doodlage/page-06.jpg',
-    '/lookbooks/doodlage/page-07.jpg', '/lookbooks/doodlage/page-08.jpg'
-  ],
-  'margn': [
-    '/lookbooks/margn/page-01.jpg', '/lookbooks/margn/page-02.jpg', '/lookbooks/margn/page-03.jpg',
-    '/lookbooks/margn/page-04.jpg', '/lookbooks/margn/page-05.jpg', '/lookbooks/margn/page-06.jpg',
-    '/lookbooks/margn/page-07.jpg', '/lookbooks/margn/page-08.jpg'
-  ],
+  'doodlage': ['/lookbooks/doodlage/page-01.jpg', '/lookbooks/doodlage/page-02.jpg', '/lookbooks/doodlage/page-03.jpg', '/lookbooks/doodlage/page-04.jpg', '/lookbooks/doodlage/page-05.jpg', '/lookbooks/doodlage/page-06.jpg', '/lookbooks/doodlage/page-07.jpg', '/lookbooks/doodlage/page-08.jpg'],
+  'margn': ['/lookbooks/margn/page-01.jpg', '/lookbooks/margn/page-02.jpg', '/lookbooks/margn/page-03.jpg', '/lookbooks/margn/page-04.jpg', '/lookbooks/margn/page-05.jpg', '/lookbooks/margn/page-06.jpg', '/lookbooks/margn/page-07.jpg', '/lookbooks/margn/page-08.jpg'],
   'akhl-studio': ['/images/discover/akhl-studio/1.webp', '/images/discover/akhl-studio/2.webp', '/images/discover/akhl-studio/3.webp', '/images/discover/akhl-studio/4.webp', '/images/discover/akhl-studio/5.webp', '/images/discover/akhl-studio/6.webp'],
   'akhl_studio': ['/images/discover/akhl-studio/1.webp', '/images/discover/akhl-studio/2.webp', '/images/discover/akhl-studio/3.webp', '/images/discover/akhl-studio/4.webp', '/images/discover/akhl-studio/5.webp', '/images/discover/akhl-studio/6.webp'],
   'ituvana': ['/images/discover/ituvana/1.webp', '/images/discover/ituvana/2.webp', '/images/discover/ituvana/3.webp', '/images/discover/ituvana/4.webp', '/images/discover/ituvana/5.webp', '/images/discover/ituvana/6.webp']
 };
-
 const BrandStorefront = () => {
-  const { slug } = useParams<{ slug: string }>();
-  
+  const {
+    slug
+  } = useParams<{
+    slug: string;
+  }>();
+
   // Fetch data from database
-  const { data: dbCollections, isLoading: collectionsLoading } = useCollectionsByBrand(slug || '');
-  const { data: dbBrand } = useBrand(slug || '');
-  
+  const {
+    data: dbCollections,
+    isLoading: collectionsLoading
+  } = useCollectionsByBrand(slug || '');
+  const {
+    data: dbBrand
+  } = useBrand(slug || '');
+
   // Fallback to static data
   const staticBrand = brands.find(b => b.slug === slug);
-  
+
   // Unified brand data
   const brandName = dbBrand?.name || staticBrand?.name || 'Brand';
   const brandDescription = dbBrand?.description || staticBrand?.description || '';
   const brandStory = dbBrand?.brand_story || staticBrand?.story || '';
   const brandLocation = staticBrand?.location || 'India';
-  
   if (!dbBrand && !staticBrand) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
+    return <div className="min-h-screen flex items-center justify-center">
         <p>Brand not found</p>
-      </div>
-    );
+      </div>;
   }
-  
   const heroImage = heroImages[slug || ''] || '/images/home/Q_BB_Doodlage.png';
 
   // Use DB collections or fallback mock data
-  const moreCollections = (dbCollections && dbCollections.length > 0)
-    ? dbCollections.slice(0, 3).map(c => ({
-        name: c.title,
-        handle: c.handle,
-        season: c.seasonality || 'Trans Seasonal',
-        image: c.thumbnail_image || (brandLookbookImages[slug || ''] || brandLookbookImages['asaii'])[0]
-      }))
-    : [
-        { name: 'Autumn Whispers', handle: 'autumn-whispers', season: 'Fall Winter', image: (brandLookbookImages[slug || ''] || brandLookbookImages['asaii'])[0] },
-        { name: 'Urban Nomad', handle: 'urban-nomad', season: 'Spring Summer', image: (brandLookbookImages[slug || ''] || brandLookbookImages['asaii'])[2] },
-        { name: 'Minimalist Dreams', handle: 'minimalist-dreams', season: 'Trans Seasonal', image: (brandLookbookImages[slug || ''] || brandLookbookImages['asaii'])[4] }
-      ];
+  const moreCollections = dbCollections && dbCollections.length > 0 ? dbCollections.slice(0, 3).map(c => ({
+    name: c.title,
+    handle: c.handle,
+    season: c.seasonality || 'Trans Seasonal',
+    image: c.thumbnail_image || (brandLookbookImages[slug || ''] || brandLookbookImages['asaii'])[0]
+  })) : [{
+    name: 'Autumn Whispers',
+    handle: 'autumn-whispers',
+    season: 'Fall Winter',
+    image: (brandLookbookImages[slug || ''] || brandLookbookImages['asaii'])[0]
+  }, {
+    name: 'Urban Nomad',
+    handle: 'urban-nomad',
+    season: 'Spring Summer',
+    image: (brandLookbookImages[slug || ''] || brandLookbookImages['asaii'])[2]
+  }, {
+    name: 'Minimalist Dreams',
+    handle: 'minimalist-dreams',
+    season: 'Trans Seasonal',
+    image: (brandLookbookImages[slug || ''] || brandLookbookImages['asaii'])[4]
+  }];
 
   // Use brand tags from DB or static
-  const brandTags = (dbBrand?.usp_tags?.split(',').map(t => t.trim()).filter(Boolean)) || staticBrand?.tags || [];
+  const brandTags = dbBrand?.usp_tags?.split(',').map(t => t.trim()).filter(Boolean) || staticBrand?.tags || [];
   return <div className="min-h-screen bg-background">
       {/* CTA Guidance */}
-      <CTAGuidance 
-        message="Scroll to explore the brand's story → Browse featured looks and collections" 
-      />
+      <CTAGuidance message="Scroll to explore the brand's story → Browse featured looks and collections" />
 
       {/* Back Button */}
       <Link to="/discover" className="fixed top-8 left-8 z-50 flex items-center gap-2 text-primary-foreground hover:text-gold transition-colors">
@@ -138,14 +141,7 @@ const BrandStorefront = () => {
         </div>
 
         {/* Actions */}
-        <div className="absolute top-8 right-8 flex gap-4">
-          <button className="p-3 bg-primary-foreground/10 backdrop-blur-sm hover:bg-primary-foreground/20 transition-all">
-            <Heart className="w-5 h-5 text-primary-foreground" strokeWidth={1.5} />
-          </button>
-          <button className="p-3 bg-primary-foreground/10 backdrop-blur-sm hover:bg-primary-foreground/20 transition-all">
-            <MessageCircle className="w-5 h-5 text-primary-foreground" strokeWidth={1.5} />
-          </button>
-        </div>
+        
       </section>
 
       {/* Brand Story Section */}
