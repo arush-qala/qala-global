@@ -16,15 +16,23 @@ const LookbookScroll = ({
 
   // Calculate the total scroll distance needed
   // Each image is 1/3 viewport width, CTA slide is 1 viewport width
-  // We want the CTA to be centered when scroll ends
+  // We want the CTA to be centered when scroll ends - no overscroll
   useEffect(() => {
     const calculateHeight = () => {
       if (containerRef.current) {
-        // Total content: images (each 33.33vw) + CTA (100vw)
-        // The CTA should be centered when scroll ends
-        const imagesWidth = images.length * (window.innerWidth / 3);
-        // Add viewport height for scroll distance - calibrated so CTA centers at end
-        setContainerHeight(imagesWidth + window.innerHeight * 0.6);
+        const vw = window.innerWidth;
+        const imageWidth = vw / 3; // Each image is 33.33vw
+        const totalImagesWidth = images.length * imageWidth;
+        // CTA is 100vw wide. To center it, we need to scroll so its center is at viewport center.
+        // Total content width = totalImagesWidth + 100vw (CTA)
+        // Final scroll position: we want CTA center at viewport center
+        // CTA starts at x = totalImagesWidth, CTA center is at totalImagesWidth + 50vw
+        // To center: scroll = totalImagesWidth + 50vw - 50vw = totalImagesWidth
+        // So maxScroll in vw = (totalImagesWidth / vw) * 100 = images.length * 33.33
+        // The container height drives the scroll - calibrate so scrollYProgress=1 means CTA centered
+        const scrollDistance = totalImagesWidth; // This is the exact translateX needed
+        // Container height = viewport height + scroll distance (converted to vh equivalent)
+        setContainerHeight(window.innerHeight + scrollDistance * 0.8);
       }
     };
     
@@ -60,14 +68,14 @@ const LookbookScroll = ({
     setHasReachedEnd(latest >= 0.98);
   });
 
-  // Calculate max scroll: images take (n * 33.33vw), CTA takes 100vw
-  // We want to stop exactly when CTA is centered in viewport
+  // Calculate max scroll to stop exactly when CTA is horizontally centered
+  // Images: n images × 33.33vw each
+  // CTA slide: 100vw wide
+  // To center CTA in viewport: translate = totalImagesWidth (in vw)
+  // At this point, CTA's left edge is at 0, and since CTA is 100vw, its center is at 50vw = viewport center
   const imageWidthPercent = 100 / 3; // Each image is 33.33vw
   const totalImagesWidth = images.length * imageWidthPercent;
-  // CTA slide is 100vw wide, to center it we need to scroll so it's at 50vw from left
-  // Total scrollable content = images + CTA = totalImagesWidth + 100
-  // To center CTA: scroll = totalImagesWidth + 50 (half of CTA width) - 50 (half of viewport)
-  // Simplified: maxScroll = totalImagesWidth (CTA will be centered)
+  // This is the exact percentage to translate so CTA is centered
   const maxScroll = totalImagesWidth;
   const x = useTransform(scrollYProgress, [0, 1], ['0%', `-${maxScroll}%`]);
   return <section ref={containerRef} className="relative bg-sand" style={{
