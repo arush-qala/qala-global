@@ -27,6 +27,8 @@ interface AssortmentContextType {
   clearFlyingImage: () => void;
   lastCollectionUrl: string | null;
   setLastCollectionUrl: (url: string) => void;
+  isTrayOpen: boolean;
+  setTrayOpen: (open: boolean) => void;
 }
 
 const AssortmentContext = createContext<AssortmentContextType | undefined>(undefined);
@@ -43,6 +45,7 @@ export const AssortmentProvider = ({ children }: { children: ReactNode }) => {
   const [products, setProducts] = useState<AssortmentProduct[]>([]);
   const [flyingImage, setFlyingImage] = useState<FlyingImageData | null>(null);
   const [lastCollectionUrl, setLastCollectionUrlState] = useState<string | null>(null);
+  const [isTrayOpen, setIsTrayOpen] = useState(false);
 
   const addProduct = useCallback((product: AssortmentProduct, buttonRect?: DOMRect) => {
     setProducts(prev => {
@@ -57,6 +60,9 @@ export const AssortmentProvider = ({ children }: { children: ReactNode }) => {
         y: buttonRect.top,
       });
     }
+    
+    // Open tray when product is added
+    setIsTrayOpen(true);
   }, []);
 
   const removeProduct = useCallback((id: string) => {
@@ -83,6 +89,10 @@ export const AssortmentProvider = ({ children }: { children: ReactNode }) => {
     setLastCollectionUrlState(url);
   }, []);
 
+  const setTrayOpen = useCallback((open: boolean) => {
+    setIsTrayOpen(open);
+  }, []);
+
   return (
     <AssortmentContext.Provider value={{
       products,
@@ -95,6 +105,8 @@ export const AssortmentProvider = ({ children }: { children: ReactNode }) => {
       clearFlyingImage,
       lastCollectionUrl,
       setLastCollectionUrl,
+      isTrayOpen,
+      setTrayOpen,
     }}>
       {children}
     </AssortmentContext.Provider>

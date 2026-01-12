@@ -163,6 +163,9 @@ const ProductDetailOverlay = ({
   // State-based panel visibility - triggered on first scroll
   const [rightPanelVisible, setRightPanelVisible] = useState(false);
   const hasScrolledRef = useRef(false);
+  
+  // Button animation state for selection feedback
+  const [justSelected, setJustSelected] = useState(false);
 
   // Reset state when product changes
   useEffect(() => {
@@ -171,6 +174,7 @@ const ProductDetailOverlay = ({
     setCurrentImageIndex(0);
     setRightPanelVisible(false);
     hasScrolledRef.current = false;
+    setJustSelected(false);
   }, [product.id]);
 
   // Listen for ANY scroll on image container to reveal right panel
@@ -192,13 +196,23 @@ const ProductDetailOverlay = ({
         setRightPanelVisible(true);
       }
     };
+    
+    // Touch support for mobile
+    const handleTouchMove = () => {
+      if (!hasScrolledRef.current && imageContainer.scrollTop > 0) {
+        hasScrolledRef.current = true;
+        setRightPanelVisible(true);
+      }
+    };
 
     imageContainer.addEventListener('scroll', handleScroll, { passive: true });
     imageContainer.addEventListener('wheel', handleWheel, { passive: true });
+    imageContainer.addEventListener('touchmove', handleTouchMove, { passive: true });
     
     return () => {
       imageContainer.removeEventListener('scroll', handleScroll);
       imageContainer.removeEventListener('wheel', handleWheel);
+      imageContainer.removeEventListener('touchmove', handleTouchMove);
     };
   }, [product.id]);
 
@@ -234,6 +248,14 @@ const ProductDetailOverlay = ({
   };
 
   const [showSizeChart, setShowSizeChart] = useState(false);
+  
+  const handleSelectWithFeedback = (e: React.MouseEvent) => {
+    if (!isInAssortment) {
+      setJustSelected(true);
+      setTimeout(() => setJustSelected(false), 1000);
+    }
+    onSelectStyle(product.id, e);
+  };
 
   return (
     <motion.div
@@ -250,6 +272,26 @@ const ProductDetailOverlay = ({
       >
         <X className="w-6 h-6" strokeWidth={1} />
       </button>
+
+      {/* Navigation Arrows - Visible when prev/next exist */}
+      {prevProduct && (
+        <button
+          onClick={() => onNavigate(productIndex - 1)}
+          className="absolute left-[7vw] top-1/2 -translate-y-1/2 z-50 p-3 bg-background/80 backdrop-blur-sm border border-border/30 hover:bg-background hover:border-gold transition-all group"
+          aria-label="Previous product"
+        >
+          <ChevronLeft className="w-5 h-5 text-muted-foreground group-hover:text-gold transition-colors" strokeWidth={1.5} />
+        </button>
+      )}
+      {nextProduct && (
+        <button
+          onClick={() => onNavigate(productIndex + 1)}
+          className="absolute right-[7vw] top-1/2 -translate-y-1/2 z-50 p-3 bg-background/80 backdrop-blur-sm border border-border/30 hover:bg-background hover:border-gold transition-all group"
+          aria-label="Next product"
+        >
+          <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-gold transition-colors" strokeWidth={1.5} />
+        </button>
+      )}
 
       {/* Size Chart Overlay */}
       <AnimatePresence>
@@ -305,27 +347,31 @@ const ProductDetailOverlay = ({
       <div ref={overlayRef} className="h-full overflow-y-auto overscroll-contain">
         <div className="min-h-[200vh]">
           <div className="flex min-h-[200vh]">
-            {/* Left Edge - Previous Product Peek (constant 7vw) */}
-            <div
-              className="w-[7vw] sticky top-0 h-screen flex-shrink-0 cursor-pointer relative overflow-hidden"
+            {/* Left Edge - Previous Product Peek (larger 12vw for better clickability) */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2, duration: 0.4 }}
+              className="w-[12vw] sticky top-0 h-screen flex-shrink-0 cursor-pointer relative overflow-hidden"
               onClick={() => prevProduct && onNavigate(productIndex - 1)}
             >
               {prevProduct ? (
-                <div className="absolute inset-0 grayscale opacity-40 hover:opacity-60 transition-opacity">
+                <div className="absolute inset-0 grayscale opacity-50 hover:opacity-70 hover:grayscale-0 transition-all duration-300">
                   <img
                     src={prevProduct.image}
                     alt={prevProduct.name}
                     className="w-full h-full object-cover object-right"
                     loading="lazy"
                   />
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent to-background/20" />
                 </div>
               ) : (
                 <div className="h-full bg-muted/20" />
               )}
-            </div>
+            </motion.div>
 
-            {/* Middle Section - Fixed 86vw containing images + details panel */}
-            <div className="w-[86vw] flex-shrink-0 sticky top-0 h-screen overflow-hidden">
+            {/* Middle Section - Fixed 76vw containing images + details panel */}
+            <div className="w-[76vw] flex-shrink-0 sticky top-0 h-screen overflow-hidden">
               {/* Image Column - shifts left when panel reveals */}
               <motion.div 
                 ref={imageContainerRef}
@@ -367,24 +413,24 @@ const ProductDetailOverlay = ({
                 <div className="h-full flex flex-col px-10 py-12">
                   {/* Product Header */}
                   <div>
-                    <span className="text-gold text-sm tracking-widest block mb-5">
+                    <span className="text-gold text-sm tracking-widest block mb-4">
                       {String(productIndex + 1).padStart(2, "0")} / {products.length}
                     </span>
 
-                    <h2 className="font-serif text-3xl lg:text-4xl leading-tight mb-8">{product.name}</h2>
+                    <h2 className="font-serif text-3xl lg:text-4xl leading-tight mb-6">{product.name}</h2>
 
-                    {/* Specs */}
-                    <div className="space-y-4 mb-8">
+                    {/* Specs - Tighter spacing */}
+                    <div className="space-y-2 mb-6">
                       <div className="flex">
-                        <span className="text-muted-foreground text-sm w-28">FABRIC:</span>
+                        <span className="text-muted-foreground text-sm w-24">FABRIC:</span>
                         <span className="text-base">{product.fabricDetails}</span>
                       </div>
                       <div className="flex">
-                        <span className="text-muted-foreground text-sm w-28">FEELS LIKE:</span>
+                        <span className="text-muted-foreground text-sm w-24">FEELS LIKE:</span>
                         <span className="text-base">{product.feelsLike}</span>
                       </div>
                       <div className="flex">
-                        <span className="text-muted-foreground text-sm w-28">SIZE GUIDE:</span>
+                        <span className="text-muted-foreground text-sm w-24">SIZE GUIDE:</span>
                         <button
                           onClick={() => setShowSizeChart(true)}
                           className="text-base underline hover:text-gold transition-colors"
@@ -394,10 +440,12 @@ const ProductDetailOverlay = ({
                       </div>
                     </div>
 
-                    {/* CTA */}
-                    <button
-                      onClick={(e) => onSelectStyle(product.id, e)}
-                      className={`w-full py-5 flex items-center justify-center gap-2 transition-all mb-10 ${
+                    {/* CTA with feedback animation */}
+                    <motion.button
+                      onClick={handleSelectWithFeedback}
+                      animate={justSelected ? { scale: [1, 1.05, 1] } : {}}
+                      transition={{ duration: 0.3 }}
+                      className={`w-full py-5 flex items-center justify-center gap-2 transition-all mb-8 ${
                         isInAssortment
                           ? "bg-gold text-primary-foreground"
                           : "bg-gold/80 hover:bg-gold text-primary-foreground"
@@ -411,16 +459,27 @@ const ProductDetailOverlay = ({
                       ) : (
                         <span className="text-sm tracking-widest">SELECT THIS STYLE</span>
                       )}
-                    </button>
+                    </motion.button>
                   </div>
 
-                  {/* Virtual Trial Video */}
-                  <section className="mb-10">
+                  {/* Virtual Trial Video - Default placeholder */}
+                  <section className="mb-8">
                     <div className="aspect-video w-full bg-muted border border-border relative overflow-hidden">
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="text-muted-foreground text-base">You imagine it.</span>
-                      </div>
-                      <span className="absolute bottom-3 left-3 text-sm tracking-widest text-muted-foreground bg-background/80 px-2 py-1">
+                      <video 
+                        className="w-full h-full object-cover"
+                        autoPlay 
+                        muted 
+                        loop 
+                        playsInline
+                        poster="/images/discover/asaii/1.webp"
+                      >
+                        <source src="/videos/default.mp4" type="video/mp4" />
+                        {/* Fallback if video not available */}
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <span className="text-muted-foreground text-base">You imagine it.</span>
+                        </div>
+                      </video>
+                      <span className="absolute bottom-3 left-3 text-sm tracking-widest text-primary-foreground bg-deep-charcoal/80 px-2 py-1">
                         VIRTUAL TRIAL
                       </span>
                     </div>
@@ -428,7 +487,7 @@ const ProductDetailOverlay = ({
 
                   {/* Tabbed info */}
                   <section className="mt-auto">
-                    <div className="flex gap-5 mb-5 border-b border-border pb-4">
+                    <div className="flex gap-4 mb-4 border-b border-border pb-3">
                       {tabs.map((tab) => (
                         <button
                           key={tab}
@@ -448,24 +507,28 @@ const ProductDetailOverlay = ({
               </motion.aside>
             </div>
 
-            {/* Right Edge - Next Product Peek (constant 7vw) */}
-            <div
-              className="w-[7vw] sticky top-0 h-screen flex-shrink-0 cursor-pointer relative overflow-hidden"
+            {/* Right Edge - Next Product Peek (larger 12vw for better clickability) */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2, duration: 0.4 }}
+              className="w-[12vw] sticky top-0 h-screen flex-shrink-0 cursor-pointer relative overflow-hidden"
               onClick={() => nextProduct && onNavigate(productIndex + 1)}
             >
               {nextProduct ? (
-                <div className="absolute inset-0 grayscale opacity-40 hover:opacity-60 transition-opacity">
+                <div className="absolute inset-0 grayscale opacity-50 hover:opacity-70 hover:grayscale-0 transition-all duration-300">
                   <img
                     src={nextProduct.image}
                     alt={nextProduct.name}
                     className="w-full h-full object-cover object-left"
                     loading="lazy"
                   />
+                  <div className="absolute inset-0 bg-gradient-to-l from-transparent to-background/20" />
                 </div>
               ) : (
                 <div className="h-full bg-muted/20" />
               )}
-            </div>
+            </motion.div>
           </div>
         </div>
       </div>
@@ -517,6 +580,8 @@ const CollectionDetail = () => {
   const { slug, collectionSlug } = useParams<{ slug: string; collectionSlug: string }>();
   const [selectedProductIndex, setSelectedProductIndex] = useState<number | null>(null);
   const [currentProductIndex, setCurrentProductIndex] = useState(0);
+  const [showCTAGuidance, setShowCTAGuidance] = useState(false);
+  const hasShownGuidanceRef = useRef(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const stickyRef = useRef<HTMLDivElement>(null);
 
@@ -537,6 +602,12 @@ const CollectionDetail = () => {
       // If horizontal scroll detected, prevent default to avoid browser back
       if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
         e.preventDefault();
+      }
+      
+      // Show CTA guidance on first horizontal movement (scroll started)
+      if (!hasShownGuidanceRef.current && Math.abs(e.deltaX) > 0) {
+        hasShownGuidanceRef.current = true;
+        setShowCTAGuidance(true);
       }
     };
 
@@ -561,10 +632,16 @@ const CollectionDetail = () => {
     offset: ["start start", "end end"],
   });
 
-  // Track scroll progress to update product counter
+  // Track scroll progress to update product counter and show CTA guidance
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
     const productIdx = Math.min(Math.floor(latest * products.length), products.length - 1);
     setCurrentProductIndex(productIdx);
+    
+    // Show CTA guidance when user starts scrolling (any non-zero progress)
+    if (!hasShownGuidanceRef.current && latest > 0) {
+      hasShownGuidanceRef.current = true;
+      setShowCTAGuidance(true);
+    }
   });
 
   // Calculate scroll bounds:
@@ -615,8 +692,10 @@ const CollectionDetail = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* CTA Guidance */}
-      <CTAGuidance message="Select products to add to your assortment cart" />
+      {/* CTA Guidance - Only show after horizontal exploration begins */}
+      {showCTAGuidance && (
+        <CTAGuidance message="Click to view product and add to your assortment" />
+      )}
 
       {/* Fixed Header */}
       <div className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm">
@@ -669,7 +748,7 @@ const CollectionDetail = () => {
               </div>
             </div>
 
-            {/* Product Rail */}
+            {/* Product Rail - No price, just number + name */}
             {products.map((product, index) => (
               <div
                 key={product.id}
@@ -686,13 +765,12 @@ const CollectionDetail = () => {
                   {/* Hover Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-deep-charcoal/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-                  {/* Product Info - always visible at bottom */}
+                  {/* Product Info - number + name only (no price) */}
                   <div className="absolute bottom-0 left-0 right-0 p-6">
                     <span className="text-primary-foreground/60 text-luxury-xs block mb-2">
                       {String(index + 1).padStart(2, "0")} / {products.length}
                     </span>
                     <h3 className="font-serif text-xl text-primary-foreground">{product.name}</h3>
-                    <p className="text-primary-foreground/80 text-sm mt-1">${product.price}</p>
                     <span className="text-primary-foreground/50 text-xs mt-2 block group-hover:text-primary-foreground transition-colors">
                       Click to view details
                     </span>

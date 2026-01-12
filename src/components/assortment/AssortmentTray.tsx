@@ -1,24 +1,31 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAssortment } from '@/contexts/AssortmentContext';
 import { AssortmentReview } from './AssortmentReview';
 
 export const AssortmentTray = () => {
-  const { products } = useAssortment();
-  const [isReviewOpen, setIsReviewOpen] = useState(false);
+  const { products, isTrayOpen, setTrayOpen } = useAssortment();
   const location = useLocation();
 
   // Hide on homepage
   const isHomepage = location.pathname === '/';
   
+  // Auto-open when products are added (handled in context now)
+  // Reset tray state when navigating away
+  useEffect(() => {
+    if (products.length === 0) {
+      setTrayOpen(false);
+    }
+  }, [products.length, setTrayOpen]);
+
   if (products.length === 0 || isHomepage) return null;
 
   return (
     <>
       {/* Simple Bottom Tray */}
       <AnimatePresence>
-        {!isReviewOpen && (
+        {!isTrayOpen && (
           <motion.div
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -27,7 +34,7 @@ export const AssortmentTray = () => {
             className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40"
           >
             <motion.button
-              onClick={() => setIsReviewOpen(true)}
+              onClick={() => setTrayOpen(true)}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               className="flex items-center gap-4 px-6 py-3 bg-foreground text-background 
@@ -75,8 +82,8 @@ export const AssortmentTray = () => {
 
       {/* Review Mode */}
       <AssortmentReview 
-        isOpen={isReviewOpen} 
-        onClose={() => setIsReviewOpen(false)} 
+        isOpen={isTrayOpen} 
+        onClose={() => setTrayOpen(false)} 
       />
     </>
   );
