@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Package, ShoppingCart, Calendar, MapPin } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -47,6 +48,12 @@ const Experience = () => {
     lastCollectionUrl
   } = useAssortment();
   const navigate = useNavigate();
+
+  // Always scroll to top when page loads
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const handleBack = () => {
     if (lastCollectionUrl) {
       navigate(lastCollectionUrl);
