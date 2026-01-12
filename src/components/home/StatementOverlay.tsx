@@ -53,7 +53,7 @@ const FullScreenSelector = ({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="relative bg-background border border-border shadow-2xl max-w-md w-full mx-6 p-8"
+            className="relative bg-background border border-border shadow-4xl max-w-md w-full mx-6 p-8"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Close button */}
