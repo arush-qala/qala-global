@@ -5,23 +5,27 @@ import { useNavigate } from 'react-router-dom';
 import { useAssortment } from '@/contexts/AssortmentContext';
 
 // CTA Card Component
+// Experience Card Component with hover reveal
 const CTACard = ({
   icon: Icon,
   title,
   description,
-  onClick
+  onClick,
+  isFullWidth = false
 }: {
   icon: React.ElementType;
   title: string;
   description: string;
   onClick: () => void;
-}) => <motion.button onClick={onClick} whileHover={{
-  y: -8,
-  scale: 1.02
-}} whileTap={{
-  scale: 0.98
-}} className="text-left p-8 border border-border bg-background hover:border-gold/50 
-               transition-all duration-300 group relative overflow-hidden">
+  isFullWidth?: boolean;
+}) => (
+  <motion.button 
+    onClick={onClick} 
+    whileHover={{ y: -8, scale: 1.02 }} 
+    whileTap={{ scale: 0.98 }} 
+    className={`text-left p-8 border border-border bg-background hover:border-gold/50 
+                transition-all duration-300 group relative overflow-hidden ${isFullWidth ? 'w-full' : ''}`}
+  >
     {/* Background gradient on hover */}
     <div className="absolute inset-0 bg-gradient-to-br from-gold/5 to-transparent opacity-0 
                     group-hover:opacity-100 transition-opacity duration-500" />
@@ -32,16 +36,18 @@ const CTACard = ({
         <Icon className="w-7 h-7 text-gold" />
       </div>
       <h3 className="font-serif mb-3 text-4xl">{title}</h3>
-      <p className="text-muted-foreground leading-relaxed text-base">{description}</p>
       
-      {/* Arrow indicator */}
-      <div className="mt-6 flex items-center gap-2 text-gold opacity-0 group-hover:opacity-100 
-                      translate-x-0 group-hover:translate-x-2 transition-all duration-300">
-        
-        
-      </div>
+      {/* Description with hover reveal */}
+      <p className="text-muted-foreground leading-relaxed text-base 
+                    opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 
+                    transition-all duration-300 ease-out
+                    md:opacity-0 md:translate-y-2 
+                    max-md:opacity-100 max-md:translate-y-0">
+        {description}
+      </p>
     </div>
-  </motion.button>;
+  </motion.button>
+);
 const Experience = () => {
   const {
     products,
@@ -102,12 +108,37 @@ const Experience = () => {
                 </div>}
             </div>}
 
-          {/* CTA Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <CTACard icon={Package} title="Order Sample Crate" description="Test fabric and quality before committing. Select up to 5 pieces for physical sampling at your boutique." onClick={() => navigate('/experience/sample-crate')} />
-            <CTACard icon={ShoppingCart} title="Place B2B Order" description="Ready to stock? Enter quantities per size in our order matrix. Tiered bulk pricing applies." onClick={() => navigate('/experience/b2b-order')} />
-            <CTACard icon={Calendar} title="Private Showcase" description="White-glove service. Our team brings the collection directly to your boutique for a trunk show experience." onClick={() => navigate('/experience/private-showcase')} />
-            <CTACard icon={MapPin} title="Trade Show RSVP" description="Prefer to see in person? RSVP for our booth appointments at upcoming fashion weeks and trade events." onClick={() => navigate('/experience/trade-show')} />
+          {/* Top 3 Experience Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <CTACard 
+              icon={Package} 
+              title="Order Sample Crate" 
+              description="Test fabric and quality before committing. Select up to 5 pieces for physical sampling at your boutique." 
+              onClick={() => navigate('/experience/sample-crate')} 
+            />
+            <CTACard 
+              icon={Calendar} 
+              title="Request Private Showcase" 
+              description="White-glove service. Our team brings the collection directly to your boutique for a trunk show experience." 
+              onClick={() => navigate('/experience/private-showcase')} 
+            />
+            <CTACard 
+              icon={MapPin} 
+              title="Meet at a Tradeshow" 
+              description="Prefer to see in person? RSVP for our booth appointments at upcoming fashion weeks and trade events." 
+              onClick={() => navigate('/experience/trade-show')} 
+            />
+          </div>
+
+          {/* B2B Order - Full Width Below */}
+          <div className="mt-6">
+            <CTACard 
+              icon={ShoppingCart} 
+              title="Place B2B Order" 
+              description="Ready to stock? Enter quantities per size in our order matrix. Tiered bulk pricing applies." 
+              onClick={() => navigate('/experience/b2b-order')} 
+              isFullWidth={true}
+            />
           </div>
         </motion.div>
       </main>
