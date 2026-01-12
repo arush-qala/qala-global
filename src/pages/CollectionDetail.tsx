@@ -188,9 +188,11 @@ const ProductDetailOverlay = ({
   // Parallax: the image stack glides left as the right panel "unpacks"
   const imageX = useTransform(scrollYProgress, [0, 0.15, 0.4], ["0vw", "0vw", "-18vw"]);
 
-  // Right panel reveal: completely hidden at start, slides in on scroll
-  const panelOpacity = useTransform(scrollYProgress, [0, 0.05], [0, 1]);
-  const panelX = useTransform(scrollYProgress, [0, 0.05], ["100%", "0%"]);
+  // Right panel reveal: starts completely hidden (opacity 0, off-screen)
+  // Triggers immediately on ANY scroll (even 1px) - using very small threshold
+  // scrollYProgress of 0.01 ≈ 2vh scroll which is ~15-20px
+  const panelOpacity = useTransform(scrollYProgress, [0, 0.005, 0.02], [0, 0, 1]);
+  const panelX = useTransform(scrollYProgress, [0, 0.005, 0.02], ["100%", "100%", "0%"]);
 
   const prevProduct = productIndex > 0 ? products[productIndex - 1] : null;
   const nextProduct = productIndex < products.length - 1 ? products[productIndex + 1] : null;
