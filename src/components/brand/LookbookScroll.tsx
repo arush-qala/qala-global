@@ -151,9 +151,9 @@ const LookbookScroll = ({
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="text-luxury-label text-center py-6 text-2xl flex-shrink-0"
+          className="text-left py-6 text-2xl font-bold flex-shrink-0 px-8 lg:px-16"
         >
-          FEATURED LOOKBOOK
+          Latest Collection
         </motion.h3>
 
         {/* Horizontal scroll container - scroll driven by vertical scroll */}
