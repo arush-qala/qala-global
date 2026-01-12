@@ -10,8 +10,9 @@ export const AssortmentTray = () => {
   const prevCountRef = useRef(products.length);
   const [shouldPulse, setShouldPulse] = useState(false);
 
-  // Hide on homepage
+  // Hide on homepage and sample-crate page (has its own selection flow)
   const isHomepage = location.pathname === '/';
+  const isSampleCratePage = location.pathname.startsWith('/experience/sample-crate');
   
   // Detect when a new item is added and trigger pulse animation
   useEffect(() => {
@@ -31,7 +32,7 @@ export const AssortmentTray = () => {
     }
   }, [products.length, setTrayOpen]);
 
-  if (products.length === 0 || isHomepage) return null;
+  if (products.length === 0 || isHomepage || isSampleCratePage) return null;
 
   return (
     <>
