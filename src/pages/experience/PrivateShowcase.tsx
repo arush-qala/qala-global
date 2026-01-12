@@ -80,14 +80,6 @@ const PrivateShowcase = () => {
                 </p>
               )}
               
-              <div className="mt-8 p-6 bg-ivory">
-                <h3 className="font-serif text-xl mb-2">The Trunk Show Experience</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">
-                  Our brand representative will bring your curated selection directly to your boutique. 
-                  Experience the fabrics, discuss styling opportunities, and place orders with 
-                  personalized guidance.
-                </p>
-              </div>
             </motion.div>
 
             {/* Right: Booking Form */}
@@ -95,9 +87,11 @@ const PrivateShowcase = () => {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
             >
-              <h1 className="font-serif text-3xl mb-2">Schedule Your Showcase</h1>
-              <p className="text-muted-foreground mb-8">
-                Tell us about your boutique and preferred dates.
+              <h1 className="font-serif text-3xl mb-4">Schedule Your Showcase</h1>
+              <p className="text-muted-foreground mb-8 leading-relaxed">
+                Our brand representative will bring your curated selection directly to your boutique. 
+                Experience the fabrics, discuss styling opportunities, and place orders with 
+                personalized guidance.
               </p>
 
               <div className="space-y-6">
