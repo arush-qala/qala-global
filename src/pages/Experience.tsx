@@ -36,8 +36,8 @@ const CTACard = ({
       {/* Arrow indicator */}
       <div className="mt-6 flex items-center gap-2 text-gold opacity-0 group-hover:opacity-100 
                       translate-x-0 group-hover:translate-x-2 transition-all duration-300">
-        <span className="text-luxury-xs tracking-widest text-base">EXPLORE</span>
-        <ArrowLeft className="w-4 h-4 rotate-180" />
+        
+        
       </div>
     </div>
   </motion.button>;
