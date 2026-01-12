@@ -27,15 +27,11 @@ const Header = ({
           
         </nav>
 
-        {/* Logo */}
+        {/* Logo - Static, no animation */}
         <Link to="/" className="absolute left-1/2 -translate-x-1/2">
-          <motion.h1 whileHover={{
-          letterSpacing: '0.35em'
-        }} transition={{
-          duration: 0.3
-        }} className="font-serif tracking-[0.3em] font-light text-4xl">
+          <h1 className="font-serif tracking-[0.3em] font-light text-4xl">
             QALA
-          </motion.h1>
+          </h1>
         </Link>
 
         {/* Right Navigation */}
