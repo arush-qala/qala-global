@@ -241,9 +241,7 @@ const BrandStorefront = () => {
           }} className="font-serif text-4xl lg:text-5xl font-light">
               More Collections
             </motion.h2>
-            <Link to={`/brands/${slug}/collections`} className="text-luxury-xs text-muted-foreground hover:text-gold transition-colors tracking-widest">
-              VIEW ALL
-            </Link>
+            
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
