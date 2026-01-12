@@ -39,17 +39,7 @@ const Header = ({
         </Link>
 
         {/* Right Navigation */}
-        <div className="flex items-center gap-6">
-          <button className="p-2 hover:text-accent transition-colors duration-300" aria-label="Favorites">
-            <Heart className="w-4 h-4" strokeWidth={1.5} />
-          </button>
-          <button className="p-2 hover:text-accent transition-colors duration-300" aria-label="Cart">
-            <ShoppingBag className="w-4 h-4" strokeWidth={1.5} />
-          </button>
-          <button className="p-2 hover:text-accent transition-colors duration-300" aria-label="Account">
-            <User className="w-4 h-4" strokeWidth={1.5} />
-          </button>
-        </div>
+        
       </div>
     </motion.header>;
 };
