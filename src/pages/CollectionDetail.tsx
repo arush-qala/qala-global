@@ -191,8 +191,8 @@ const ProductDetailOverlay = ({
   // Right panel reveal: starts completely hidden (opacity 0, off-screen)
   // Triggers immediately on ANY scroll (even 1px) - using very small threshold
   // scrollYProgress of 0.01 ≈ 2vh scroll which is ~15-20px
-  const panelOpacity = useTransform(scrollYProgress, [0, 0.005, 0.02], [0, 0, 1]);
-  const panelX = useTransform(scrollYProgress, [0, 0.005, 0.02], ["100%", "100%", "0%"]);
+  const panelOpacity = useTransform(scrollYProgress, [0, 0.005], [0, 1]);
+  const panelX = useTransform(scrollYProgress, [0, 0.005], ["100%", "0%"]);
 
   const prevProduct = productIndex > 0 ? products[productIndex - 1] : null;
   const nextProduct = productIndex < products.length - 1 ? products[productIndex + 1] : null;
@@ -303,15 +303,19 @@ const ProductDetailOverlay = ({
             {/* Middle Section - Fixed 86vw containing images + details panel */}
             <div className="w-[86vw] flex-shrink-0 sticky top-0 h-screen overflow-hidden">
               {/* Image Column - shifts left on scroll, now with vertical scroll for multi-image stack */}
-              <motion.div style={{ x: imageX }} className="absolute inset-0 flex justify-center pt-16 overflow-y-auto hide-scrollbar">
+              <motion.div
+                style={{ x: imageX }}
+                className="absolute inset-0 flex justify-center pt-16 overflow-y-auto hide-scrollbar"
+              >
                 <div className="max-w-[520px] w-full flex flex-col pb-16">
                   {/* Multi-Image Vertical Stack */}
                   {(() => {
                     // Fallback: if only 1 image, duplicate to show 3 images
-                    const displayImages = product.images.length === 1 
-                      ? [product.images[0], product.images[0], product.images[0]]
-                      : product.images;
-                    
+                    const displayImages =
+                      product.images.length === 1
+                        ? [product.images[0], product.images[0], product.images[0]]
+                        : product.images;
+
                     return displayImages.map((img, idx) => (
                       <div key={idx} className={idx > 0 ? "mt-6" : ""}>
                         <img
