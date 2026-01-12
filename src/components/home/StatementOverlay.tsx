@@ -115,7 +115,7 @@ const StatementOverlay = ({ currentSlideIndex }: StatementOverlayProps) => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.3 }}
       >
-        <div className="flex items-center justify-center gap-4 pointer-events-auto bg-background/80 backdrop-blur-sm py-6 px-4 w-full max-w-6xl">
+        <div className="flex items-center justify-center gap-4 pointer-events-auto bg-background/80 backdrop-blur-sm py-6 px-8">
           <p className="font-serif text-xl md:text-2xl lg:text-3xl font-light text-foreground whitespace-nowrap flex items-center flex-wrap gap-x-2">
             I am looking for {/* Category Selector Trigger */}
             <button
