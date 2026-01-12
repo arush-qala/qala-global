@@ -199,7 +199,7 @@ const BrandStorefront = () => {
             }} transition={{
               delay: index * 0.15
             }} className="aspect-square overflow-hidden">
-                  <img src={img} alt={`Process ${index + 1}`} className="w-full h-full object-cover img-luxury" />
+                  <img src={img} alt={`Process ${index + 1}`} className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" />
                 </motion.div>)}
             </div>
           </div>
