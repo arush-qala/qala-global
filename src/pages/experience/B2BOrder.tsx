@@ -1,46 +1,77 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, Minus, Plus } from "lucide-react";
+import { ArrowLeft, Minus, Plus, Scissors } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAssortment } from "@/contexts/AssortmentContext";
+import { Textarea } from "@/components/ui/textarea";
+
+interface OrderItem {
+  productId: string;
+  quantities: Record<string, number>;
+  notes: string;
+}
+
 const B2BOrder = () => {
   const navigate = useNavigate();
-  const {
-    products
-  } = useAssortment();
-  const [quantities, setQuantities] = useState<Record<string, Record<string, number>>>({});
-  const [activeProduct, setActiveProduct] = useState<string | null>(products[0]?.id || null);
+  const { products } = useAssortment();
   const sizes = ["XS", "S", "M", "L", "XL"];
+  
+  const [orderItems, setOrderItems] = useState<Record<string, OrderItem>>(() => {
+    const initial: Record<string, OrderItem> = {};
+    products.forEach(p => {
+      initial[p.id] = { productId: p.id, quantities: {}, notes: "" };
+    });
+    return initial;
+  });
+
   const updateQuantity = (productId: string, size: string, delta: number) => {
-    setQuantities(prev => {
-      const productQty = prev[productId] || {};
-      const current = productQty[size] || 0;
+    setOrderItems(prev => {
+      const item = prev[productId] || { productId, quantities: {}, notes: "" };
+      const current = item.quantities[size] || 0;
       const newQty = Math.max(0, current + delta);
       return {
         ...prev,
         [productId]: {
-          ...productQty,
-          [size]: newQty
+          ...item,
+          quantities: { ...item.quantities, [size]: newQty }
         }
       };
     });
   };
+
   const setQuantity = (productId: string, size: string, value: number) => {
-    setQuantities(prev => ({
-      ...prev,
-      [productId]: {
-        ...(prev[productId] || {}),
-        [size]: Math.max(0, value)
-      }
-    }));
+    setOrderItems(prev => {
+      const item = prev[productId] || { productId, quantities: {}, notes: "" };
+      return {
+        ...prev,
+        [productId]: {
+          ...item,
+          quantities: { ...item.quantities, [size]: Math.max(0, value) }
+        }
+      };
+    });
   };
+
+  const setNotes = (productId: string, notes: string) => {
+    setOrderItems(prev => {
+      const item = prev[productId] || { productId, quantities: {}, notes: "" };
+      return {
+        ...prev,
+        [productId]: { ...item, notes }
+      };
+    });
+  };
+
   const getProductTotal = (productId: string) => {
-    const productQty = quantities[productId] || {};
-    return Object.values(productQty).reduce((sum, qty) => sum + qty, 0);
+    const item = orderItems[productId];
+    if (!item) return 0;
+    return Object.values(item.quantities).reduce((sum, qty) => sum + qty, 0);
   };
+
   const getTotalUnits = () => {
     return products.reduce((sum, p) => sum + getProductTotal(p.id), 0);
   };
+
   const getTotalValue = () => {
     return products.reduce((sum, p) => sum + getProductTotal(p.id) * p.price, 0);
   };
@@ -53,136 +84,250 @@ const B2BOrder = () => {
     if (units >= 50) return 0.1;
     return 0;
   };
+
   const totalUnits = getTotalUnits();
   const discount = getDiscount(totalUnits);
   const subtotal = getTotalValue();
   const discountAmount = subtotal * discount;
-  const finalTotal = subtotal - discountAmount;
-  const activeProductData = products.find(p => p.id === activeProduct);
-  return <div className="min-h-screen bg-background">
+  const shipping = totalUnits > 0 ? 250 : 0;
+  const tax = (subtotal - discountAmount) * 0.18; // 18% GST
+  const finalTotal = subtotal - discountAmount + shipping + tax;
+
+  // Get brand and collection name from first product
+  const brandName = products[0]?.brandName || "Brand";
+  const collectionName = "Curated Selection";
+
+  const handleProceedToCheckout = () => {
+    window.scrollTo(0, 0);
+    navigate("/experience/b2b-order/checkout", {
+      state: {
+        orderItems,
+        products,
+        subtotal,
+        discountAmount,
+        discount,
+        shipping,
+        tax,
+        finalTotal,
+        totalUnits
+      }
+    });
+  };
+
+  return (
+    <div className="min-h-screen bg-background">
       {/* Header */}
       <div className="fixed top-0 left-0 right-0 z-40 bg-background border-b border-border">
         <div className="flex items-center justify-between px-8 py-6">
-          <button onClick={() => navigate("/experience")} className="flex items-center gap-2 hover:text-gold transition-colors">
+          <button 
+            onClick={() => navigate("/experience")} 
+            className="flex items-center gap-2 hover:text-gold transition-colors"
+          >
             <ArrowLeft className="w-4 h-4" />
-            <span className="text-luxury-sm tracking-widest uppercase text-base">Back</span>
+            <span className="text-luxury-sm tracking-widest uppercase text-sm">Back</span>
           </button>
-          <span className="text-luxury-sm tracking-widest text-base">B2B WHOLESALE ORDER</span>
+          <div className="text-center">
+            <span className="text-luxury-sm tracking-widest text-sm text-muted-foreground">
+              {brandName} · {collectionName}
+            </span>
+          </div>
           <div className="w-20" />
         </div>
       </div>
 
-      <main className="pt-28 pb-32 flex">
-        {/* Left: Product Navigator */}
-        <div className="w-80 flex-shrink-0 border-r border-border h-[calc(100vh-7rem)] overflow-y-auto">
-          <div className="p-6">
-            <h2 className="text-luxury-xs text-muted-foreground mb-4 text-xl">YOUR SELECTION</h2>
-            <div className="space-y-3">
-              {products.map(product => {
-              const qty = getProductTotal(product.id);
-              return <button key={product.id} onClick={() => setActiveProduct(product.id)} className={`w-full flex items-center gap-4 p-3 border transition-colors text-left ${activeProduct === product.id ? "border-gold bg-gold/5" : "border-border hover:border-gold/30"}`}>
-                    <div className="w-16 h-20 flex-shrink-0 overflow-hidden">
-                      <img src={product.image} alt="" className="w-full h-full object-cover" />
+      <main className="pt-24 pb-32 px-8">
+        <div className="max-w-7xl mx-auto flex gap-8">
+          {/* Left: Product List */}
+          <div className="flex-1 space-y-6">
+            <h1 className="font-serif text-3xl mb-8">B2B Wholesale Order</h1>
+            
+            {products.map(product => {
+              const productQty = orderItems[product.id]?.quantities || {};
+              const productTotal = getProductTotal(product.id);
+              const productValue = productTotal * product.price;
+              
+              return (
+                <motion.div
+                  key={product.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="border border-border p-6 bg-card"
+                >
+                  <div className="flex gap-6">
+                    {/* Product Image */}
+                    <div className="w-24 h-32 flex-shrink-0 overflow-hidden">
+                      <img 
+                        src={product.image} 
+                        alt={product.name} 
+                        className="w-full h-full object-cover"
+                      />
                     </div>
+
+                    {/* Product Details + Size Grid */}
                     <div className="flex-1 min-w-0">
-                      <p className="text-luxury-xs text-muted-foreground mb-1 text-lg">{product.brandName}</p>
-                      <p className="font-serif truncate text-lg">{product.name}</p>
-                      {qty > 0 && <p className="text-gold text-xs mt-1">{qty} units</p>}
+                      <div className="flex justify-between items-start mb-4">
+                        <div>
+                          <p className="text-luxury-xs text-muted-foreground mb-1">
+                            {product.brandName}
+                          </p>
+                          <h3 className="font-serif text-lg">{product.name}</h3>
+                          <p className="text-gold text-sm mt-1">${product.price} / unit</p>
+                        </div>
+                        
+                        {/* Landed Price */}
+                        <div className="text-right">
+                          <p className="text-luxury-xs text-muted-foreground mb-1">Landed Price</p>
+                          <p className="font-serif text-xl">${productValue.toLocaleString()}</p>
+                          {productTotal > 0 && (
+                            <p className="text-muted-foreground text-xs">{productTotal} units</p>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Size Grid */}
+                      <div className="mb-4">
+                        <p className="text-luxury-xs text-muted-foreground mb-3">Quantity by Size</p>
+                        <div className="flex gap-3">
+                          {sizes.map(size => {
+                            const qty = productQty[size] || 0;
+                            return (
+                              <div key={size} className="flex-1 text-center">
+                                <p className="text-xs text-muted-foreground mb-2">{size}</p>
+                                <div className="flex items-center justify-center border border-border bg-background">
+                                  <button
+                                    onClick={() => updateQuantity(product.id, size, -1)}
+                                    className="w-8 h-10 flex items-center justify-center hover:bg-muted transition-colors"
+                                  >
+                                    <Minus className="w-3 h-3" />
+                                  </button>
+                                  <input
+                                    type="number"
+                                    min="0"
+                                    value={qty}
+                                    onChange={(e) => setQuantity(product.id, size, parseInt(e.target.value) || 0)}
+                                    className="w-12 h-10 text-center bg-transparent border-x border-border text-sm font-serif"
+                                  />
+                                  <button
+                                    onClick={() => updateQuantity(product.id, size, 1)}
+                                    className="w-8 h-10 flex items-center justify-center hover:bg-muted transition-colors"
+                                  >
+                                    <Plus className="w-3 h-3" />
+                                  </button>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                      {/* Notes Field */}
+                      <div>
+                        <Textarea
+                          placeholder="Jot down any customisation points..."
+                          value={orderItems[product.id]?.notes || ""}
+                          onChange={(e) => setNotes(product.id, e.target.value)}
+                          className="resize-none h-16 text-sm bg-muted/30 border-border"
+                        />
+                      </div>
                     </div>
-                  </button>;
+                  </div>
+                </motion.div>
+              );
             })}
+          </div>
+
+          {/* Right Sidebar */}
+          <div className="w-80 flex-shrink-0 space-y-6 sticky top-28 h-fit">
+            {/* Customisation CTA Card */}
+            <div className="border border-border bg-card p-6">
+              <div className="w-16 h-16 bg-gold/10 rounded-full flex items-center justify-center mb-4 mx-auto">
+                <Scissors className="w-8 h-8 text-gold" />
+              </div>
+              <h3 className="font-serif text-lg text-center mb-2">
+                Need Customisations?
+              </h3>
+              <p className="text-muted-foreground text-sm text-center mb-4 leading-relaxed">
+                Customise sizing, silhouettes, or design changes to suit your clientele!
+              </p>
+              <button className="w-full btn-luxury-outline text-sm py-3">
+                Schedule Appointment with Designer
+              </button>
+            </div>
+
+            {/* Billing Breakdown Card */}
+            <div className="border border-border bg-card p-6">
+              <h3 className="text-luxury-xs text-muted-foreground mb-4">ORDER SUMMARY</h3>
+              
+              <div className="space-y-3 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Subtotal ({totalUnits} units)</span>
+                  <span>${subtotal.toLocaleString()}</span>
+                </div>
+                
+                {discount > 0 && (
+                  <div className="flex justify-between text-gold">
+                    <span>Bulk Discount ({(discount * 100).toFixed(0)}%)</span>
+                    <span>-${discountAmount.toLocaleString()}</span>
+                  </div>
+                )}
+                
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Shipping</span>
+                  <span>{shipping > 0 ? `$${shipping}` : "—"}</span>
+                </div>
+                
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Tax (18% GST)</span>
+                  <span>${tax.toLocaleString()}</span>
+                </div>
+                
+                <div className="border-t border-border pt-3 mt-3">
+                  <div className="flex justify-between font-serif text-lg">
+                    <span>Total</span>
+                    <span>${finalTotal.toLocaleString()}</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-
-        {/* Right: Order Matrix */}
-        <div className="flex-1 overflow-y-auto h-[calc(100vh-7rem)]">
-          {activeProductData ? <div className="p-8">
-              {/* Product Hero */}
-              <div className="flex gap-8 mb-12">
-                <div className="w-80 aspect-[3/4] flex-shrink-0 overflow-hidden">
-                  <img src={activeProductData.image} alt={activeProductData.name} className="w-full h-full object-cover" />
-                </div>
-                <div>
-                  <p className="text-luxury-xs text-muted-foreground mb-2 text-xl">{activeProductData.brandName}</p>
-                  <h1 className="font-serif mb-2 text-4xl">{activeProductData.name}</h1>
-                  <p className="text-gold mb-4 text-2xl">${activeProductData.price} / unit</p>
-                  <p className="text-muted-foreground max-w-md text-base">
-                    Enter quantities per size below. Orders are processed per unit.
-                  </p>
-                </div>
-              </div>
-
-              {/* Size Matrix */}
-              <div className="mb-8">
-                <h3 className="text-luxury-xs text-muted-foreground mb-4 text-base">QUANTITY BY SIZE</h3>
-                <div className="grid grid-cols-5 gap-4">
-                  {sizes.map(size => {
-                const qty = quantities[activeProductData.id]?.[size] || 0;
-                return <div key={size} className="text-center">
-                        <p className="text-luxury-sm mb-3 text-base">{size}</p>
-                        <div className="border border-border p-4">
-                          <div className="flex items-center justify-center gap-2 mb-2">
-                            <button onClick={() => updateQuantity(activeProductData.id, size, -1)} className="w-8 h-8 flex items-center justify-center bg-muted hover:bg-muted/80 transition-colors">
-                              <Minus className="w-4 h-4" />
-                            </button>
-                            <input type="number" min="0" step="1" value={qty} onChange={e => setQuantity(activeProductData.id, size, parseInt(e.target.value) || 0)} className="w-20 text-center bg-background border border-border py-2 font-serif text-xl" />
-                            <button onClick={() => updateQuantity(activeProductData.id, size, 1)} className="w-8 h-8 flex items-center justify-center bg-muted hover:bg-muted/80 transition-colors">
-                              <Plus className="w-4 h-4" />
-                            </button>
-                          </div>
-                          <p className="text-muted-foreground text-base">
-                            ${(qty * activeProductData.price).toLocaleString()}
-                          </p>
-                        </div>
-                      </div>;
-              })}
-                </div>
-              </div>
-
-              {/* Product Total */}
-              <div className="border-t border-border pt-6">
-                <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground">Product Total</span>
-                  <span className="font-serif text-xl">
-                    {getProductTotal(activeProductData.id)} units · $
-                    {(getProductTotal(activeProductData.id) * activeProductData.price).toLocaleString()}
-                  </span>
-                </div>
-              </div>
-            </div> : <div className="flex items-center justify-center h-full">
-              <p className="text-muted-foreground">Select a product to configure quantities</p>
-            </div>}
         </div>
       </main>
 
       {/* Fixed Bottom Bar */}
-      <motion.div initial={{
-      y: 100
-    }} animate={{
-      y: 0
-    }} className="fixed bottom-0 left-0 right-0 bg-deep-charcoal border-t border-gold/20">
-        <div className="max-w-7xl mx-auto px-8 py-6 flex items-center justify-between">
-          <div className="flex items-center gap-12">
+      <motion.div
+        initial={{ y: 100 }}
+        animate={{ y: 0 }}
+        className="fixed bottom-0 left-0 right-0 bg-deep-charcoal border-t border-gold/20"
+      >
+        <div className="max-w-7xl mx-auto px-8 py-5 flex items-center justify-between">
+          <div className="flex items-center gap-8">
             <div>
               <p className="text-muted-foreground text-xs mb-1">Total Units</p>
-              <p className="text-primary-foreground font-serif text-xl">{totalUnits.toLocaleString()}</p>
+              <p className="text-primary-foreground font-serif text-lg">{totalUnits.toLocaleString()}</p>
             </div>
-            {discount > 0 && <div>
+            {discount > 0 && (
+              <div>
                 <p className="text-muted-foreground text-xs mb-1">Bulk Discount</p>
-                <p className="text-gold font-serif text-xl">{(discount * 100).toFixed(0)}% OFF</p>
-              </div>}
+                <p className="text-gold font-serif text-lg">{(discount * 100).toFixed(0)}% OFF</p>
+              </div>
+            )}
             <div>
               <p className="text-muted-foreground text-xs mb-1">Order Value</p>
-              <p className="text-primary-foreground font-serif text-xl">${finalTotal.toLocaleString()}</p>
+              <p className="text-primary-foreground font-serif text-lg">${finalTotal.toLocaleString()}</p>
             </div>
           </div>
 
-          <button className="btn-luxury-gold" disabled={totalUnits === 0}>
-            Request Quote
+          <button 
+            className="btn-luxury-gold"
+            disabled={totalUnits === 0}
+            onClick={handleProceedToCheckout}
+          >
+            Proceed to Checkout
           </button>
         </div>
       </motion.div>
-    </div>;
+    </div>
+  );
 };
+
 export default B2BOrder;

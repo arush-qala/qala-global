@@ -14,6 +14,7 @@ import Experience from "./pages/Experience";
 import SampleCrate from "./pages/experience/SampleCrate";
 import SampleCrateCheckout from "./pages/experience/SampleCrateCheckout";
 import B2BOrder from "./pages/experience/B2BOrder";
+import B2BOrderCheckout from "./pages/experience/B2BOrderCheckout";
 import PrivateShowcase from "./pages/experience/PrivateShowcase";
 import TradeShow from "./pages/experience/TradeShow";
 import NotFound from "./pages/NotFound";
@@ -36,6 +37,7 @@ const App = () => (
             <Route path="/experience/sample-crate" element={<SampleCrate />} />
             <Route path="/experience/sample-crate/checkout" element={<SampleCrateCheckout />} />
             <Route path="/experience/b2b-order" element={<B2BOrder />} />
+            <Route path="/experience/b2b-order/checkout" element={<B2BOrderCheckout />} />
             <Route path="/experience/private-showcase" element={<PrivateShowcase />} />
             <Route path="/experience/trade-show" element={<TradeShow />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
