@@ -124,10 +124,10 @@ const B2BOrder = () => {
             className="flex items-center gap-2 hover:text-gold transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span className="text-sm tracking-widest uppercase">Back</span>
+            <span className="text-luxury-sm tracking-widest uppercase text-sm">Back</span>
           </button>
           <div className="text-center">
-            <span className="text-sm tracking-widest text-muted-foreground">
+            <span className="text-luxury-sm tracking-widest text-sm text-muted-foreground">
               {brandName} · {collectionName}
             </span>
           </div>
@@ -139,7 +139,7 @@ const B2BOrder = () => {
         <div className="max-w-7xl mx-auto flex gap-8">
           {/* Left: Product List */}
           <div className="flex-1 space-y-6">
-            <h1 className="font-serif text-4xl lg:text-5xl mb-8">B2B Wholesale Order</h1>
+            <h1 className="font-serif text-3xl mb-8">B2B Wholesale Order</h1>
             
             {products.map(product => {
               const productQty = orderItems[product.id]?.quantities || {};

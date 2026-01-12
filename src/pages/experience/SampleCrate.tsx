@@ -306,7 +306,7 @@ const SampleCrate = () => {
             className="flex items-center gap-2 hover:text-gold transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span className="text-sm tracking-widest uppercase">Back</span>
+            <span className="text-luxury-sm tracking-widest uppercase text-base">Back</span>
           </button>
           <span className="text-luxury-sm tracking-widest text-base">SAMPLE CRATE</span>
           <div className="w-20" />
@@ -418,8 +418,8 @@ const SampleCrate = () => {
       >
         <div className="max-w-7xl mx-auto px-8 py-6 flex items-center justify-between">
           <div>
-            <p className="text-primary-foreground text-sm mb-1">
-              {selectedItems.length} of {products.length} pieces selected
+            <p className="text-primary-foreground text-luxury-sm mb-1">
+              {selectedItems.length} of 5 pieces selected
             </p>
             <p className="text-primary-foreground/60 text-xs truncate max-w-md">
               {selectedItems.map((item) => `${item.product.name} (${item.size})`).join(', ') ||

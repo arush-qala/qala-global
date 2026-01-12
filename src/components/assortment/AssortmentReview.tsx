@@ -132,16 +132,16 @@ export const AssortmentReview = ({
             className="fixed inset-0 z-40 bg-black/40"
           />
           
-          {/* Bottom Sheet Drawer */}
+          {/* Centered Modal */}
           <motion.div
-            initial={{ y: '100%' }}
-            animate={{ y: 0 }}
-            exit={{ y: '100%' }}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
             transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-            className="fixed bottom-0 left-0 right-0 z-50"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-8"
           >
             <div 
-              className="bg-background border-t border-border w-full h-[80vh] max-h-[700px] flex flex-col"
+              className="bg-background border border-border w-full max-w-6xl h-[80vh] max-h-[700px] flex flex-col"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}
