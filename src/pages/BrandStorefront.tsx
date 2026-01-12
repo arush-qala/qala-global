@@ -85,7 +85,6 @@ const BrandStorefront = () => {
       {/* CTA Guidance */}
       <CTAGuidance 
         message="Scroll to explore the brand's story → Browse featured looks and collections" 
-        className="text-primary-foreground [&>div]:bg-charcoal/60 [&>div]:border-primary-foreground/20"
       />
 
       {/* Back Button */}
