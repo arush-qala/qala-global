@@ -80,9 +80,7 @@ const Experience = () => {
       }} transition={{
         duration: 0.6
       }}>
-          <h1 className="font-serif text-4xl text-center mb-4 lg:text-6xl">
-            How Would You Like to Proceed?
-          </h1>
+          <h1 className="font-serif text-4xl text-center mb-4 lg:text-6xl">How Would You Like to Experience This Brand?</h1>
           <p className="text-muted-foreground text-center max-w-xl mx-auto mb-16 text-lg">
             Your curated selection is ready. Choose how you'd like to experience these pieces.
           </p>
