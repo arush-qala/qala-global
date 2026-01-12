@@ -86,7 +86,7 @@ const BrandStorefront = () => {
       {/* Back Button */}
       <Link to="/discover" className="fixed top-8 left-8 z-50 flex items-center gap-2 text-primary-foreground hover:text-gold transition-colors">
         <ArrowLeft className="w-4 h-4" />
-        <span className="text-luxury-sm text-base">Back</span>
+        <span className="text-sm tracking-widest uppercase">Back</span>
       </Link>
 
       {/* Hero Section - Full Screen Image (No Text) */}
@@ -190,7 +190,7 @@ const BrandStorefront = () => {
         </div>
       </section>
 
-      {/* More Collections Section - Full Width */}
+      {/* Latest Collection Section - Full Width */}
       <section className="py-24 bg-background">
         <div className="px-8 lg:px-16 mb-12">
           <motion.h2
@@ -199,7 +199,7 @@ const BrandStorefront = () => {
             viewport={{ once: true }}
             className="font-serif text-4xl lg:text-5xl font-light"
           >
-            More Collections
+            Latest Collection
           </motion.h2>
         </div>
 
