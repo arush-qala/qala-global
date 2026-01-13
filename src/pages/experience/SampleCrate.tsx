@@ -418,8 +418,8 @@ const SampleCrate = () => {
       >
         <div className="max-w-7xl mx-auto px-8 py-6 flex items-center justify-between">
           <div>
-            <p className="text-primary-foreground text-luxury-sm mb-1">
-              {selectedItems.length} of 5 pieces selected
+            <p className="text-primary-foreground text-base mb-1">
+              {selectedItems.length} of {products.length} pieces selected
             </p>
             <p className="text-primary-foreground/60 text-xs truncate max-w-md">
               {selectedItems.map((item) => `${item.product.name} (${item.size})`).join(', ') ||

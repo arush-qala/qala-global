@@ -39,9 +39,9 @@ const PrivateShowcase = () => {
             className="flex items-center gap-2 hover:text-gold transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span className="text-luxury-sm tracking-widest uppercase">Back</span>
+            <span className="text-base tracking-widest uppercase">Back</span>
           </button>
-          <span className="text-luxury-sm tracking-widest">PRIVATE SHOWCASE</span>
+          <span className="text-base tracking-widest">PRIVATE SHOWCASE</span>
           <div className="w-20" />
         </div>
       </div>
@@ -56,7 +56,7 @@ const PrivateShowcase = () => {
               animate={{ opacity: 1, x: 0 }}
               className="relative"
             >
-              <h2 className="text-luxury-xs text-muted-foreground mb-6">YOUR CURATED SELECTION</h2>
+              <h2 className="text-xs tracking-widest text-muted-foreground mb-6">YOUR CURATED SELECTION</h2>
               <div className="grid grid-cols-3 gap-2">
                 {products.slice(0, 6).map((product, index) => (
                   <motion.div
@@ -75,7 +75,7 @@ const PrivateShowcase = () => {
                 ))}
               </div>
               {products.length > 6 && (
-                <p className="text-muted-foreground text-sm mt-4 text-center">
+                <p className="text-muted-foreground text-base mt-4 text-center">
                   +{products.length - 6} more pieces in your selection
                 </p>
               )}
@@ -87,8 +87,8 @@ const PrivateShowcase = () => {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
             >
-              <h1 className="font-serif text-3xl mb-4">Schedule Your Showcase</h1>
-              <p className="text-muted-foreground mb-8 leading-relaxed">
+              <h1 className="font-serif text-4xl lg:text-5xl mb-4">Schedule Your Showcase</h1>
+              <p className="text-muted-foreground mb-8 leading-relaxed text-lg">
                 Our brand representative will bring your curated selection directly to your boutique. 
                 Experience the fabrics, discuss styling opportunities, and place orders with 
                 personalized guidance.
@@ -97,7 +97,7 @@ const PrivateShowcase = () => {
               <div className="space-y-6">
                 {/* Boutique Info */}
                 <div>
-                  <h3 className="text-luxury-xs text-muted-foreground mb-4 flex items-center gap-2">
+                  <h3 className="text-xs tracking-widest text-muted-foreground mb-4 flex items-center gap-2">
                     <MapPin className="w-4 h-4" /> BOUTIQUE INFORMATION
                   </h3>
                   <div className="space-y-4">
@@ -106,7 +106,7 @@ const PrivateShowcase = () => {
                       value={formData.boutiqueName}
                       onChange={(e) => setFormData({...formData, boutiqueName: e.target.value})}
                       placeholder="Boutique Name"
-                      className="w-full bg-background border border-border px-4 py-3 text-sm focus:border-gold focus:outline-none"
+                      className="w-full bg-background border border-border px-4 py-3 text-base focus:border-gold focus:outline-none"
                     />
                     <div className="grid grid-cols-2 gap-4">
                       <input
@@ -114,14 +114,14 @@ const PrivateShowcase = () => {
                         value={formData.contactName}
                         onChange={(e) => setFormData({...formData, contactName: e.target.value})}
                         placeholder="Contact Name"
-                        className="w-full bg-background border border-border px-4 py-3 text-sm focus:border-gold focus:outline-none"
+                        className="w-full bg-background border border-border px-4 py-3 text-base focus:border-gold focus:outline-none"
                       />
                       <input
                         type="email"
                         value={formData.email}
                         onChange={(e) => setFormData({...formData, email: e.target.value})}
                         placeholder="Email"
-                        className="w-full bg-background border border-border px-4 py-3 text-sm focus:border-gold focus:outline-none"
+                        className="w-full bg-background border border-border px-4 py-3 text-base focus:border-gold focus:outline-none"
                       />
                     </div>
                     <input
@@ -129,14 +129,14 @@ const PrivateShowcase = () => {
                       value={formData.phone}
                       onChange={(e) => setFormData({...formData, phone: e.target.value})}
                       placeholder="Phone Number"
-                      className="w-full bg-background border border-border px-4 py-3 text-sm focus:border-gold focus:outline-none"
+                      className="w-full bg-background border border-border px-4 py-3 text-base focus:border-gold focus:outline-none"
                     />
                     <input
                       type="text"
                       value={formData.address}
                       onChange={(e) => setFormData({...formData, address: e.target.value})}
                       placeholder="Street Address"
-                      className="w-full bg-background border border-border px-4 py-3 text-sm focus:border-gold focus:outline-none"
+                      className="w-full bg-background border border-border px-4 py-3 text-base focus:border-gold focus:outline-none"
                     />
                     <div className="grid grid-cols-3 gap-4">
                       <input
@@ -144,21 +144,21 @@ const PrivateShowcase = () => {
                         value={formData.city}
                         onChange={(e) => setFormData({...formData, city: e.target.value})}
                         placeholder="City"
-                        className="w-full bg-background border border-border px-4 py-3 text-sm focus:border-gold focus:outline-none"
+                        className="w-full bg-background border border-border px-4 py-3 text-base focus:border-gold focus:outline-none"
                       />
                       <input
                         type="text"
                         value={formData.state}
                         onChange={(e) => setFormData({...formData, state: e.target.value})}
                         placeholder="State"
-                        className="w-full bg-background border border-border px-4 py-3 text-sm focus:border-gold focus:outline-none"
+                        className="w-full bg-background border border-border px-4 py-3 text-base focus:border-gold focus:outline-none"
                       />
                       <input
                         type="text"
                         value={formData.zipCode}
                         onChange={(e) => setFormData({...formData, zipCode: e.target.value})}
                         placeholder="ZIP"
-                        className="w-full bg-background border border-border px-4 py-3 text-sm focus:border-gold focus:outline-none"
+                        className="w-full bg-background border border-border px-4 py-3 text-base focus:border-gold focus:outline-none"
                       />
                     </div>
                   </div>
@@ -166,7 +166,7 @@ const PrivateShowcase = () => {
 
                 {/* Scheduling */}
                 <div>
-                  <h3 className="text-luxury-xs text-muted-foreground mb-4 flex items-center gap-2">
+                  <h3 className="text-xs tracking-widest text-muted-foreground mb-4 flex items-center gap-2">
                     <Calendar className="w-4 h-4" /> PREFERRED DATES
                   </h3>
                   <div className="grid grid-cols-2 gap-4">
@@ -176,7 +176,7 @@ const PrivateShowcase = () => {
                         type="date"
                         value={formData.preferredDate1}
                         onChange={(e) => setFormData({...formData, preferredDate1: e.target.value})}
-                        className="w-full bg-background border border-border px-4 py-3 text-sm focus:border-gold focus:outline-none"
+                        className="w-full bg-background border border-border px-4 py-3 text-base focus:border-gold focus:outline-none"
                       />
                     </div>
                     <div>
@@ -185,7 +185,7 @@ const PrivateShowcase = () => {
                         type="date"
                         value={formData.preferredDate2}
                         onChange={(e) => setFormData({...formData, preferredDate2: e.target.value})}
-                        className="w-full bg-background border border-border px-4 py-3 text-sm focus:border-gold focus:outline-none"
+                        className="w-full bg-background border border-border px-4 py-3 text-base focus:border-gold focus:outline-none"
                       />
                     </div>
                   </div>
@@ -193,7 +193,7 @@ const PrivateShowcase = () => {
 
                 {/* Time Preference */}
                 <div>
-                  <h3 className="text-luxury-xs text-muted-foreground mb-4 flex items-center gap-2">
+                  <h3 className="text-xs tracking-widest text-muted-foreground mb-4 flex items-center gap-2">
                     <Clock className="w-4 h-4" /> PREFERRED TIME
                   </h3>
                   <div className="grid grid-cols-2 gap-3">
@@ -201,7 +201,7 @@ const PrivateShowcase = () => {
                       <button
                         key={slot}
                         onClick={() => setFormData({...formData, preferredTime: slot})}
-                        className={`p-3 border text-sm transition-colors ${
+                        className={`p-3 border text-base transition-colors ${
                           formData.preferredTime === slot
                             ? 'border-gold bg-gold/5 text-gold'
                             : 'border-border hover:border-gold/30'
@@ -215,13 +215,13 @@ const PrivateShowcase = () => {
 
                 {/* Notes */}
                 <div>
-                  <label className="text-luxury-xs text-muted-foreground mb-2 block">ADDITIONAL NOTES</label>
+                  <label className="text-xs tracking-widest text-muted-foreground mb-2 block">ADDITIONAL NOTES</label>
                   <textarea
                     value={formData.notes}
                     onChange={(e) => setFormData({...formData, notes: e.target.value})}
                     rows={3}
                     placeholder="Any special requirements or preferences..."
-                    className="w-full bg-background border border-border px-4 py-3 text-sm resize-none focus:border-gold focus:outline-none"
+                    className="w-full bg-background border border-border px-4 py-3 text-base resize-none focus:border-gold focus:outline-none"
                   />
                 </div>
               </div>
@@ -238,10 +238,10 @@ const PrivateShowcase = () => {
       >
         <div className="max-w-6xl mx-auto px-8 py-6 flex items-center justify-between">
           <div>
-            <p className="text-primary-foreground text-luxury-sm mb-1">
+            <p className="text-primary-foreground text-base mb-1">
               {products.length} pieces in your selection
             </p>
-            <p className="text-muted-foreground text-xs">
+            <p className="text-muted-foreground text-sm">
               Our team will confirm availability within 24 hours
             </p>
           </div>

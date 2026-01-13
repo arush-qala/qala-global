@@ -124,10 +124,10 @@ const B2BOrder = () => {
             className="flex items-center gap-2 hover:text-gold transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span className="text-luxury-sm tracking-widest uppercase text-sm">Back</span>
+            <span className="text-base tracking-widest uppercase">Back</span>
           </button>
           <div className="text-center">
-            <span className="text-luxury-sm tracking-widest text-sm text-muted-foreground">
+            <span className="text-base tracking-widest text-muted-foreground">
               {brandName} · {collectionName}
             </span>
           </div>
@@ -139,7 +139,7 @@ const B2BOrder = () => {
         <div className="max-w-7xl mx-auto flex gap-8">
           {/* Left: Product List */}
           <div className="flex-1 space-y-6">
-            <h1 className="font-serif text-3xl mb-8">B2B Wholesale Order</h1>
+            <h1 className="font-serif text-4xl lg:text-5xl mb-8">B2B Wholesale Order</h1>
             
             {products.map(product => {
               const productQty = orderItems[product.id]?.quantities || {};
@@ -167,32 +167,32 @@ const B2BOrder = () => {
                     <div className="flex-1 min-w-0">
                       <div className="flex justify-between items-start mb-4">
                         <div>
-                          <p className="text-luxury-xs text-muted-foreground mb-1">
+                          <p className="text-xs tracking-widest text-muted-foreground mb-1">
                             {product.brandName}
                           </p>
                           <h3 className="font-serif text-lg">{product.name}</h3>
-                          <p className="text-gold text-sm mt-1">${product.price} / unit</p>
+                          <p className="text-gold text-base mt-1">${product.price} / unit</p>
                         </div>
                         
                         {/* Landed Price */}
                         <div className="text-right">
-                          <p className="text-luxury-xs text-muted-foreground mb-1">Landed Price</p>
+                          <p className="text-xs tracking-widest text-muted-foreground mb-1">Landed Price</p>
                           <p className="font-serif text-xl">${productValue.toLocaleString()}</p>
                           {productTotal > 0 && (
-                            <p className="text-muted-foreground text-xs">{productTotal} units</p>
+                            <p className="text-muted-foreground text-sm">{productTotal} units</p>
                           )}
                         </div>
                       </div>
 
                       {/* Size Grid */}
                       <div className="mb-4">
-                        <p className="text-luxury-xs text-muted-foreground mb-3">Quantity by Size</p>
+                        <p className="text-xs tracking-widest text-muted-foreground mb-3">Quantity by Size</p>
                         <div className="flex gap-3">
                           {sizes.map(size => {
                             const qty = productQty[size] || 0;
                             return (
                               <div key={size} className="flex-1 text-center">
-                                <p className="text-xs text-muted-foreground mb-2">{size}</p>
+                                <p className="text-sm text-muted-foreground mb-2">{size}</p>
                                 <div className="flex items-center justify-center border border-border bg-background">
                                   <button
                                     onClick={() => updateQuantity(product.id, size, -1)}
@@ -205,7 +205,7 @@ const B2BOrder = () => {
                                     min="0"
                                     value={qty}
                                     onChange={(e) => setQuantity(product.id, size, parseInt(e.target.value) || 0)}
-                                    className="w-12 h-10 text-center bg-transparent border-x border-border text-sm font-serif"
+                                    className="w-12 h-10 text-center bg-transparent border-x border-border text-base font-serif"
                                   />
                                   <button
                                     onClick={() => updateQuantity(product.id, size, 1)}
@@ -226,7 +226,7 @@ const B2BOrder = () => {
                           placeholder="Jot down any customisation points..."
                           value={orderItems[product.id]?.notes || ""}
                           onChange={(e) => setNotes(product.id, e.target.value)}
-                          className="resize-none h-16 text-sm bg-muted/30 border-border"
+                          className="resize-none h-16 text-base bg-muted/30 border-border"
                         />
                       </div>
                     </div>
@@ -246,19 +246,19 @@ const B2BOrder = () => {
               <h3 className="font-serif text-lg text-center mb-2">
                 Need Customisations?
               </h3>
-              <p className="text-muted-foreground text-sm text-center mb-4 leading-relaxed">
+              <p className="text-muted-foreground text-base text-center mb-4 leading-relaxed">
                 Customise sizing, silhouettes, or design changes to suit your clientele!
               </p>
-              <button className="w-full btn-luxury-outline text-sm py-3">
+              <button className="w-full btn-luxury-outline text-base py-3">
                 Schedule Appointment with Designer
               </button>
             </div>
 
             {/* Billing Breakdown Card */}
             <div className="border border-border bg-card p-6">
-              <h3 className="text-luxury-xs text-muted-foreground mb-4">ORDER SUMMARY</h3>
+              <h3 className="text-xs tracking-widest text-muted-foreground mb-4">ORDER SUMMARY</h3>
               
-              <div className="space-y-3 text-sm">
+              <div className="space-y-3 text-base">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Subtotal ({totalUnits} units)</span>
                   <span>${subtotal.toLocaleString()}</span>
@@ -302,17 +302,17 @@ const B2BOrder = () => {
         <div className="max-w-7xl mx-auto px-8 py-5 flex items-center justify-between">
           <div className="flex items-center gap-8">
             <div>
-              <p className="text-muted-foreground text-xs mb-1">Total Units</p>
+              <p className="text-muted-foreground text-sm mb-1">Total Units</p>
               <p className="text-primary-foreground font-serif text-lg">{totalUnits.toLocaleString()}</p>
             </div>
             {discount > 0 && (
               <div>
-                <p className="text-muted-foreground text-xs mb-1">Bulk Discount</p>
+                <p className="text-muted-foreground text-sm mb-1">Bulk Discount</p>
                 <p className="text-gold font-serif text-lg">{(discount * 100).toFixed(0)}% OFF</p>
               </div>
             )}
             <div>
-              <p className="text-muted-foreground text-xs mb-1">Order Value</p>
+              <p className="text-muted-foreground text-sm mb-1">Order Value</p>
               <p className="text-primary-foreground font-serif text-lg">${finalTotal.toLocaleString()}</p>
             </div>
           </div>

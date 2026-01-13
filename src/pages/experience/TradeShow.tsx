@@ -84,9 +84,9 @@ const TradeShow = () => {
             className="flex items-center gap-2 hover:text-gold transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span className="text-luxury-sm tracking-widest uppercase">Back</span>
+            <span className="text-base tracking-widest uppercase">Back</span>
           </button>
-          <span className="text-luxury-sm tracking-widest">TRADE SHOWS</span>
+          <span className="text-base tracking-widest">TRADE SHOWS</span>
           <div className="w-20" />
         </div>
       </div>
@@ -99,8 +99,8 @@ const TradeShow = () => {
             animate={{ opacity: 1, y: 0 }}
             className="text-center"
           >
-            <h1 className="font-serif text-4xl lg:text-5xl mb-4">Meet Us In Person</h1>
-            <p className="text-muted-foreground max-w-xl mx-auto">
+            <h1 className="font-serif text-4xl lg:text-6xl mb-4">Meet Us In Person</h1>
+            <p className="text-muted-foreground max-w-xl mx-auto text-lg">
               Experience our collections at the world's premier fashion events. 
               Book exclusive booth appointments for personalized consultations.
             </p>
@@ -139,7 +139,7 @@ const TradeShow = () => {
                     <div className="flex-1 p-6 flex items-center justify-between">
                       <div>
                         <h3 className="font-serif text-2xl mb-2">{event.name}</h3>
-                        <div className="flex items-center gap-4 text-muted-foreground text-sm">
+                        <div className="flex items-center gap-4 text-muted-foreground text-base">
                           <span className="flex items-center gap-1">
                             <Calendar className="w-4 h-4" />
                             {event.date}
@@ -149,7 +149,7 @@ const TradeShow = () => {
                             {event.location}
                           </span>
                         </div>
-                        <p className="text-gold text-sm mt-2">{event.booth}</p>
+                        <p className="text-gold text-base mt-2">{event.booth}</p>
                       </div>
                       <ChevronRight className={`w-6 h-6 text-muted-foreground transition-transform ${
                         isExpanded ? 'rotate-90' : ''
@@ -169,8 +169,8 @@ const TradeShow = () => {
                       >
                         <div className="p-6 grid grid-cols-1 lg:grid-cols-2 gap-8">
                           <div>
-                            <p className="text-muted-foreground mb-4">{event.description}</p>
-                            <div className="space-y-2 text-sm">
+                            <p className="text-muted-foreground mb-4 text-base">{event.description}</p>
+                            <div className="space-y-2 text-base">
                               <p><span className="text-muted-foreground">Venue:</span> {event.venue}</p>
                               <p><span className="text-muted-foreground">Location:</span> {event.booth}</p>
                             </div>
@@ -178,7 +178,7 @@ const TradeShow = () => {
                           
                           {/* Your Selection Preview */}
                           <div>
-                            <p className="text-luxury-xs text-muted-foreground mb-3">PIECES YOU'RE INTERESTED IN</p>
+                            <p className="text-xs tracking-widest text-muted-foreground mb-3">PIECES YOU'RE INTERESTED IN</p>
                             <div className="flex gap-2 flex-wrap">
                               {products.slice(0, 4).map((product) => (
                                 <div key={product.id} className="w-16 h-20 overflow-hidden">
@@ -186,7 +186,7 @@ const TradeShow = () => {
                                 </div>
                               ))}
                               {products.length > 4 && (
-                                <div className="w-16 h-20 bg-muted flex items-center justify-center">
+                                <div className="w-16 h-20 bg-muted flex items-center justify-center text-base">
                                   <span className="text-muted-foreground text-sm">+{products.length - 4}</span>
                                 </div>
                               )}
@@ -200,7 +200,7 @@ const TradeShow = () => {
                               e.stopPropagation();
                               toggleEvent(event.id);
                             }}
-                            className={`w-full py-4 text-luxury-sm tracking-widest transition-colors ${
+                            className={`w-full py-4 text-sm tracking-widest transition-colors ${
                               isSelected
                                 ? 'bg-gold text-primary-foreground'
                                 : 'border border-border hover:border-gold'
@@ -233,10 +233,10 @@ const TradeShow = () => {
       >
         <div className="max-w-6xl mx-auto px-8 py-6 flex items-center justify-between">
           <div>
-            <p className="text-primary-foreground text-luxury-sm mb-1">
+            <p className="text-primary-foreground text-base mb-1">
               {selectedEvents.size} event{selectedEvents.size !== 1 ? 's' : ''} selected
             </p>
-            <p className="text-muted-foreground text-xs">
+            <p className="text-muted-foreground text-sm">
               You'll receive confirmation emails for each event
             </p>
           </div>
