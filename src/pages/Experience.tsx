@@ -73,7 +73,7 @@ const Experience = () => {
         <div className="flex items-center justify-between px-8 py-6">
           <button onClick={handleBack} className="flex items-center gap-2 hover:text-gold transition-colors">
             <ArrowLeft className="w-4 h-4" />
-            <span className="text-luxury-sm tracking-widest uppercase text-base">Back to Collection</span>
+            <span className="text-sm tracking-widest uppercase">Back to Collection</span>
           </button>
           
           <span className="text-luxury-sm tracking-widest text-base">

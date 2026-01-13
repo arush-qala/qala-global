@@ -39,7 +39,7 @@ const PrivateShowcase = () => {
             className="flex items-center gap-2 hover:text-gold transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span className="text-base tracking-widest uppercase">Back</span>
+            <span className="text-sm tracking-widest uppercase">Back</span>
           </button>
           <span className="text-base tracking-widest">PRIVATE SHOWCASE</span>
           <div className="w-20" />
