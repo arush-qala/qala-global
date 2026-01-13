@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, ReactNode, useCallback, useEffect } from 'react';
 
+// Storage key for persisting assortment to localStorage
 const STORAGE_KEY = 'qala-assortment';
 
 export interface AssortmentProduct {
