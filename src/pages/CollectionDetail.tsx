@@ -798,7 +798,7 @@ const CollectionDetail = () => {
         <div className="flex items-center justify-between px-8 py-6">
           <Link to={`/brands/${slug}`} className="flex items-center gap-2 hover:text-gold transition-colors">
             <ArrowLeft className="w-4 h-4" />
-            <span className="text-luxury-sm tracking-widest uppercase">Back to Brand</span>
+            <span className="text-sm tracking-widest uppercase">Back to Brand</span>
           </Link>
 
           {/* Scroll Progress Indicator */}

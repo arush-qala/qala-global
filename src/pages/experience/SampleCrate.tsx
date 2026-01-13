@@ -306,7 +306,7 @@ const SampleCrate = () => {
             className="flex items-center gap-2 hover:text-gold transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span className="text-luxury-sm tracking-widest uppercase text-base">Back</span>
+            <span className="text-sm tracking-widest uppercase">Back</span>
           </button>
           <span className="text-luxury-sm tracking-widest text-base">SAMPLE CRATE</span>
           <div className="w-20" />

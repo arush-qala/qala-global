@@ -1,4 +1,6 @@
-import { createContext, useContext, useState, ReactNode, useCallback } from 'react';
+import { createContext, useContext, useState, ReactNode, useCallback, useEffect } from 'react';
+
+const STORAGE_KEY = 'qala-assortment';
 
 export interface AssortmentProduct {
   id: string;
@@ -41,11 +43,33 @@ export const useAssortment = () => {
   return context;
 };
 
+// Load initial state from localStorage
+const loadFromStorage = (): AssortmentProduct[] => {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      return JSON.parse(stored);
+    }
+  } catch (error) {
+    console.error('Failed to load assortment from localStorage:', error);
+  }
+  return [];
+};
+
 export const AssortmentProvider = ({ children }: { children: ReactNode }) => {
-  const [products, setProducts] = useState<AssortmentProduct[]>([]);
+  const [products, setProducts] = useState<AssortmentProduct[]>(loadFromStorage);
   const [flyingImage, setFlyingImage] = useState<FlyingImageData | null>(null);
   const [lastCollectionUrl, setLastCollectionUrlState] = useState<string | null>(null);
   const [isTrayOpen, setIsTrayOpen] = useState(false);
+
+  // Persist products to localStorage whenever they change
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(products));
+    } catch (error) {
+      console.error('Failed to save assortment to localStorage:', error);
+    }
+  }, [products]);
 
   const addProduct = useCallback((product: AssortmentProduct, buttonRect?: DOMRect) => {
     setProducts(prev => {
@@ -79,6 +103,11 @@ export const AssortmentProvider = ({ children }: { children: ReactNode }) => {
 
   const clearAssortment = useCallback(() => {
     setProducts([]);
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch (error) {
+      console.error('Failed to clear assortment from localStorage:', error);
+    }
   }, []);
 
   const clearFlyingImage = useCallback(() => {

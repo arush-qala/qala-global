@@ -149,7 +149,7 @@ const B2BOrderCheckout = () => {
             className="flex items-center gap-2 hover:text-gold transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span className="text-luxury-sm tracking-widest uppercase text-sm">Back to Order</span>
+            <span className="text-sm tracking-widest uppercase">Back to Order</span>
           </button>
           <span className="text-luxury-sm tracking-widest text-sm">CHECKOUT</span>
           <div className="w-28" />
