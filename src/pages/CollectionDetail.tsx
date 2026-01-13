@@ -133,6 +133,99 @@ const getProducts = (brandSlug: string) => {
   });
 };
 
+// Inline Assortment Bar Component - Shown inside product overlay
+const InlineAssortmentBar = () => {
+  const { products, setTrayOpen } = useAssortment();
+  const [shouldPulse, setShouldPulse] = useState(false);
+  const prevCountRef = useRef(products.length);
+  
+  // Detect when a new item is added and trigger pulse
+  useEffect(() => {
+    if (products.length > prevCountRef.current) {
+      setShouldPulse(true);
+      const timer = setTimeout(() => setShouldPulse(false), 600);
+      return () => clearTimeout(timer);
+    }
+    prevCountRef.current = products.length;
+  }, [products.length]);
+  
+  if (products.length === 0) return null;
+  
+  return (
+    <motion.div
+      initial={{ y: 100, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[55]"
+    >
+      <motion.button
+        onClick={() => setTrayOpen(true)}
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
+        animate={shouldPulse ? { 
+          scale: [1, 1.08, 1],
+          boxShadow: [
+            '0 10px 40px rgba(184, 149, 106, 0.2)',
+            '0 10px 50px rgba(184, 149, 106, 0.5)',
+            '0 10px 40px rgba(184, 149, 106, 0.2)'
+          ]
+        } : {}}
+        transition={{ duration: 0.5, ease: 'easeOut' }}
+        className="flex items-center gap-4 px-6 py-3 bg-foreground text-background 
+                   border border-border/20 shadow-lg hover:bg-foreground/90 transition-colors"
+      >
+        {/* Thumbnail Stack */}
+        <div className="flex -space-x-2">
+          {products.slice(0, 3).map((product, index) => (
+            <motion.div
+              key={product.id}
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: index * 0.05, type: 'spring', stiffness: 400 }}
+              className="w-8 h-8 rounded-full overflow-hidden border-2 border-background"
+              style={{ zIndex: 3 - index }}
+            >
+              <img 
+                src={product.image} 
+                alt={product.name} 
+                className="w-full h-full object-cover"
+              />
+            </motion.div>
+          ))}
+          {products.length > 3 && (
+            <motion.div 
+              key="overflow-badge"
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              className="w-8 h-8 rounded-full bg-gold flex items-center justify-center 
+                            border-2 border-background text-[10px] font-medium text-primary-foreground"
+            >
+              +{products.length - 3}
+            </motion.div>
+          )}
+        </div>
+
+        {/* Text with count badge */}
+        <div className="flex items-center gap-2">
+          <motion.span
+            key={products.length}
+            initial={{ scale: 1.3, color: 'hsl(var(--gold))' }}
+            animate={{ scale: 1, color: 'inherit' }}
+            transition={{ duration: 0.3 }}
+            className="text-luxury-xs tracking-widest"
+          >
+            {products.length} {products.length === 1 ? 'STYLE' : 'STYLES'} SELECTED
+          </motion.span>
+        </div>
+
+        {/* Arrow */}
+        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
+        </svg>
+      </motion.button>
+    </motion.div>
+  );
+};
+
 // Product Detail Overlay Component
 const ProductDetailOverlay = ({
   product,
@@ -532,6 +625,9 @@ const ProductDetailOverlay = ({
           </div>
         </div>
       </div>
+      
+      {/* Inline Assortment Bar - Visible in product overlay */}
+      <InlineAssortmentBar />
     </motion.div>
   );
 };
