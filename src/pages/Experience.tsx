@@ -98,15 +98,25 @@ const Experience = () => {
             Your curated selection is ready. Choose how you'd like to experience these pieces.
           </p>
 
-          {/* Selection Preview */}
-          {products.length > 0 && <div className="flex justify-center gap-2 mb-16">
-              {products.slice(0, 8).map((product, index) => (
-                <div key={product.id || index} className="w-16 h-16 border border-border bg-muted" />
+          {/* Selection Preview - Only show when products exist */}
+          {products.length > 0 && (
+            <div className="flex justify-center gap-2 mb-16">
+              {products.slice(0, 8).map((product) => (
+                <div key={product.id} className="w-16 h-16 border border-border overflow-hidden">
+                  <img 
+                    src={product.image} 
+                    alt={product.name}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
               ))}
-              {products.length > 8 && <div className="w-16 h-16 border border-border flex items-center justify-center bg-muted">
+              {products.length > 8 && (
+                <div className="w-16 h-16 border border-border flex items-center justify-center bg-muted">
                   <span className="text-muted-foreground text-sm">+{products.length - 8}</span>
-                </div>}
-            </div>}
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Top 3 Experience Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
