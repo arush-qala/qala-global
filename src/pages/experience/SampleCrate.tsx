@@ -346,10 +346,12 @@ const SampleCrate = () => {
                   className={`group relative ${isDisabled ? 'opacity-50' : ''}`}
                 >
                   {/* Product Image */}
-                  <div
-                    className={`aspect-[3/4] mb-4 overflow-hidden border-2 transition-colors relative ${
+                  <button
+                    onClick={() => !isDisabled && handleAddClick(product)}
+                    disabled={isDisabled}
+                    className={`aspect-[3/4] mb-4 overflow-hidden border-2 transition-colors relative w-full cursor-pointer ${
                       isSelected ? 'border-gold' : 'border-transparent'
-                    }`}
+                    } ${isDisabled ? 'cursor-not-allowed' : ''}`}
                   >
                     <img
                       src={product.image}
@@ -368,7 +370,7 @@ const SampleCrate = () => {
                         SIZE {selectedItem?.size}
                       </motion.div>
                     )}
-                  </div>
+                  </button>
 
                   {/* Product Info */}
                   <div className="flex items-start justify-between gap-4">
