@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, MapPin, Calendar, Check, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useAssortment } from '@/contexts/AssortmentContext';
 
 interface TradeEvent {
   id: string;
@@ -13,11 +12,11 @@ interface TradeEvent {
   booth: string;
   image: string;
   description: string;
+  brands: string[];
 }
 
 const TradeShow = () => {
   const navigate = useNavigate();
-  const { products } = useAssortment();
   const [selectedEvents, setSelectedEvents] = useState<Set<string>>(new Set());
   const [expandedEvent, setExpandedEvent] = useState<string | null>(null);
 
@@ -30,7 +29,8 @@ const TradeShow = () => {
       venue: 'Palais de Tokyo',
       booth: 'Hall B, Stand 42',
       image: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=800&q=80',
-      description: 'Join us at the heart of fashion. Our collection will be showcased alongside the world\'s most prestigious designers.'
+      description: 'Join us at the heart of fashion. Our collection will be showcased alongside the world\'s most prestigious designers.',
+      brands: ['Doodlage', 'Margn', 'AKHL Studio']
     },
     { 
       id: '2', 
@@ -40,7 +40,8 @@ const TradeShow = () => {
       venue: 'Javits Center',
       booth: 'Level 2, Booth 156',
       image: 'https://images.unsplash.com/photo-1534430480872-3498386e7856?auto=format&fit=crop&w=800&q=80',
-      description: 'The premier marketplace for contemporary fashion. Meet our team and explore the latest collection.'
+      description: 'The premier marketplace for contemporary fashion. Meet our team and explore the latest collection.',
+      brands: ['Asaii', 'Ituvana', 'Doodlage']
     },
     { 
       id: '3', 
@@ -50,7 +51,8 @@ const TradeShow = () => {
       venue: 'Jio World Convention Centre',
       booth: 'Main Hall, Stand 78',
       image: 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?auto=format&fit=crop&w=800&q=80',
-      description: 'Experience the fusion of traditional craftsmanship and contemporary design at India\'s premier fashion event.'
+      description: 'Experience the fusion of traditional craftsmanship and contemporary design at India\'s premier fashion event.',
+      brands: ['Doodlage', 'Margn', 'AKHL Studio', 'Asaii', 'Ituvana']
     },
     { 
       id: '4', 
@@ -60,7 +62,8 @@ const TradeShow = () => {
       venue: 'Somerset House',
       booth: 'East Wing Gallery',
       image: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=800&q=80',
-      description: 'Celebrate British fashion excellence. Book an exclusive appointment at our Somerset House installation.'
+      description: 'Celebrate British fashion excellence. Book an exclusive appointment at our Somerset House installation.',
+      brands: ['Margn', 'Ituvana']
     },
   ];
 
@@ -176,20 +179,18 @@ const TradeShow = () => {
                             </div>
                           </div>
                           
-                          {/* Your Selection Preview */}
+                          {/* Brands Present */}
                           <div>
-                            <p className="text-xs tracking-widest text-muted-foreground mb-3">PIECES YOU'RE INTERESTED IN</p>
+                            <p className="text-xs tracking-widest text-muted-foreground mb-3">BRANDS PRESENT</p>
                             <div className="flex gap-2 flex-wrap">
-                              {products.slice(0, 4).map((product) => (
-                                <div key={product.id} className="w-16 h-20 overflow-hidden">
-                                  <img src={product.image} alt="" className="w-full h-full object-cover" />
-                                </div>
+                              {event.brands.map((brand) => (
+                                <span 
+                                  key={brand} 
+                                  className="px-3 py-1.5 border border-border text-sm"
+                                >
+                                  {brand}
+                                </span>
                               ))}
-                              {products.length > 4 && (
-                                <div className="w-16 h-20 bg-muted flex items-center justify-center text-base">
-                                  <span className="text-muted-foreground text-sm">+{products.length - 4}</span>
-                                </div>
-                              )}
                             </div>
                           </div>
                         </div>
