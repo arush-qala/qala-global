@@ -277,7 +277,7 @@ const B2BOrder = () => {
                 </div>
                 
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Tax (18% GST)</span>
+                  <span className="text-muted-foreground">Duties</span>
                   <span>${tax.toLocaleString()}</span>
                 </div>
                 
