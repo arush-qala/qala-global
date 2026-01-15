@@ -11,7 +11,13 @@ const brandImages: Record<string, string[]> = {
   'doodlage': ['/images/discover/doodlage/1.jpg', '/images/discover/doodlage/2.webp', '/images/discover/doodlage/3.webp', '/images/discover/doodlage/4.webp', '/images/discover/doodlage/5.webp', '/images/discover/doodlage/6.webp'],
   'margn': ['/images/discover/margn/1.webp', '/images/discover/margn/2.webp', '/images/discover/margn/3.webp', '/images/discover/margn/4.webp', '/images/discover/margn/5.webp', '/images/discover/margn/6.webp'],
   'akhl': ['/images/discover/akhl-studio/1.webp', '/images/discover/akhl-studio/2.webp', '/images/discover/akhl-studio/3.webp', '/images/discover/akhl-studio/4.webp', '/images/discover/akhl-studio/5.webp', '/images/discover/akhl-studio/6.webp'],
-  'ituvana': ['/images/discover/ituvana/1.webp', '/images/discover/ituvana/2.webp', '/images/discover/ituvana/3.webp', '/images/discover/ituvana/4.webp', '/images/discover/ituvana/5.webp', '/images/discover/ituvana/6.webp']
+  'ituvana': ['/images/discover/ituvana/1.webp', '/images/discover/ituvana/2.webp', '/images/discover/ituvana/3.webp', '/images/discover/ituvana/4.webp', '/images/discover/ituvana/5.webp', '/images/discover/ituvana/6.webp'],
+  // NEW BRANDS - Using placeholder images (reusing existing brand images until real assets are provided)
+  'capisvirleo': ['/images/discover/doodlage/1.jpg', '/images/discover/doodlage/2.webp', '/images/discover/doodlage/3.webp', '/images/discover/doodlage/4.webp', '/images/discover/doodlage/5.webp', '/images/discover/doodlage/6.webp'],
+  'day-and-age': ['/images/discover/asaii/1.webp', '/images/discover/asaii/2.webp', '/images/discover/asaii/3.webp', '/images/discover/asaii/4.webp', '/images/discover/asaii/5.webp', '/images/discover/asaii/6.webp'],
+  'guapa': ['/images/discover/margn/1.webp', '/images/discover/margn/2.webp', '/images/discover/margn/3.webp', '/images/discover/margn/4.webp', '/images/discover/margn/5.webp', '/images/discover/margn/6.webp'],
+  'ka-sha': ['/images/discover/ituvana/1.webp', '/images/discover/ituvana/2.webp', '/images/discover/ituvana/3.webp', '/images/discover/ituvana/4.webp', '/images/discover/ituvana/5.webp', '/images/discover/ituvana/6.webp'],
+  'khara-kapas': ['/images/discover/akhl-studio/1.webp', '/images/discover/akhl-studio/2.webp', '/images/discover/akhl-studio/3.webp', '/images/discover/akhl-studio/4.webp', '/images/discover/akhl-studio/5.webp', '/images/discover/akhl-studio/6.webp'],
 };
 
 const Discover = () => {
@@ -31,7 +37,7 @@ const Discover = () => {
     if (season) {
       result = result.filter(b => b.season.toLowerCase().includes(season.toLowerCase()));
     }
-    return result.length > 0 ? result.slice(0, 5) : brands.slice(0, 5);
+    return result.length > 0 ? result.slice(0, 10) : brands.slice(0, 10);
   }, [category, season]);
 
   const activeBrand = filteredBrands[activeBrandIndex];
