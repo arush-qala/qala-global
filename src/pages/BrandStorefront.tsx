@@ -117,14 +117,14 @@ const BrandStorefront = () => {
         y: 0
       }} transition={{
         duration: 0.8
-      }} className="max-w-4xl mx-auto text-center">
+      }} className="max-w-6xl mx-auto text-center">
           <span className="text-gold text-luxury-label mb-4 block">
             {brandLocation}
           </span>
           <h1 className="font-serif text-5xl lg:text-7xl font-light mb-6">
             {brandName}
           </h1>
-          <p className="text-muted-foreground text-lg leading-relaxed max-w-xl mx-auto">
+          <p className="text-muted-foreground text-lg leading-relaxed max-w-3xl mx-auto">
             {brandDescription}
           </p>
         </motion.div>
@@ -137,7 +137,7 @@ const BrandStorefront = () => {
       <LookbookScroll images={brandLookbookImages[slug || ''] || brandLookbookImages['asaii']} slug={slug || ''} />
 
       {/* Visual Story - The Process (3 Column Layout) */}
-      <section className="py-32 bg-background">
+      <section className="py-32 px-8 lg:px-16 bg-background">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-0 items-center">
           {/* Left Image - Edge to Edge */}
           <div className="aspect-[3/4] overflow-hidden">
@@ -161,7 +161,7 @@ const BrandStorefront = () => {
         </div>
 
         {/* Geotags - Monochrome Icons with Labels Below */}
-        <div className="flex flex-wrap justify-center gap-16 mt-16 px-8">
+        <div className="flex flex-wrap justify-center gap-16 mt-16">
           {[{
           icon: Leaf,
           label: 'Ethical Sourcing'
@@ -182,8 +182,8 @@ const BrandStorefront = () => {
       </section>
 
       {/* More Collections Section - Full Width */}
-      <section className="py-24 bg-background">
-        <div className="px-8 lg:px-16 mb-12">
+      <section className="py-24 px-8 lg:px-16 bg-background">
+        <div className="mb-12">
           <motion.h2 initial={{
           opacity: 0,
           y: 20
@@ -197,7 +197,7 @@ const BrandStorefront = () => {
           </motion.h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-0">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {moreCollections.map((collection, index) => <Link key={collection.handle || collection.name} to={`/brands/${slug}/collections/${collection.handle || collection.name.toLowerCase().replace(/\s+/g, '-')}`}>
               <motion.div initial={{
             opacity: 0,
@@ -213,7 +213,7 @@ const BrandStorefront = () => {
                 <div className="aspect-[3/4] overflow-hidden mb-4">
                   <img src={collection.image} alt={collection.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                 </div>
-                <div className="px-6">
+                <div>
                   <h3 className="font-serif text-2xl font-light mb-2">{collection.name}</h3>
                   <p className="text-luxury-xs text-muted-foreground tracking-widest">{collection.season.toUpperCase()}</p>
                 </div>
