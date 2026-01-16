@@ -130,8 +130,17 @@ const BrandStorefront = () => {
         </motion.div>
       </section>
 
-      {/* Brand Story Section */}
-      
+      {/* Latest Collection Section */}
+      <section className="pt-24 pb-0 px-8 lg:px-16 bg-sand">
+        <motion.h2
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          className="font-serif text-4xl lg:text-5xl font-light"
+        >
+          Latest Collection
+        </motion.h2>
+      </section>
 
       {/* Lookbook Horizontal Scroll */}
       <LookbookScroll images={brandLookbookImages[slug || ''] || brandLookbookImages['asaii']} slug={slug || ''} />

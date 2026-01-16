@@ -146,15 +146,8 @@ const LookbookScroll = ({
         data-sticky-container
         className="sticky top-0 h-screen flex flex-col"
       >
-        {/* Header - Matches "More Collections" heading style exactly */}
-        <motion.h2
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          className="text-left py-8 text-3xl font-serif font-normal tracking-tight flex-shrink-0"
-        >
-          Latest Collection
-        </motion.h2>
+        {/* Spacer for top padding */}
+        <div className="h-8 flex-shrink-0" />
 
         {/* Horizontal scroll container - scroll driven by vertical scroll */}
         <div
