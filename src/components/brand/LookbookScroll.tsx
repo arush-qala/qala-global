@@ -138,7 +138,7 @@ const LookbookScroll = ({
   return (
     <section 
       ref={sectionRef} 
-      className="relative bg-sand"
+      className="relative bg-sand px-8 lg:px-16"
       style={{ height: containerHeight }}
     >
       {/* Sticky container - pinned to viewport during scroll hijack */}
@@ -151,7 +151,7 @@ const LookbookScroll = ({
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="text-left py-8 text-3xl font-serif font-normal tracking-tight flex-shrink-0 px-8 lg:px-16"
+          className="text-left py-8 text-3xl font-serif font-normal tracking-tight flex-shrink-0"
         >
           Latest Collection
         </motion.h2>
