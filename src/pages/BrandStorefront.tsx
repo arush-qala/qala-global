@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Loader2, Leaf, Droplets, Hand, Globe } from 'lucide-react';
 import Footer from '@/components/layout/Footer';
 import CTAGuidance from '@/components/layout/CTAGuidance';
+import FadingTopBar from '@/components/layout/FadingTopBar';
 import BackButton from '@/components/ui/back-button';
 import { brands } from '@/data/brands';
 import LookbookScroll from '@/components/brand/LookbookScroll';
@@ -95,8 +96,10 @@ const BrandStorefront = () => {
       {/* CTA Guidance */}
       <CTAGuidance message="Scroll to explore the brand's story → Browse featured looks and collections" />
 
-      {/* Back Button - Floating glassmorphism style */}
-      <BackButton to="/discover" variant="floating" className="fixed top-8 left-8 z-50" />
+      {/* Fading Top Bar with Back Button */}
+      <FadingTopBar>
+        <BackButton to="/discover" variant="floating" />
+      </FadingTopBar>
 
       {/* Hero Section - Full Screen Image with Consistent Margins */}
       <section className="relative h-screen px-8 lg:px-16">
