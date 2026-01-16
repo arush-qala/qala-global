@@ -96,8 +96,8 @@ const BrandStorefront = () => {
       {/* CTA Guidance */}
       <CTAGuidance message="Scroll to explore the brand's story → Browse featured looks and collections" />
 
-      {/* Top Bar - Static, part of page flow */}
-      <div className="w-full h-14 bg-background flex items-center px-8 lg:px-16">
+      {/* Top Bar - Sticky, always visible */}
+      <div className="sticky top-0 z-50 w-full h-14 bg-background flex items-center px-8 lg:px-16">
         <BackButton to="/discover" />
       </div>
 
