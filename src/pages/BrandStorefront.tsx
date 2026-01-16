@@ -98,7 +98,7 @@ const BrandStorefront = () => {
 
       {/* Fading Top Bar with Back Button */}
       <FadingTopBar>
-        <BackButton to="/discover" variant="floating" />
+        <BackButton to="/discover" />
       </FadingTopBar>
 
       {/* Hero Section - Full Screen Image with Consistent Margins */}
