@@ -100,9 +100,9 @@ const BrandStorefront = () => {
         <span className="text-sm tracking-widest uppercase">Back</span>
       </Link>
 
-      {/* Hero Section - Full Screen Image (No Text) */}
-      <section className="relative h-screen">
-        <div className="absolute inset-0">
+      {/* Hero Section - Full Screen Image with Consistent Margins */}
+      <section className="relative h-screen px-8 lg:px-16">
+        <div className="h-full overflow-hidden rounded-none">
           <img src={heroImage} alt={brandName} className="w-full h-full object-cover" />
         </div>
       </section>
@@ -139,7 +139,7 @@ const BrandStorefront = () => {
       {/* Visual Story - The Process (3 Column Layout) */}
       <section className="py-32 px-8 lg:px-16 bg-background">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-0 items-center">
-          {/* Left Image - Edge to Edge */}
+          {/* Left Image */}
           <div className="aspect-[3/4] overflow-hidden">
             <img src={(brandLookbookImages[slug || ''] || brandLookbookImages['asaii'])[0]} alt="Process 1" className="w-full h-full object-cover" />
           </div>
@@ -154,30 +154,56 @@ const BrandStorefront = () => {
             </p>
           </div>
 
-          {/* Right Image - Edge to Edge */}
+          {/* Right Image */}
           <div className="aspect-[3/4] overflow-hidden">
             <img src={(brandLookbookImages[slug || ''] || brandLookbookImages['asaii'])[1]} alt="Process 2" className="w-full h-full object-cover" />
           </div>
         </div>
+      </section>
 
-        {/* Geotags - Monochrome Icons with Labels Below */}
-        <div className="flex flex-wrap justify-center gap-16 mt-16">
+      {/* Full-Width Media Block - Edge to Edge (Intentional Contrast) */}
+      <section className="relative w-full">
+        <div className="aspect-video lg:aspect-[21/9] w-full overflow-hidden bg-charcoal">
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="w-full h-full object-cover"
+            poster={(brandLookbookImages[slug || ''] || brandLookbookImages['asaii'])[2]}
+          >
+            <source src="/videos/default.mp4" type="video/mp4" />
+          </video>
+          {/* Play button overlay for when video doesn't autoplay */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div className="w-20 h-20 rounded-full border-2 border-primary-foreground/50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+              <div className="w-0 h-0 border-t-8 border-t-transparent border-l-12 border-l-primary-foreground border-b-8 border-b-transparent ml-1" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Geotags Section - With Consistent Margins */}
+      <section className="py-24 px-8 lg:px-16 bg-background">
+        <div className="flex flex-wrap justify-center gap-16">
           {[{
-          icon: Leaf,
-          label: 'Ethical Sourcing'
-        }, {
-          icon: Droplets,
-          label: 'Natural Dyes'
-        }, {
-          icon: Hand,
-          label: 'Handcrafted'
-        }, {
-          icon: Globe,
-          label: 'Carbon Neutral'
-        }].map(item => <div key={item.label} className="flex flex-col items-center gap-3">
+            icon: Leaf,
+            label: 'Ethical Sourcing'
+          }, {
+            icon: Droplets,
+            label: 'Natural Dyes'
+          }, {
+            icon: Hand,
+            label: 'Handcrafted'
+          }, {
+            icon: Globe,
+            label: 'Carbon Neutral'
+          }].map(item => (
+            <div key={item.label} className="flex flex-col items-center gap-3">
               <item.icon className="w-10 h-10 text-foreground stroke-1" />
               <span className="text-luxury-label text-center">{item.label}</span>
-            </div>)}
+            </div>
+          ))}
         </div>
       </section>
 
