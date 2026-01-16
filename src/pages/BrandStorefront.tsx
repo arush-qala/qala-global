@@ -31,9 +31,12 @@ const brandLookbookImages: Record<string, string[]> = {
   'akhl_studio': ['/images/discover/akhl-studio/1.webp', '/images/discover/akhl-studio/2.webp', '/images/discover/akhl-studio/3.webp', '/images/discover/akhl-studio/4.webp', '/images/discover/akhl-studio/5.webp', '/images/discover/akhl-studio/6.webp'],
   'ituvana': ['/images/discover/ituvana/1.webp', '/images/discover/ituvana/2.webp', '/images/discover/ituvana/3.webp', '/images/discover/ituvana/4.webp', '/images/discover/ituvana/5.webp', '/images/discover/ituvana/6.webp']
 };
-
 const BrandStorefront = () => {
-  const { slug } = useParams<{ slug: string }>();
+  const {
+    slug
+  } = useParams<{
+    slug: string;
+  }>();
   const location = useLocation();
 
   // Scroll to top on mount
@@ -42,8 +45,13 @@ const BrandStorefront = () => {
   }, [location.pathname]);
 
   // Fetch data from database
-  const { data: dbCollections, isLoading: collectionsLoading } = useCollectionsByBrand(slug || '');
-  const { data: dbBrand } = useBrand(slug || '');
+  const {
+    data: dbCollections,
+    isLoading: collectionsLoading
+  } = useCollectionsByBrand(slug || '');
+  const {
+    data: dbBrand
+  } = useBrand(slug || '');
 
   // Fallback to static data
   const staticBrand = brands.find(b => b.slug === slug);
@@ -53,33 +61,36 @@ const BrandStorefront = () => {
   const brandDescription = dbBrand?.description || staticBrand?.description || '';
   const brandStory = dbBrand?.brand_story || staticBrand?.story || '';
   const brandLocation = staticBrand?.location || 'India';
-
   if (!dbBrand && !staticBrand) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
+    return <div className="min-h-screen flex items-center justify-center">
         <p>Brand not found</p>
-      </div>
-    );
+      </div>;
   }
-
   const heroImage = heroImages[slug || ''] || '/images/home/Q_BB_Doodlage.png';
 
   // Use DB collections or fallback mock data
-  const moreCollections = dbCollections && dbCollections.length > 0
-    ? dbCollections.slice(0, 3).map(c => ({
-        name: c.title,
-        handle: c.handle,
-        season: c.seasonality || 'Trans Seasonal',
-        image: c.thumbnail_image || (brandLookbookImages[slug || ''] || brandLookbookImages['asaii'])[0]
-      }))
-    : [
-        { name: 'Autumn Whispers', handle: 'autumn-whispers', season: 'Fall Winter', image: (brandLookbookImages[slug || ''] || brandLookbookImages['asaii'])[0] },
-        { name: 'Urban Nomad', handle: 'urban-nomad', season: 'Spring Summer', image: (brandLookbookImages[slug || ''] || brandLookbookImages['asaii'])[2] },
-        { name: 'Minimalist Dreams', handle: 'minimalist-dreams', season: 'Trans Seasonal', image: (brandLookbookImages[slug || ''] || brandLookbookImages['asaii'])[4] }
-      ];
-
-  return (
-    <div className="min-h-screen bg-background">
+  const moreCollections = dbCollections && dbCollections.length > 0 ? dbCollections.slice(0, 3).map(c => ({
+    name: c.title,
+    handle: c.handle,
+    season: c.seasonality || 'Trans Seasonal',
+    image: c.thumbnail_image || (brandLookbookImages[slug || ''] || brandLookbookImages['asaii'])[0]
+  })) : [{
+    name: 'Autumn Whispers',
+    handle: 'autumn-whispers',
+    season: 'Fall Winter',
+    image: (brandLookbookImages[slug || ''] || brandLookbookImages['asaii'])[0]
+  }, {
+    name: 'Urban Nomad',
+    handle: 'urban-nomad',
+    season: 'Spring Summer',
+    image: (brandLookbookImages[slug || ''] || brandLookbookImages['asaii'])[2]
+  }, {
+    name: 'Minimalist Dreams',
+    handle: 'minimalist-dreams',
+    season: 'Trans Seasonal',
+    image: (brandLookbookImages[slug || ''] || brandLookbookImages['asaii'])[4]
+  }];
+  return <div className="min-h-screen bg-background">
       {/* CTA Guidance */}
       <CTAGuidance message="Scroll to explore the brand's story → Browse featured looks and collections" />
 
@@ -98,12 +109,15 @@ const BrandStorefront = () => {
 
       {/* Brand Name & Description - Below Hero */}
       <section className="py-16 px-8 lg:px-16 bg-background">
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="max-w-4xl mx-auto text-center"
-        >
+        <motion.div initial={{
+        opacity: 0,
+        y: 40
+      }} animate={{
+        opacity: 1,
+        y: 0
+      }} transition={{
+        duration: 0.8
+      }} className="max-w-4xl mx-auto text-center">
           <span className="text-gold text-luxury-label mb-4 block">
             {brandLocation}
           </span>
@@ -117,27 +131,7 @@ const BrandStorefront = () => {
       </section>
 
       {/* Brand Story Section */}
-      <section className="py-32 px-8 lg:px-16 bg-background">
-        <div className="max-w-4xl mx-auto text-center">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="font-serif text-4xl lg:text-5xl font-light mb-8"
-          >
-            The Story
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="text-muted-foreground leading-loose text-xl"
-          >
-            {brandStory}
-          </motion.p>
-        </div>
-      </section>
+      
 
       {/* Lookbook Horizontal Scroll */}
       <LookbookScroll images={brandLookbookImages[slug || ''] || brandLookbookImages['asaii']} slug={slug || ''} />
@@ -147,11 +141,7 @@ const BrandStorefront = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-0 items-center">
           {/* Left Image - Edge to Edge */}
           <div className="aspect-[3/4] overflow-hidden">
-            <img
-              src={(brandLookbookImages[slug || ''] || brandLookbookImages['asaii'])[0]}
-              alt="Process 1"
-              className="w-full h-full object-cover"
-            />
+            <img src={(brandLookbookImages[slug || ''] || brandLookbookImages['asaii'])[0]} alt="Process 1" className="w-full h-full object-cover" />
           </div>
 
           {/* Center Text */}
@@ -166,76 +156,73 @@ const BrandStorefront = () => {
 
           {/* Right Image - Edge to Edge */}
           <div className="aspect-[3/4] overflow-hidden">
-            <img
-              src={(brandLookbookImages[slug || ''] || brandLookbookImages['asaii'])[1]}
-              alt="Process 2"
-              className="w-full h-full object-cover"
-            />
+            <img src={(brandLookbookImages[slug || ''] || brandLookbookImages['asaii'])[1]} alt="Process 2" className="w-full h-full object-cover" />
           </div>
         </div>
 
         {/* Geotags - Monochrome Icons with Labels Below */}
         <div className="flex flex-wrap justify-center gap-16 mt-16 px-8">
-          {[
-            { icon: Leaf, label: 'Ethical Sourcing' },
-            { icon: Droplets, label: 'Natural Dyes' },
-            { icon: Hand, label: 'Handcrafted' },
-            { icon: Globe, label: 'Carbon Neutral' }
-          ].map(item => (
-            <div key={item.label} className="flex flex-col items-center gap-3">
+          {[{
+          icon: Leaf,
+          label: 'Ethical Sourcing'
+        }, {
+          icon: Droplets,
+          label: 'Natural Dyes'
+        }, {
+          icon: Hand,
+          label: 'Handcrafted'
+        }, {
+          icon: Globe,
+          label: 'Carbon Neutral'
+        }].map(item => <div key={item.label} className="flex flex-col items-center gap-3">
               <item.icon className="w-10 h-10 text-foreground stroke-1" />
               <span className="text-luxury-label text-center">{item.label}</span>
-            </div>
-          ))}
+            </div>)}
         </div>
       </section>
 
       {/* More Collections Section - Full Width */}
       <section className="py-24 bg-background">
         <div className="px-8 lg:px-16 mb-12">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="font-serif text-4xl lg:text-5xl font-light"
-          >
+          <motion.h2 initial={{
+          opacity: 0,
+          y: 20
+        }} whileInView={{
+          opacity: 1,
+          y: 0
+        }} viewport={{
+          once: true
+        }} className="font-serif text-4xl lg:text-5xl font-light">
             More Collections
           </motion.h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-0">
-          {moreCollections.map((collection, index) => (
-            <Link
-              key={collection.handle || collection.name}
-              to={`/brands/${slug}/collections/${collection.handle || collection.name.toLowerCase().replace(/\s+/g, '-')}`}
-            >
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="group cursor-pointer"
-              >
+          {moreCollections.map((collection, index) => <Link key={collection.handle || collection.name} to={`/brands/${slug}/collections/${collection.handle || collection.name.toLowerCase().replace(/\s+/g, '-')}`}>
+              <motion.div initial={{
+            opacity: 0,
+            y: 20
+          }} whileInView={{
+            opacity: 1,
+            y: 0
+          }} viewport={{
+            once: true
+          }} transition={{
+            delay: index * 0.1
+          }} className="group cursor-pointer">
                 <div className="aspect-[3/4] overflow-hidden mb-4">
-                  <img
-                    src={collection.image}
-                    alt={collection.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                  />
+                  <img src={collection.image} alt={collection.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                 </div>
                 <div className="px-6">
                   <h3 className="font-serif text-2xl font-light mb-2">{collection.name}</h3>
                   <p className="text-luxury-xs text-muted-foreground tracking-widest">{collection.season.toUpperCase()}</p>
                 </div>
               </motion.div>
-            </Link>
-          ))}
+            </Link>)}
         </div>
       </section>
 
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default BrandStorefront;
