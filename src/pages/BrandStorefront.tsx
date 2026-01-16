@@ -1,9 +1,10 @@
 import { useParams, Link, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Loader2, Leaf, Droplets, Hand, Globe } from 'lucide-react';
+import { Loader2, Leaf, Droplets, Hand, Globe } from 'lucide-react';
 import Footer from '@/components/layout/Footer';
 import CTAGuidance from '@/components/layout/CTAGuidance';
+import BackButton from '@/components/ui/back-button';
 import { brands } from '@/data/brands';
 import LookbookScroll from '@/components/brand/LookbookScroll';
 import { useCollectionsByBrand } from '@/hooks/useCollections';
@@ -94,11 +95,8 @@ const BrandStorefront = () => {
       {/* CTA Guidance */}
       <CTAGuidance message="Scroll to explore the brand's story → Browse featured looks and collections" />
 
-      {/* Back Button */}
-      <Link to="/discover" className="fixed top-8 left-8 z-50 flex items-center gap-2 text-primary-foreground hover:text-gold transition-colors">
-        <ArrowLeft className="w-4 h-4" />
-        <span className="text-sm tracking-widest uppercase">Back</span>
-      </Link>
+      {/* Back Button - Floating glassmorphism style */}
+      <BackButton to="/discover" variant="floating" className="fixed top-8 left-8 z-50" />
 
       {/* Hero Section - Full Screen Image with Consistent Margins */}
       <section className="relative h-screen px-8 lg:px-16">
