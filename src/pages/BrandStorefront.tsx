@@ -6,6 +6,7 @@ import Footer from '@/components/layout/Footer';
 import CTAGuidance from '@/components/layout/CTAGuidance';
 
 import BackButton from '@/components/ui/back-button';
+import TopBar from '@/components/layout/TopBar';
 import { brands } from '@/data/brands';
 import LookbookScroll from '@/components/brand/LookbookScroll';
 import { useCollectionsByBrand } from '@/hooks/useCollections';
@@ -97,9 +98,9 @@ const BrandStorefront = () => {
       <CTAGuidance message="Scroll to explore the brand's story → Browse featured looks and collections" />
 
       {/* Top Bar - Sticky, always visible */}
-      <div className="sticky top-0 z-50 w-full h-14 bg-background flex items-center px-8 lg:px-16 border-b border-border">
+      <TopBar>
         <BackButton to="/discover" />
-      </div>
+      </TopBar>
 
       {/* Hero Section - Full Screen Image with Consistent Margins */}
       <section className="relative h-screen px-8 lg:px-16">

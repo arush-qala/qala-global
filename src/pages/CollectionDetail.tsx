@@ -794,7 +794,7 @@ const CollectionDetail = () => {
       )}
 
       {/* Fixed Header */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm">
+      <div className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border">
         <div className="flex items-center justify-between px-8 py-6">
           <Link to={`/brands/${slug}`} className="flex items-center gap-2 hover:text-gold transition-colors">
             <ArrowLeft className="w-4 h-4" />
