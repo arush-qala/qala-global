@@ -51,9 +51,9 @@ const Discover = () => {
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
       e.preventDefault();
-      
+
       if (scrollCooldownRef.current) return;
-      
+
       // Debounce scroll to prevent rapid switching
       scrollCooldownRef.current = true;
       setTimeout(() => {
@@ -62,12 +62,12 @@ const Discover = () => {
 
       if (e.deltaY > 0) {
         // Scroll down - next brand
-        setActiveBrandIndex(prev => 
+        setActiveBrandIndex(prev =>
           prev < filteredBrands.length - 1 ? prev + 1 : 0
         );
       } else if (e.deltaY < 0) {
         // Scroll up - previous brand
-        setActiveBrandIndex(prev => 
+        setActiveBrandIndex(prev =>
           prev > 0 ? prev - 1 : filteredBrands.length - 1
         );
       }
@@ -89,13 +89,13 @@ const Discover = () => {
     <div ref={containerRef} className="h-screen overflow-hidden bg-background">
       <Header />
       <CTAGuidance message="Scroll to explore brands" />
-      
+
       <main className="h-full pt-24 pb-20 flex flex-col">
         {/* Filter Indicator */}
         {(category || season) && (
-          <motion.div 
-            initial={{ opacity: 0, y: -10 }} 
-            animate={{ opacity: 1, y: 0 }} 
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
             className="px-8 py-3 bg-sand flex-shrink-0"
           >
             <p className="text-luxury-label text-center text-base">
@@ -112,27 +112,27 @@ const Discover = () => {
           {/* Left - Image Grid */}
           <div className="p-6 lg:p-10 overflow-hidden">
             <AnimatePresence mode="wait">
-              <motion.div 
-                key={activeBrand?.slug} 
-                initial={{ opacity: 0 }} 
-                animate={{ opacity: 1 }} 
-                exit={{ opacity: 0 }} 
-                transition={{ duration: 0.5 }} 
+              <motion.div
+                key={activeBrand?.slug}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.5 }}
                 className="grid grid-cols-2 md:grid-cols-3 gap-2 h-full"
               >
                 {images.map((img, index) => (
-                  <motion.div 
-                    key={index} 
-                    initial={{ opacity: 0, y: 20 }} 
-                    animate={{ opacity: 1, y: 0 }} 
-                    transition={{ delay: index * 0.1 }} 
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
                     className="relative aspect-[4/5] overflow-hidden group"
                   >
                     {/* Full color images - no grayscale */}
-                    <img 
-                      src={img} 
-                      alt={`${activeBrand?.name} look ${index + 1}`} 
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
+                    <img
+                      src={img}
+                      alt={`${activeBrand?.name} look ${index + 1}`}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                     {/* Overlay on hover */}
                     <div className="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
@@ -149,23 +149,23 @@ const Discover = () => {
           {/* Right - Brand Info */}
           <div className="p-6 lg:p-10 flex flex-col justify-center overflow-hidden">
             <AnimatePresence mode="wait">
-              <motion.div 
-                key={activeBrand?.slug} 
-                initial={{ opacity: 0, x: 20 }} 
-                animate={{ opacity: 1, x: 0 }} 
-                exit={{ opacity: 0, x: -20 }} 
+              <motion.div
+                key={activeBrand?.slug}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.5 }}
               >
                 {/* Brand Location */}
-                <motion.span 
-                  initial={{ opacity: 0 }} 
-                  animate={{ opacity: 1 }} 
-                  transition={{ delay: 0.2 }} 
+                <motion.span
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.2 }}
                   className="text-gold text-luxury-label mb-4 block text-base"
                 >
                   {activeBrand?.location}
                 </motion.span>
-                
+
                 <h1 className="font-serif text-5xl lg:text-6xl font-light mb-5">
                   {activeBrand?.name}
                 </h1>
@@ -185,16 +185,16 @@ const Discover = () => {
 
                 {/* CTAs */}
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <Link 
-                    to={`/brands/${activeBrand?.slug}`} 
+                  <Link
+                    to={`/brands/${activeBrand?.slug}`}
                     className="btn-luxury inline-flex items-center gap-3 justify-center"
                   >
                     View Brand Store
                     <ArrowRight className="w-4 h-4" />
                   </Link>
-                  
-                  <button 
-                    onClick={handleRefresh} 
+
+                  <button
+                    onClick={handleRefresh}
                     className="btn-luxury-outline inline-flex items-center gap-3 justify-center"
                   >
                     <RefreshCw className="w-4 h-4" />
@@ -211,18 +211,17 @@ const Discover = () => {
       <div className="fixed bottom-0 left-0 right-0 z-40 glass border-t border-border">
         <div className="flex items-center justify-center gap-1 px-4 py-4">
           {filteredBrands.map((brand, index) => (
-            <button 
-              key={brand.slug} 
-              onClick={() => setActiveBrandIndex(index)} 
-              className={`px-6 py-3 text-luxury-xs transition-all duration-300 relative ${
-                index === activeBrandIndex ? 'text-foreground' : 'text-taupe hover:text-foreground'
-              }`}
+            <button
+              key={brand.slug}
+              onClick={() => setActiveBrandIndex(index)}
+              className={`px-6 py-3 text-luxury-xs transition-all duration-300 relative ${index === activeBrandIndex ? 'text-foreground' : 'text-taupe hover:text-foreground'
+                }`}
             >
               {brand.name}
               {index === activeBrandIndex && (
-                <motion.div 
-                  layoutId="activeLabel" 
-                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-gold" 
+                <motion.div
+                  layoutId="activeLabel"
+                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-gold"
                 />
               )}
             </button>
