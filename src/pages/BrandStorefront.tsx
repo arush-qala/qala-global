@@ -61,7 +61,13 @@ const brandLookbookImages: Record<string, string[]> = {
   'margn': ['/lookbooks/margn/page-01.jpg', '/lookbooks/margn/page-02.jpg', '/lookbooks/margn/page-03.jpg', '/lookbooks/margn/page-04.jpg', '/lookbooks/margn/page-05.jpg', '/lookbooks/margn/page-06.jpg', '/lookbooks/margn/page-07.jpg', '/lookbooks/margn/page-08.jpg'],
   'akhl-studio': ['/images/discover/akhl-studio/1.webp', '/images/discover/akhl-studio/2.webp', '/images/discover/akhl-studio/3.webp', '/images/discover/akhl-studio/4.webp', '/images/discover/akhl-studio/5.webp', '/images/discover/akhl-studio/6.webp'],
   'akhl_studio': ['/images/discover/akhl-studio/1.webp', '/images/discover/akhl-studio/2.webp', '/images/discover/akhl-studio/3.webp', '/images/discover/akhl-studio/4.webp', '/images/discover/akhl-studio/5.webp', '/images/discover/akhl-studio/6.webp'],
-  'ituvana': ['/images/discover/ituvana/1.webp', '/images/discover/ituvana/2.webp', '/images/discover/ituvana/3.webp', '/images/discover/ituvana/4.webp', '/images/discover/ituvana/5.webp', '/images/discover/ituvana/6.webp']
+  'akhl': ['/images/discover/akhl-studio/1.webp', '/images/discover/akhl-studio/2.webp', '/images/discover/akhl-studio/3.webp', '/images/discover/akhl-studio/4.webp', '/images/discover/akhl-studio/5.webp', '/images/discover/akhl-studio/6.webp'],
+  'ituvana': ['/images/discover/ituvana/1.webp', '/images/discover/ituvana/2.webp', '/images/discover/ituvana/3.webp', '/images/discover/ituvana/4.webp', '/images/discover/ituvana/5.webp', '/images/discover/ituvana/6.webp'],
+  'capisvirleo': ['/images/discover/capisvirleo/1.jpg', '/images/discover/capisvirleo/2.jpg', '/images/discover/capisvirleo/3.jpg', '/images/discover/capisvirleo/4.jpg', '/images/discover/capisvirleo/5.jpg', '/images/discover/capisvirleo/6.jpg'],
+  'day-and-age': ['/images/discover/day-&-age/1.jpg', '/images/discover/day-&-age/2.jpg', '/images/discover/day-&-age/3.jpg', '/images/discover/day-&-age/4.jpg', '/images/discover/day-&-age/5.jpg', '/images/discover/day-&-age/6.jpg'],
+  'guapa': ['/images/discover/guapa/1.jpg', '/images/discover/guapa/2.jpg', '/images/discover/guapa/3.jpg', '/images/discover/guapa/4.jpg', '/images/discover/guapa/5.webp', '/images/discover/guapa/6.webp'],
+  'ka-sha': ['/images/discover/ka-sha/1.jpg', '/images/discover/ka-sha/2.jpg', '/images/discover/ka-sha/3.jpg', '/images/discover/ka-sha/4.jpg', '/images/discover/ka-sha/5.jpg', '/images/discover/ka-sha/6.jpg'],
+  'khara-kapas': ['/images/discover/khara-kapas/1.jpg', '/images/discover/khara-kapas/2.jpg', '/images/discover/khara-kapas/3.jpg', '/images/discover/khara-kapas/4.webp', '/images/discover/khara-kapas/5.jpg', '/images/discover/khara-kapas/6.jpg'],
 };
 const BrandStorefront = () => {
   const {
